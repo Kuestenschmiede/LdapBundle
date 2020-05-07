@@ -1,0 +1,5 @@
+services:
+    con4gis.auth.listener.successfull_authentication:
+        class: con4gis\AuthBundle\Classes\Listener\LoginListener
+        tags:
+            - { name: kernel.event_listener, event: security.authentication.success, method: onSuccessfullAuthentication, priority: 10 }
