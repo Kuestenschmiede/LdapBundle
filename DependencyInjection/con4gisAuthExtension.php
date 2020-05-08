@@ -12,10 +12,10 @@ use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 class con4gisAuthExtension extends Extension
 {
 
-    public function getAlias()
-    {
-        return "con4gis_auth";
-    }
+//    public function getAlias()
+//    {
+//        return "con4gis_auth";
+//    }
 
     private $files = [
         "listener.yml"

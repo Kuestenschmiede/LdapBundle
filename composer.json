@@ -26,9 +26,6 @@
         "contao/core-bundle": "^4.9",
         "menatwork/contao-multicolumnwizard": "^3.3",
         "doctrine/orm": "^2.5.14",
-        "doctrine/data-fixtures": "^1.2.2",
-        "bugbuster/contao-mobiledetection-bundle": "^1.0",
-        "guzzlehttp/guzzle": "^6.2",
         "symfony/ldap": "^4.4"
     },
     "conflict": {
