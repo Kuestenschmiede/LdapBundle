@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
     'palettes' => array
     (
         '__selector__'                => array(''),
-        'default'                     => 'server, port, encryption, baseDn, bindDn, password, filter'
+        'default'                     => 'server, port, encryption, baseDn, bindDn, password, filter, adminGroup, groups'
     ),
 
     'subpalettes' => array
@@ -174,6 +174,26 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
             'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'rgxp' => 'natural', 'tl_class'=>'w50 wizard'),
         ),
 
+        'groups' => array(
+
+            'label'            => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['groups'],
+            'exclude'          => true,
+            'filter'           => true,
+            'inputType'        => 'checkboxWizard',
+            'eval'             => ['maxlength' => 360, 'multiple' => true, 'tl_class' => 'long clr'],
+            'options_callback' => array('tl_c4g_auth_be_groups', 'groupsCallback'),
+
+        ),
+
+        'adminGroup' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['adminGroup'],
+            'filter'                  => false,
+            'inputType'               => 'select',
+            'options_callback'        => ['tl_c4g_auth_be_groups', 'groupsCallback'],
+            'default'                 => 0,
+//            'save_callback'           => ['tl_c4g_auth_be_groups', 'adminGroupSaveCallback'],
+        ),
+
     ),
 );
 class tl_c4g_auth_be_groups extends \Backend
@@ -202,6 +222,68 @@ class tl_c4g_auth_be_groups extends \Backend
 
     public function saveDataset(Contao\DataContainer $dc) {
 
+//        $bindDn = $dc->activeRecord->bindDn;
+//        $baseDn = $dc->activeRecord->baseDn;
+//        $password = $dc->activeRecord->password;
+//        $filter = $dc->activeRecord->filter;
+//        $encryption = $dc->activeRecord->encryption;
+//        $server = $dc->activeRecord->server;
+//        $port = $dc->activeRecord->port;
+//
+//        if ($encryption == 1) {
+//            $adServer = "ldaps://" . $server . ":" . $port;
+//        } else {
+//            $adServer = "ldap://" . $server . ":" . $port;
+//        }
+//
+//        $ldap = ldap_connect($adServer);
+//
+//        $ldaprdn = 'cn=Administrator,cn=Users,dc=ad,dc=coastforge,dc=de';
+//
+//        ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+//        ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+//
+//        $bind = @ldap_bind($ldap, $bindDn, $password);
+//
+//        if ($bind) {
+//            if ($filter) {
+//
+//                //ldapsearch -h 192.168.100.10 -p 389 -x -b "cn=Users,dc=ad,dc=coastforge,dc=de" -D "COASTFORGE\Administrator" -W "(&(objectClass=group))"
+//                $result = ldap_search($ldap, $baseDn, $filter);
+//                $ldapGroups = ldap_get_entries($ldap, $result);
+//                array_shift($ldapGroups);
+//
+//                foreach ($ldapGroups as $ldapGroup) {
+//
+//                    $group = strstr($ldapGroup['dn'], ',', true);
+//                    $group = trim(substr($group, strpos($group, '=') + 1));;
+//                    echo "test";
+//                }
+//
+//            }
+//        }
+//
+//        echo "test";
+
+        $groups = $dc->activeRecord->groups;
+        $groups = unserialize($groups);
+
+        foreach ($groups as $group) {
+
+            $contaoGroup = UserGroupModel::findOneByName($group);
+            if (!$contaoGroup) {
+                $newContaoGroup = new UserGroupModel();
+                $newContaoGroup->name = $group;
+                $newContaoGroup->save();
+            }
+
+        }
+
+        echo "test";
+    }
+
+    public function groupsCallback(Contao\DataContainer $dc) {
+
         $bindDn = $dc->activeRecord->bindDn;
         $baseDn = $dc->activeRecord->baseDn;
         $password = $dc->activeRecord->password;
@@ -209,6 +291,7 @@ class tl_c4g_auth_be_groups extends \Backend
         $encryption = $dc->activeRecord->encryption;
         $server = $dc->activeRecord->server;
         $port = $dc->activeRecord->port;
+        $groups = [];
 
         if ($encryption == 1) {
             $adServer = "ldaps://" . $server . ":" . $port;
@@ -218,8 +301,6 @@ class tl_c4g_auth_be_groups extends \Backend
 
         $ldap = ldap_connect($adServer);
 
-        $ldaprdn = 'cn=Administrator,cn=Users,dc=ad,dc=coastforge,dc=de';
-
         ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
@@ -228,6 +309,7 @@ class tl_c4g_auth_be_groups extends \Backend
         if ($bind) {
             if ($filter) {
 
+                //ldapsearch -h 192.168.100.10 -p 389 -x -b "cn=Users,dc=ad,dc=coastforge,dc=de" -D "COASTFORGE\Administrator" -W "(&(objectClass=group))"
                 $result = ldap_search($ldap, $baseDn, $filter);
                 $ldapGroups = ldap_get_entries($ldap, $result);
                 array_shift($ldapGroups);
@@ -236,13 +318,21 @@ class tl_c4g_auth_be_groups extends \Backend
 
                     $group = strstr($ldapGroup['dn'], ',', true);
                     $group = trim(substr($group, strpos($group, '=') + 1));
-                    echo "test";
+                    $groups[] = $group;
                 }
 
+                return $groups;
+
             }
+        } else {
+
         }
 
-        echo "test";
+    }
 
+    public function adminGroupSaveCallback(DataContainer $dc) {
+        $group = $dc->activeRecord->adminGroup;
+        return $group;
+        echo "tet";
     }
 }

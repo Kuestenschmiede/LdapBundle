@@ -76,6 +76,18 @@ class Con4gisAuthBackendGroups
     protected $port = '';
 
     /**
+     * @var string
+     * @ORM\Column(name="groups", type="blob")
+     */
+    protected $groups = '';
+
+    /**
+     * @var int
+     * @ORM\Column(name="adminGroup", type="integer")
+     */
+    protected $adminGroup = 0;
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -217,5 +229,37 @@ class Con4gisAuthBackendGroups
     public function setPort(int $port)
     {
         $this->port = $port;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroups(): string
+    {
+        return $this->groups ? $this->groups : '';
+    }
+
+    /**
+     * @param int $groups
+     */
+    public function setGroups(int $groups)
+    {
+        $this->groups = $groups;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAdminGroup(): int
+    {
+        return $this->adminGroup ? $this->adminGroup : '';
+    }
+
+    /**
+     * @param int $adminGroup
+     */
+    public function setAdminGroup(int $adminGroup)
+    {
+        $this->adminGroup = $adminGroup;
     }
 }
