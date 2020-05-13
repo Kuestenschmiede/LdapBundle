@@ -12,7 +12,7 @@ $GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['port'] = array('Port', 'Standard p
 $GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['groups'] = array('Available groups');
 $GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['adminGroup'] = array('Admin group', 'Select the group for which an admin access is to be created. This group does NOT need to be imported.');
 
-$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['infotext'] = 'The groups are updated each time these settings are saved.';
+$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['infotext'] = 'The groups are updated each time these settings are saved. The groups are assigned to the users at each login.';
 
 /** Options */
 $GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['plain'] = 'No encryption';

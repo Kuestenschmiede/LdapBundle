@@ -48,25 +48,32 @@ class LoginListener extends System
 
                 $contaoGroups = [];
 
+                $beUser = BackendUser::getInstance();
+
                 foreach ($groups as $group) {
                     if ($foundGroup = UserGroupModel::findByName($group)) {
                         $contaoGroups[] = $foundGroup->id;
-                        echo "Test";
                     }
                 }
 
                 if (!empty($contaoGroups)) {
                     $contaoGroups = serialize($contaoGroups);
-                    $sql = $this->db->prepare("UPDATE tl_user SET groups=? WHERE id=?")->execute($contaoGroups, $beUser->id);
-                    echo "tst";
+//                    $sql = $this->db->prepare("UPDATE tl_user SET groups=? WHERE id=?")->execute($contaoGroups, $beUser->id);
+                    $beUser->groups = $contaoGroups;
+                    $beUser->tstamp = time();
                 }
 
                 $user = UserModel::findByUsername($loginUsername);
                 if ($user) {
                     foreach ($groups as $group) {
                         if ($group == $adminGroup) {
-                            $sql = $this->db->prepare("UPDATE tl_user SET admin='1' WHERE id=?")->execute($beUser->id);
+//                            $sql = $this->db->prepare("UPDATE tl_user SET admin='1' WHERE id=?")->execute($beUser->id);
+                            $beUser->admin = '1';
+                            $beUser->tstamp = time();
                             break;
+                        } else {
+                            $beUser->admin = '0';
+                            $beUser->tstamp = time();
                         }
                     }
                 }
@@ -108,6 +115,8 @@ class LoginListener extends System
 
                 $user = new UserModel();
                 $user->username = $loginUsername;
+//                $user->save();
+//                $beUser = BackendUser::getInstance();
                 if ($userMail) {
                     $user->email = $userMail;
                 }
@@ -125,21 +134,25 @@ class LoginListener extends System
                 foreach ($groups as $group) {
                     if ($foundGroup = UserGroupModel::findByName($group)) {
                         $contaoGroups[] = $foundGroup->id;
-                        echo "Test";
                     }
                 }
 
-//                if (!empty($contaoGroups)) {
-//                    $user->groups = serialize($contaoGroups);
-//                }
+                if (!empty($contaoGroups)) {
+                    $user->groups = serialize($contaoGroups);
+                }
 
                 $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*_-";
                 $password = hash("sha384", substr(str_shuffle($chars), 0, 18));
+
                 $user->password = $password;
+
+                $user->dateAdded = time();
+                $user->tstamp = time();
 
                 foreach ($groups as $group) {
                     if ($group == $adminGroup) {
                         $user->admin = 1;
+                        $user->groups = NULL;
                         break;
                     }
                 }

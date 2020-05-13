@@ -83,7 +83,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
     'palettes' => array
     (
         '__selector__'                => array(''),
-        'default'                     => 'userFilter, email, name'
+        'default'                     => '{ldap}, userFilter, email, name'
     ),
 
     'subpalettes' => array
