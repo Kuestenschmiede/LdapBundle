@@ -19,5 +19,9 @@ $GLOBALS['BE_MOD']['con4gis_auth'] =  array(
     'fe_groups' => array
     (
         'tables'    => array('tl_c4g_auth_fe_groups'),
+    ),
+    'c4g_auth_settings' => array
+    (
+        'tables'    => array('tl_c4g_auth_settings'),
     )
 );

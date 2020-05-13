@@ -82,8 +82,8 @@ class Con4gisAuthBackendGroups
     protected $groups = '';
 
     /**
-     * @var int
-     * @ORM\Column(name="adminGroup", type="integer")
+     * @var string
+     * @ORM\Column(name="adminGroup", type="string")
      */
     protected $adminGroup = 0;
 
@@ -192,9 +192,9 @@ class Con4gisAuthBackendGroups
     }
 
     /**
-     * @param string $Encryption
+     * @param string $encryption
      */
-    public function setEncryption(int $encryption)
+    public function setEncryption(string $encryption)
     {
         $this->encryption = $encryption;
     }
@@ -248,17 +248,17 @@ class Con4gisAuthBackendGroups
     }
 
     /**
-     * @return int
+     * @return string
      */
-    public function getAdminGroup(): int
+    public function getAdminGroup(): string
     {
         return $this->adminGroup ? $this->adminGroup : '';
     }
 
     /**
-     * @param int $adminGroup
+     * @param string $adminGroup
      */
-    public function setAdminGroup(int $adminGroup)
+    public function setAdminGroup(string $adminGroup)
     {
         $this->adminGroup = $adminGroup;
     }

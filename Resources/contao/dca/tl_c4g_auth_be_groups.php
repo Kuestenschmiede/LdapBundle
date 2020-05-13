@@ -11,7 +11,7 @@
  * @link      https://www.kuestenschmiede.de
  */
 
-use Contao\DataContainer;
+use Contao\Message;
 use Contao\UserGroupModel;
 
 /**
@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
     'palettes' => array
     (
         '__selector__'                => array(''),
-        'default'                     => 'server, port, encryption, baseDn, bindDn, password, filter, adminGroup, groups'
+        'default'                     => '{ldap}, server, port, encryption, baseDn, bindDn, password, filter, adminGroup, groups'
     ),
 
     'subpalettes' => array
@@ -115,7 +115,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => array('mandatory' => true, 'decodeEntities' => true,),
+            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard',),
         ),
 
         'baseDn' => array(
@@ -133,7 +133,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
             'default'                 => '',
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['mandatory' => true, 'decodeEntities' => true,],
+            'eval'                    => ['mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard',],
         ),
 
         'filter' => array
@@ -143,17 +143,21 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => array('decodeEntities' => true,),
+            'eval'                    => array('decodeEntities' => true),
         ),
 
         'encryption' => array
         (
             'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['encryption'],
-            'sorting'                 => true,
-            'search'                  => true,
-            'inputType'               => 'checkbox',
-            'default'                 => '',
-            'eval'                    => ['tl_class'=>'clr'],
+            'exclude'                 => true,
+            'filter'                  => false,
+            'inputType'               => 'select',
+            'options'                 => [
+                'plain'               => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['plain'],
+                'ssl'                 => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['ssl'],
+            ],
+            'default'                 => 'plain',
+            'eval'                    => ['submitOnChange' => false],
         ),
 
         'server' => array(
@@ -162,7 +166,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'rgxp' => 'url', 'tl_class'=>'w50 wizard'),
+            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'rgxp' => 'url', 'tl_class' => 'w50 wizard'),
         ),
 
         'port' => array(
@@ -171,7 +175,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'rgxp' => 'natural', 'tl_class'=>'w50 wizard'),
+            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'rgxp' => 'natural', 'tl_class' => 'w50 wizard'),
         ),
 
         'groups' => array(
@@ -187,11 +191,12 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
 
         'adminGroup' => array(
             'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['adminGroup'],
+            'exclude'                 => true,
             'filter'                  => false,
             'inputType'               => 'select',
+            'default'                 => '',
+            'eval'                    => ['submitOnChange' => false],
             'options_callback'        => ['tl_c4g_auth_be_groups', 'groupsCallback'],
-            'default'                 => 0,
-//            'save_callback'           => ['tl_c4g_auth_be_groups', 'adminGroupSaveCallback'],
         ),
 
     ),
@@ -222,61 +227,29 @@ class tl_c4g_auth_be_groups extends \Backend
 
     public function saveDataset(Contao\DataContainer $dc) {
 
-//        $bindDn = $dc->activeRecord->bindDn;
-//        $baseDn = $dc->activeRecord->baseDn;
-//        $password = $dc->activeRecord->password;
-//        $filter = $dc->activeRecord->filter;
-//        $encryption = $dc->activeRecord->encryption;
-//        $server = $dc->activeRecord->server;
-//        $port = $dc->activeRecord->port;
-//
-//        if ($encryption == 1) {
-//            $adServer = "ldaps://" . $server . ":" . $port;
-//        } else {
-//            $adServer = "ldap://" . $server . ":" . $port;
-//        }
-//
-//        $ldap = ldap_connect($adServer);
-//
-//        $ldaprdn = 'cn=Administrator,cn=Users,dc=ad,dc=coastforge,dc=de';
-//
-//        ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-//        ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-//
-//        $bind = @ldap_bind($ldap, $bindDn, $password);
-//
-//        if ($bind) {
-//            if ($filter) {
-//
-//                //ldapsearch -h 192.168.100.10 -p 389 -x -b "cn=Users,dc=ad,dc=coastforge,dc=de" -D "COASTFORGE\Administrator" -W "(&(objectClass=group))"
-//                $result = ldap_search($ldap, $baseDn, $filter);
-//                $ldapGroups = ldap_get_entries($ldap, $result);
-//                array_shift($ldapGroups);
-//
-//                foreach ($ldapGroups as $ldapGroup) {
-//
-//                    $group = strstr($ldapGroup['dn'], ',', true);
-//                    $group = trim(substr($group, strpos($group, '=') + 1));;
-//                    echo "test";
-//                }
-//
-//            }
-//        }
-//
-//        echo "test";
-
         $groups = $dc->activeRecord->groups;
-        $groups = unserialize($groups);
+        if (substr($groups, 0, 2) == "a:") {
+            $groups = unserialize($groups);
+        }
+
+        $currentTime = time();
 
         foreach ($groups as $group) {
 
             $contaoGroup = UserGroupModel::findOneByName($group);
             if (!$contaoGroup) {
-                $newContaoGroup = new UserGroupModel();
-                $newContaoGroup->name = $group;
-                $newContaoGroup->save();
+                $this->Database->prepare("INSERT INTO tl_user_group SET tstamp=?, name=?, con4gisAuthUserGroup=1")->execute($currentTime, $group);
             }
 
+        }
+
+        $currentGroups = $this->Database->prepare("SELECT name FROM tl_user_group WHERE con4gisAuthUserGroup=1;")->execute();
+        $currentGroups = $currentGroups->fetchAllAssoc();
+
+        foreach ($currentGroups as $currentGroup) {
+            if (!in_array($currentGroup['name'], $groups)) {
+                $this->Database->prepare("DELETE FROM tl_user_group WHERE name=? AND con4gisAuthUserGroup=1")->execute($currentGroup);
+            }
         }
 
         echo "test";
@@ -293,9 +266,9 @@ class tl_c4g_auth_be_groups extends \Backend
         $port = $dc->activeRecord->port;
         $groups = [];
 
-        if ($encryption == 1) {
+        if ($encryption == 'ssl') {
             $adServer = "ldaps://" . $server . ":" . $port;
-        } else {
+        } else if ($encryption == 'plain') {
             $adServer = "ldap://" . $server . ":" . $port;
         }
 
@@ -318,21 +291,29 @@ class tl_c4g_auth_be_groups extends \Backend
 
                     $group = strstr($ldapGroup['dn'], ',', true);
                     $group = trim(substr($group, strpos($group, '=') + 1));
-                    $groups[] = $group;
+                    $groups[$group] = $group;
                 }
 
                 return $groups;
 
+            } else {
+                $result = ldap_search($ldap, $baseDn);
+                $ldapGroups = ldap_get_entries($ldap, $result);
+                array_shift($ldapGroups);
+
+                foreach ($ldapGroups as $ldapGroup) {
+
+                    $group = strstr($ldapGroup['dn'], ',', true);
+                    $group = trim(substr($group, strpos($group, '=') + 1));
+                    $groups[$group] = $group;
+                }
+
+                return $groups;
             }
         } else {
-
+            Message::addError($GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['bindError']);
         }
 
     }
 
-    public function adminGroupSaveCallback(DataContainer $dc) {
-        $group = $dc->activeRecord->adminGroup;
-        return $group;
-        echo "tet";
-    }
 }
