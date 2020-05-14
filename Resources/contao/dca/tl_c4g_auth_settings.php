@@ -83,7 +83,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
     'palettes' => array
     (
         '__selector__'                => array(''),
-        'default'                     => '{ldap}, userFilter, email, name'
+        'default'                     => '{ldap}, server, port, encryption, baseDn, bindDn, password, userFilter, email, name'
     ),
 
     'subpalettes' => array
@@ -103,6 +103,65 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
 
         'tstamp' => array(
             'default'                 => 0,
+        ),
+
+        'bindDn' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['bindDn'],
+            'sorting'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'default'                 => '',
+            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard',),
+        ),
+
+        'baseDn' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['baseDn'],
+            'sorting'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'default'                 => '',
+            'eval'                    => array('mandatory' => true, 'decodeEntities' => true,),
+        ),
+
+        'password' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['password'],
+            'default'                 => '',
+            'exclude'                 => true,
+            'inputType'               => 'text',
+            'eval'                    => ['mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard',],
+        ),
+
+        'encryption' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['encryption'],
+            'exclude'                 => true,
+            'filter'                  => false,
+            'inputType'               => 'select',
+            'options'                 => [
+                'plain'               => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['plain'],
+                'ssl'                 => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['ssl'],
+            ],
+            'default'                 => 'plain',
+            'eval'                    => ['submitOnChange' => false],
+        ),
+
+        'server' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['server'],
+            'sorting'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'default'                 => '',
+            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard'),
+        ),
+
+        'port' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['port'],
+            'sorting'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'default'                 => '',
+            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard'),
         ),
 
         'email' => array(

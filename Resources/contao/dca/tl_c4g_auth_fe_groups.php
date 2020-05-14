@@ -12,12 +12,12 @@
  */
 
 use Contao\Message;
-use Contao\UserGroupModel;
+use Contao\MemberGroupModel;
 
 /**
- * Table tl_c4g_auth_be_groups
+ * Table tl_c4g_auth_fe_groups
  */
-$GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
+$GLOBALS['TL_DCA']['tl_c4g_auth_fe_groups'] = array
 (
 
     // Config
@@ -29,11 +29,11 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
         'notCopyable'                 => true,
         'onload_callback'			  => array
         (
-            array('tl_c4g_auth_be_groups', 'loadDataset'),
+            array('tl_c4g_auth_fe_groups', 'loadDataset'),
         ),
         'onsubmit_callback'           => array
         (
-            array('tl_c4g_auth_be_groups', 'saveDataset'),
+            array('tl_c4g_auth_fe_groups', 'saveDataset'),
         ),
     ),
     'list' => array
@@ -64,7 +64,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
         (
             'edit' => array
             (
-                'label'               => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['edit'],
+                'label'               => &$GLOBALS['TL_LANG']['tl_c4g_auth_fe_groups']['edit'],
                 'href'                => 'act=edit',
                 'icon'                => 'edit.svg',
             )
@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
     'palettes' => array
     (
         '__selector__'                => array(''),
-        'default'                     => '{ldap}, filter, adminGroup, groups'
+        'default'                     => '{ldap}, filter, groups'
     ),
 
     'subpalettes' => array
@@ -100,7 +100,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
     (
         'id' => array
         (
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['id'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_fe_groups']['id'],
             'sorting'                 => true,
             'search'                  => true,
         ),
@@ -111,7 +111,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
 
         'filter' => array
         (
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['filter'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_fe_groups']['filter'],
             'sorting'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
@@ -121,32 +121,22 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
 
         'groups' => array(
 
-            'label'            => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['groups'],
+            'label'            => &$GLOBALS['TL_LANG']['tl_c4g_auth_fe_groups']['groups'],
             'exclude'          => true,
             'filter'           => true,
             'inputType'        => 'checkboxWizard',
             'eval'             => ['maxlength' => 360, 'multiple' => true, 'tl_class' => 'long clr'],
-            'options_callback' => array('tl_c4g_auth_be_groups', 'groupsCallback'),
+            'options_callback' => array('tl_c4g_auth_fe_groups', 'groupsCallback'),
 
-        ),
-
-        'adminGroup' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['adminGroup'],
-            'exclude'                 => true,
-            'filter'                  => false,
-            'inputType'               => 'select',
-            'default'                 => '',
-            'eval'                    => ['submitOnChange' => false],
-            'options_callback'        => ['tl_c4g_auth_be_groups', 'groupsCallback'],
         ),
 
     ),
 );
-class tl_c4g_auth_be_groups extends \Backend
+class tl_c4g_auth_fe_groups extends \Backend
 {
     public function loadDataset(Contao\DataContainer $dc)
     {
-        $objConfig = Database::getInstance()->prepare("SELECT id FROM tl_c4g_auth_be_groups")->execute();
+        $objConfig = Database::getInstance()->prepare("SELECT id FROM tl_c4g_auth_fe_groups")->execute();
 
         if (\Input::get('key')) return;
 
@@ -162,7 +152,7 @@ class tl_c4g_auth_be_groups extends \Backend
             $this->redirect($this->addToUrl('act=edit&id='.$objConfig->id));
         }
 
-        \Contao\Message::addInfo($GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['infotext']);
+        \Contao\Message::addInfo($GLOBALS['TL_LANG']['tl_c4g_auth_fe_groups']['infotext']);
 
     }
 
@@ -177,19 +167,19 @@ class tl_c4g_auth_be_groups extends \Backend
 
         foreach ($groups as $group) {
 
-            $contaoGroup = UserGroupModel::findOneByName($group);
+            $contaoGroup = MemberGroupModel::findOneByName($group);
             if (!$contaoGroup) {
-                $this->Database->prepare("INSERT INTO tl_user_group SET tstamp=?, name=?, con4gisAuthUserGroup=1")->execute($currentTime, $group);
+                $this->Database->prepare("INSERT INTO tl_member_group SET tstamp=?, name=?, con4gisAuthMemberGroup=1")->execute($currentTime, $group);
             }
 
         }
 
-        $currentGroups = $this->Database->prepare("SELECT name FROM tl_user_group WHERE con4gisAuthUserGroup=1;")->execute();
+        $currentGroups = $this->Database->prepare("SELECT name FROM tl_member_group WHERE con4gisAuthMemberGroup=1;")->execute();
         $currentGroups = $currentGroups->fetchAllAssoc();
 
         foreach ($currentGroups as $currentGroup) {
             if (!in_array($currentGroup['name'], $groups)) {
-                $this->Database->prepare("DELETE FROM tl_user_group WHERE name=? AND con4gisAuthUserGroup=1")->execute($currentGroup);
+                $this->Database->prepare("DELETE FROM tl_member_group WHERE name=? AND con4gisAuthMemberGroup=1")->execute($currentGroup);
             }
         }
 
@@ -255,7 +245,7 @@ class tl_c4g_auth_be_groups extends \Backend
                 return $groups;
             }
         } else {
-            Message::addError($GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['bindError']);
+            Message::addError($GLOBALS['TL_LANG']['tl_c4g_auth_fe_groups']['bindError']);
         }
 
     }

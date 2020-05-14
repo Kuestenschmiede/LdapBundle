@@ -42,9 +42,13 @@ class LoginListener extends System
                 $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
                 $authBeGroupsRepo = $em->getRepository(Con4gisAuthBackendGroups::class);
                 $authBeGroups = $authBeGroupsRepo->findAll();
+
+                $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+                $authSettings = $authSettingsRepo->findAll();
+
                 $adminGroup = $authBeGroups[0]->getAdminGroup();
 
-                $groups = $this->getLdapUserGroups($em, $loginUsername, $authBeGroups);
+                $groups = $this->getLdapUserGroups($em, $loginUsername, $authSettings);
 
                 $contaoGroups = [];
 
@@ -63,6 +67,10 @@ class LoginListener extends System
                     $beUser->tstamp = time();
                 }
 
+                if ($beUser->con4gisAuthUser == "0") {
+                    $beUser->con4gisAuthUser = "1";
+                }
+
                 $user = UserModel::findByUsername($loginUsername);
                 if ($user) {
                     foreach ($groups as $group) {
@@ -78,6 +86,42 @@ class LoginListener extends System
                     }
                 }
 
+                if ($beUser->name == "" OR $beUser->email == "") {
+                    
+                    $encryption = $authSettings[0]->getEncryption();
+                    $server = $authSettings[0]->getServer();
+                    $port = $authSettings[0]->getPort();
+                    $bindDn = $authSettings[0]->getBindDn();
+                    $baseDn = $authSettings[0]->getBaseDn();
+                    $bindPassword = $authSettings[0]->getPassword();
+                    $mailField = $authSettings[0]->getEmail();
+                    $nameField = $authSettings[0]->getName();
+                    $userFilter = "(&(".$authSettings[0]->getUserFilter()."=".$loginUsername."))";
+
+                    if ($encryption == 'ssl') {
+                        $adServer = "ldaps://" . $server . ":" . $port;
+                    } else if ($encryption == 'plain') {
+                        $adServer = "ldap://" . $server . ":" . $port;
+                    }
+
+                    $ldapUser = $this->filterLdap($bindDn, $bindPassword, $userFilter, $baseDn, $adServer);
+                    $userMail = $ldapUser[0][$mailField][0];
+                    $userFullName = $ldapUser[0][$nameField][0];
+
+                    if ($userMail) {
+                        $beUser->email = $userMail;
+                    }
+
+                    if ($userFullName) {
+                        $beUser->name = $userFullName;
+                    }
+                    
+                }
+
+                $chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*_-";
+                $password = hash("sha384", substr(str_shuffle($chars), 0, 18));
+                $beUser->password = $password;
+
                 echo "test";
 
             } else {
@@ -86,17 +130,18 @@ class LoginListener extends System
                 $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
                 $authBeGroupsRepo = $em->getRepository(Con4gisAuthBackendGroups::class);
                 $authBeGroups = $authBeGroupsRepo->findAll();
-                $adminGroup = $authBeGroups[0]->getAdminGroup();
-
-                $encryption = $authBeGroups[0]->getEncryption();
-                $server = $authBeGroups[0]->getServer();
-                $port = $authBeGroups[0]->getPort();
-                $bindDn = $authBeGroups[0]->getBindDn();
-                $baseDn = $authBeGroups[0]->getBaseDn();
-                $password = $authBeGroups[0]->getPassword();
 
                 $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
                 $authSettings = $authSettingsRepo->findAll();
+
+                $adminGroup = $authBeGroups[0]->getAdminGroup();
+                $encryption = $authSettings[0]->getEncryption();
+                $server = $authSettings[0]->getServer();
+                $port = $authSettings[0]->getPort();
+                $bindDn = $authSettings[0]->getBindDn();
+                $baseDn = $authSettings[0]->getBaseDn();
+                $password = $authSettings[0]->getPassword();
+
                 $mailField = $authSettings[0]->getEmail();
                 $nameField = $authSettings[0]->getName();
                 $userFilter = "(&(".$authSettings[0]->getUserFilter()."=".$loginUsername."))";
@@ -111,7 +156,7 @@ class LoginListener extends System
                 $userMail = $ldapUser[0][$mailField][0];
                 $userFullName = $ldapUser[0][$nameField][0];
 
-                $groups = $this->getLdapUserGroups($em, $loginUsername, $authBeGroups);
+                $groups = $this->getLdapUserGroups($em, $loginUsername, $authSettings);
 
                 $user = new UserModel();
                 $user->username = $loginUsername;
@@ -168,18 +213,16 @@ class LoginListener extends System
 
     }
 
-    public function getLdapUserGroups($em, $loginUsername, $authBeGroups) {
+    public function getLdapUserGroups($em, $loginUsername, $authSettings) {
         //Check if Login User is in Admin Group
-        $bindDn = $authBeGroups[0]->getBindDn();
-        $baseDn = $authBeGroups[0]->getBaseDn();
-        $password = $authBeGroups[0]->getPassword();
-        $encryption = $authBeGroups[0]->getEncryption();
-        $server = $authBeGroups[0]->getServer();
-        $port = $authBeGroups[0]->getPort();
+        $bindDn = $authSettings[0]->getBindDn();
+        $baseDn = $authSettings[0]->getBaseDn();
+        $password = $authSettings[0]->getPassword();
+        $encryption = $authSettings[0]->getEncryption();
+        $server = $authSettings[0]->getServer();
+        $port = $authSettings[0]->getPort();
         $groups = [];
 
-        $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
-        $authSettings = $authSettingsRepo->findAll();
         $userFilter = "(&(".$authSettings[0]->getUserFilter()."=".$loginUsername."))";
 
         if ($encryption == 'ssl') {

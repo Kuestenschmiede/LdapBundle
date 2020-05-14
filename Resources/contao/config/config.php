@@ -25,3 +25,8 @@ $GLOBALS['BE_MOD']['con4gis_auth'] =  array(
         'tables'    => array('tl_c4g_auth_settings'),
     )
 );
+
+/**
+ * Hooks
+ */
+$GLOBALS['TL_HOOKS']['importUser'][] = array('con4gis\AuthBundle\Classes\LoginNewUser', 'importUserBeforeAuthenticate');
