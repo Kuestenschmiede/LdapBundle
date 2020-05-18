@@ -78,9 +78,15 @@ class Con4gisAuthSettings
 
     /**
      * @var string
-     * @ORM\Column(name="name", type="string")
+     * @ORM\Column(name="lastname", type="string")
      */
-    protected $name = '';
+    protected $lastname = '';
+
+    /**
+     * @var string
+     * @ORM\Column(name="firstname", type="string")
+     */
+    protected $firstname = '';
 
     /**
      * @var string
@@ -235,17 +241,33 @@ class Con4gisAuthSettings
     /**
      * @return string
      */
-    public function getName(): string
+    public function getLastname(): string
     {
-        return $this->name ? $this->name : '';
+        return $this->lastname ? $this->lastname : '';
     }
 
     /**
-     * @param string $name
+     * @param string $lastname
      */
-    public function setName(string $name)
+    public function setLastname(string $lastname)
     {
-        $this->name = $name;
+        $this->lastname = $lastname;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFirstname(): string
+    {
+        return $this->firstname ? $this->firstname : '';
+    }
+
+    /**
+     * @param string $firstname
+     */
+    public function setFirstname(string $firstname)
+    {
+        $this->firstname = $firstname;
     }
 
     /**

@@ -83,7 +83,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
     'palettes' => array
     (
         '__selector__'                => array(''),
-        'default'                     => '{ldap}, server, port, encryption, baseDn, bindDn, password, userFilter, email, name'
+        'default'                     => '{ldap}, server, port, encryption, baseDn, bindDn, password, userFilter, email, firstname, lastname'
     ),
 
     'subpalettes' => array
@@ -111,7 +111,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard',),
+            'eval'                    => ['mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard'],
         ),
 
         'baseDn' => array(
@@ -120,7 +120,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => array('mandatory' => true, 'decodeEntities' => true,),
+            'eval'                    => ['mandatory' => true, 'decodeEntities' => true],
         ),
 
         'password' => array
@@ -170,16 +170,25 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard'),
+            'eval'                    => array('mandatory' => true, 'decodeEntities' => true,),
         ),
 
-        'name' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['name'],
+        'firstname' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['firstname'],
             'sorting'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard'),
+            'eval'                    => ['mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50'],
+        ),
+
+        'lastname' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['lastname'],
+            'sorting'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'default'                 => '',
+            'eval'                    => ['mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50'],
         ),
 
         'userFilter' => array

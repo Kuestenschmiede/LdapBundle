@@ -1,12 +1,11 @@
 <?php
 
-
 namespace con4gis\AuthBundle\Classes;
-
 
 class LdapConnection
 {
-    public function getLdapUserGroups($em, $loginUsername, $authBeGroups, $authSettings) {
+    public function getLdapUserGroups($em, $loginUsername, $authBeGroups, $authSettings)
+    {
         //Check if Login User is in Admin Group
         $bindDn = $authSettings[0]->getBindDn();
         $baseDn = $authSettings[0]->getBaseDn();
@@ -16,12 +15,12 @@ class LdapConnection
         $port = $authSettings[0]->getPort();
         $groups = [];
 
-        $userFilter = "(&(".$authSettings[0]->getUserFilter()."=".$loginUsername."))";
+        $userFilter = '(&(' . $authSettings[0]->getUserFilter() . '=' . $loginUsername . '))';
 
         if ($encryption == 'ssl') {
-            $adServer = "ldaps://" . $server . ":" . $port;
-        } else if ($encryption == 'plain') {
-            $adServer = "ldap://" . $server . ":" . $port;
+            $adServer = 'ldaps://' . $server . ':' . $port;
+        } elseif ($encryption == 'plain') {
+            $adServer = 'ldap://' . $server . ':' . $port;
         }
 
         $ldap = ldap_connect($adServer);
@@ -43,14 +42,14 @@ class LdapConnection
                     $group = trim(substr($group, strpos($group, '=') + 1));
                     $groups[] = $group;
                 }
-
             }
         }
+
         return $groups;
     }
 
-    public function ldapBind($ldap, $bindDn, $password) {
-
+    public function ldapBind($ldap, $bindDn, $password)
+    {
         ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
@@ -59,8 +58,8 @@ class LdapConnection
         return $bind;
     }
 
-    public function filterLdap($bindDn, $password, $filter, $baseDn, $adServer) {
-
+    public function filterLdap($bindDn, $password, $filter, $baseDn, $adServer)
+    {
         $ldap = ldap_connect($adServer);
         ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
@@ -69,9 +68,10 @@ class LdapConnection
 
         if ($bind) {
             $result = ldap_search($ldap, $baseDn, $filter);
+
             return $ldapUser = ldap_get_entries($ldap, $result);
-        } else {
-            return false;
         }
+
+        return false;
     }
 }

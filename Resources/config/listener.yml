@@ -2,4 +2,4 @@ services:
     con4gis.auth.listener.interactive.login:
         class: con4gis\AuthBundle\Classes\Listener\LoginListener
         tags:
-            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin, priority: -1000 }
+            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin, priority: 10 }

@@ -9,7 +9,8 @@ $GLOBALS['TL_LANG']['tl_c4g_auth_settings']['encryption'] = array('Verschlüssel
 $GLOBALS['TL_LANG']['tl_c4g_auth_settings']['server'] = array('Serveradresse', 'IP oder Adresse des LDAP-Servers');
 $GLOBALS['TL_LANG']['tl_c4g_auth_settings']['port'] = array('Port', 'Standardport 389');
 $GLOBALS['TL_LANG']['tl_c4g_auth_settings']['email'] = array('E-Mail', 'Hier das Feld vom LDAP-Server eintragen, welches die E-Mail Adresse enthält.');
-$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['name'] = array('Name', 'Hier das Feld vom LDAP-Server eintragen, welches den Namen enthält.');
+$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['firstname'] = array('Vorame', 'Hier das Feld vom LDAP-Server eintragen, welches den Vornamen enthält.');
+$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['lastname'] = array('Nachname', 'Hier das Feld vom LDAP-Server eintragen, welches den Nachnamen enthält.');
 $GLOBALS['TL_LANG']['tl_c4g_auth_settings']['userFilter'] = array('User-Filter', 'Hier das Attribut benennen, welches den Benutzernamen enthält. (Beispiel: uid oder sAMAccountName)');
 
 /** Options */
