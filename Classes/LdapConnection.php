@@ -2,9 +2,12 @@
 
 namespace con4gis\AuthBundle\Classes;
 
+use con4gis\AuthBundle\Entity\Con4gisAuthSettings;
+use Contao\System;
+
 class LdapConnection
 {
-    public function getLdapUserGroups($em, $loginUsername, $authBeGroups, $authSettings)
+    public function getLdapUserGroups($loginUsername, $authSettings)
     {
         //Check if Login User is in Admin Group
         $bindDn = $authSettings[0]->getBindDn();
@@ -27,6 +30,7 @@ class LdapConnection
 
         ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+        ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, 0);
 
         $bind = @ldap_bind($ldap, $bindDn, $password);
 
@@ -48,12 +52,31 @@ class LdapConnection
         return $groups;
     }
 
-    public function ldapBind($ldap, $bindDn, $password)
+    public function ldapBind()
     {
+
+        $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
+        $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+        $authSettings = $authSettingsRepo->findAll();
+        $encryption = $authSettings[0]->getEncryption();
+        $server = $authSettings[0]->getServer();
+        $port = $authSettings[0]->getPort();
+        $bindDn = $authSettings[0]->getBindDn();
+        $bindPassword = $authSettings[0]->getPassword();
+
+        if ($encryption == 'ssl') {
+            $adServer = 'ldaps://' . $server . ':' . $port;
+        } elseif ($encryption == 'plain') {
+            $adServer = 'ldap://' . $server . ':' . $port;
+        }
+
+        $ldap = ldap_connect($adServer);
+
         ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-
-        $bind = @ldap_bind($ldap, $bindDn, $password);
+        ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
+        
+        $bind = @ldap_bind($ldap, $bindDn, $bindPassword);
 
         return $bind;
     }
@@ -63,6 +86,7 @@ class LdapConnection
         $ldap = ldap_connect($adServer);
         ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+        ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, 0);
 
         $bind = @ldap_bind($ldap, $bindDn, $password);
 

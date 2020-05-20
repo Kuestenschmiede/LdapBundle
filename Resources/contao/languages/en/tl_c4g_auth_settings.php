@@ -16,3 +16,8 @@ $GLOBALS['TL_LANG']['tl_c4g_auth_settings']['userFilter'] = array('User filter',
 /** Options */
 $GLOBALS['TL_LANG']['tl_c4g_auth_settings']['plain'] = 'No encryption';
 $GLOBALS['TL_LANG']['tl_c4g_auth_settings']['ssl'] = 'SSL';
+
+$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['infotext'] = 'The groups are updated each time these settings are saved. The groups are assigned to the users at each login. If the filter is changed, groups that no longer exist are automatically deleted.';
+
+/** Error Messages */
+$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['bindError'] = 'No connection to the LDAP server could be established.';

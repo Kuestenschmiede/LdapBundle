@@ -2,47 +2,77 @@
 
 namespace con4gis\AuthBundle\Classes;
 
+use con4gis\AuthBundle\Entity\Con4gisAuthFrontendGroups;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
-use Contao\MemberModel;
+use con4gis\AuthBundle\Resources\contao\models\AuthMemberModel;
+use con4gis\AuthBundle\Resources\contao\models\AuthUserModel;
+use Contao\Database;
+use Contao\System;
 use Terminal42\ServiceAnnotationBundle\ServiceAnnotationInterface;
-use Contao\UserModel;
+use con4gis\AuthBundle\Classes\LdapConnection;
+use con4gis\AuthBundle\Entity\Con4gisAuthSettings;
 
 class LoginNewUser implements ServiceAnnotationInterface
 {
+
     /**
      * @Hook("importUser")
      */
     public function importUserBeforeAuthenticate(string $username, string $password, string $table): bool
     {
-        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*_-';
-        $password = hash('sha384', substr(str_shuffle($chars), 0, 18));
 
-//        if (TL_MODE == 'FE') {
-//            $table = "tl_member";
-//        }
+        $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
+        $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+        $authSettings = $authSettingsRepo->findAll();
 
-        if ('tl_user' === $table) {
-            // Import user from an LDAP server
-            if (UserModel::findByUsername($username)) {
-                return true;
+        $encryption = $authSettings[0]->getEncryption();
+        $server = $authSettings[0]->getServer();
+        $port = $authSettings[0]->getPort();
+        $bindDn = $authSettings[0]->getBindDn();
+        $baseDn = $authSettings[0]->getBaseDn();
+        $bindPassword = $authSettings[0]->getPassword();
+        $userFilter = '(&(' . $authSettings[0]->getUserFilter() . '=' . $username . '))';
+
+        if ($encryption == 'ssl') {
+            $adServer = 'ldaps://' . $server . ':' . $port;
+        } elseif ($encryption == 'plain') {
+            $adServer = 'ldap://' . $server . ':' . $port;
+        }
+
+        $ldapConnection = new LdapConnection();
+        $ldapUser = $ldapConnection->filterLdap($bindDn, $bindPassword, $userFilter, $baseDn, $adServer);
+
+        if ($ldapUser['count'] != 0) {
+            $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*_-';
+            $password = hash('sha384', substr(str_shuffle($chars), 0, 18));
+
+            if ('tl_user' === $table) {
+                // Import user from an LDAP server
+                if (AuthUserModel::findByUsername($username)) {
+                    return true;
+                }
+                $user = new AuthUserModel();
+                $user->con4gisAuthUser = 1;
+            } elseif ('tl_member' === $table) {
+                // Import user from an LDAP server
+                if (AuthMemberModel::findByUsername($username)) {
+                    return true;
+                }
+                $user = new AuthMemberModel();
+                $user->login = '1';
+                $user->con4gisAuthMember = 1;
+            } else {
+                return false;
             }
-            $user = new UserModel();
-        } elseif ('tl_member' === $table) {
-            // Import user from an LDAP server
-            if (MemberModel::findByUsername($username)) {
-                return true;
-            }
-            $user = new MemberModel();
-            $user->login = '1';
+
+            $user->username = $username;
+            $user->password = $password;
+            $user->dateAdded = time();
+            $user->save();
+
+            return true;
         } else {
             return false;
         }
-
-        $user->username = $username;
-        $user->password = $password;
-        $user->dateAdded = time();
-        $user->save();
-
-        return true;
     }
 }

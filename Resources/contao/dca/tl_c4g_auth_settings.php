@@ -13,6 +13,7 @@
 
 use Contao\Message;
 use Contao\UserGroupModel;
+use con4gis\AuthBundle\Classes\LdapConnection;
 
 /**
  * Table tl_c4g_auth_settings
@@ -111,7 +112,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => ['mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard'],
+            'eval'                    => ['mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'long'],
         ),
 
         'baseDn' => array(
@@ -129,7 +130,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
             'default'                 => '',
             'exclude'                 => true,
             'inputType'               => 'text',
-            'eval'                    => ['mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard',],
+            'eval'                    => ['mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'long',],
         ),
 
         'encryption' => array
@@ -152,7 +153,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard'),
+            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'long'),
         ),
 
         'port' => array(
@@ -161,7 +162,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50 wizard'),
+            'eval'                    => array('mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'long'),
         ),
 
         'email' => array(
@@ -179,7 +180,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => ['mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50'],
+            'eval'                    => ['decodeEntities' => true, 'tl_class' => 'long'],
         ),
 
         'lastname' => array(
@@ -188,7 +189,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => ['mandatory' => true, 'decodeEntities' => true, 'tl_class' => 'w50'],
+            'eval'                    => ['decodeEntities' => true, 'tl_class' => 'long'],
         ),
 
         'userFilter' => array
@@ -222,7 +223,13 @@ class tl_c4g_auth_settings extends \Backend
             $this->redirect($this->addToUrl('act=edit&id='.$objConfig->id));
         }
 
-        \Contao\Message::addInfo($GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['infotext']);
+        \Contao\Message::addInfo($GLOBALS['TL_LANG']['tl_c4g_auth_settings']['infotext']);
+
+        $ldapConnection = new LdapConnection();
+
+        if (!$ldapConnection->ldapBind()) {
+            Message::addError($GLOBALS['TL_LANG']['tl_c4g_auth_settings']['bindError']);
+        }
 
     }
 }

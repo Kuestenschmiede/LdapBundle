@@ -13,6 +13,7 @@
 
 use Contao\Message;
 use Contao\UserGroupModel;
+use con4gis\AuthBundle\Classes\LdapConnection;
 
 /**
  * Table tl_c4g_auth_be_groups
@@ -187,13 +188,16 @@ class tl_c4g_auth_be_groups extends \Backend
         $currentGroups = $this->Database->prepare("SELECT name FROM tl_user_group WHERE con4gisAuthUserGroup=1;")->execute();
         $currentGroups = $currentGroups->fetchAllAssoc();
 
-        foreach ($currentGroups as $currentGroup) {
-            if (!in_array($currentGroup['name'], $groups)) {
-                $this->Database->prepare("DELETE FROM tl_user_group WHERE name=? AND con4gisAuthUserGroup=1")->execute($currentGroup);
+        $ldapConnection = new LdapConnection();
+
+        if ($ldapConnection->ldapBind()) {
+            foreach ($currentGroups as $currentGroup) {
+                if (!in_array($currentGroup['name'], $groups)) {
+                    $this->Database->prepare("DELETE FROM tl_user_group WHERE name=? AND con4gisAuthUserGroup=1")->execute($currentGroup);
+                }
             }
         }
 
-        echo "test";
     }
 
     public function groupsCallback(Contao\DataContainer $dc) {
@@ -226,7 +230,6 @@ class tl_c4g_auth_be_groups extends \Backend
         if ($bind) {
             if ($filter) {
 
-                //ldapsearch -h 192.168.100.10 -p 389 -x -b "cn=Users,dc=ad,dc=coastforge,dc=de" -D "COASTFORGE\Administrator" -W "(&(objectClass=group))"
                 $result = ldap_search($ldap, $baseDn, $filter);
                 $ldapGroups = ldap_get_entries($ldap, $result);
                 array_shift($ldapGroups);
