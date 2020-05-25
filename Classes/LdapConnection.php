@@ -1,5 +1,16 @@
 <?php
-
+/**
+ * This file is part of con4gis,
+ * the gis-kit for Contao CMS.
+ *
+ * @package     con4gis
+ * @version     7
+ * @author      con4gis contributors (see "authors.txt")
+ * @license     LGPL-3.0-or-later
+ * @copyright   Küstenschmiede GmbH Software & Design
+ * @link        https://www.con4gis.org
+ *
+ */
 namespace con4gis\AuthBundle\Classes;
 
 use con4gis\AuthBundle\Entity\Con4gisAuthSettings;
@@ -58,25 +69,30 @@ class LdapConnection
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
         $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
         $authSettings = $authSettingsRepo->findAll();
-        $encryption = $authSettings[0]->getEncryption();
-        $server = $authSettings[0]->getServer();
-        $port = $authSettings[0]->getPort();
-        $bindDn = $authSettings[0]->getBindDn();
-        $bindPassword = $authSettings[0]->getPassword();
+        $bind = false;
+        if ($authSettings && count($authSettings) > 0) {
+            $encryption = $authSettings[0]->getEncryption();
+            $server = $authSettings[0]->getServer();
+            $port = $authSettings[0]->getPort();
+            $bindDn = $authSettings[0]->getBindDn();
+            $bindPassword = $authSettings[0]->getPassword();
 
-        if ($encryption == 'ssl') {
-            $adServer = 'ldaps://' . $server . ':' . $port;
-        } elseif ($encryption == 'plain') {
-            $adServer = 'ldap://' . $server . ':' . $port;
+            if ($server && $port) {
+                if ($encryption == 'ssl') {
+                    $adServer = 'ldaps://' . $server . ':' . $port;
+                } elseif ($encryption == 'plain') {
+                    $adServer = 'ldap://' . $server . ':' . $port;
+                }
+
+                $ldap = ldap_connect($adServer);
+
+                ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+                ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+                ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
+
+                $bind = @ldap_bind($ldap, $bindDn, $bindPassword);
+            }
         }
-
-        $ldap = ldap_connect($adServer);
-
-        ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-        ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-        ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
-        
-        $bind = @ldap_bind($ldap, $bindDn, $bindPassword);
 
         return $bind;
     }
