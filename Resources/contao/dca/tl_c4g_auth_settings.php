@@ -227,7 +227,9 @@ class tl_c4g_auth_settings extends \Backend
 
         $ldapConnection = new LdapConnection();
 
-        if (!$ldapConnection->ldapBind()) {
+        $ldap = $ldapConnection->ldapConnect();
+
+        if (!$ldapConnection->ldapBind($ldap) && !$baseDn && !$bindDn && !$password && !$server && !$port) {
             Message::addError($GLOBALS['TL_LANG']['tl_c4g_auth_settings']['bindError']);
         }
 

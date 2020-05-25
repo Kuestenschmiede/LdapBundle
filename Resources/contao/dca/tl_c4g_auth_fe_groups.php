@@ -155,6 +155,14 @@ class tl_c4g_auth_fe_groups extends \Backend
 
         \Contao\Message::addInfo($GLOBALS['TL_LANG']['tl_c4g_auth_fe_groups']['infotext']);
 
+        $ldapConnection = new LdapConnection();
+
+        $ldap = $ldapConnection->ldapConnect();
+
+        if ($ldapConnection->ldapBind($ldap)) {
+            Message::addError($GLOBALS['TL_LANG']['tl_c4g_auth_settings']['bindError']);
+        }
+
     }
 
     public function saveDataset(Contao\DataContainer $dc) {
@@ -179,8 +187,9 @@ class tl_c4g_auth_fe_groups extends \Backend
         $currentGroups = $currentGroups->fetchAllAssoc();
 
         $ldapConnection = new LdapConnection();
+        $ldap = $ldapConnection->ldapConnect();
 
-        if ($ldapConnection->ldapBind()) {
+        if ($ldapConnection->ldapBind($ldap)) {
             foreach ($currentGroups as $currentGroup) {
                 if (!in_array($currentGroup['name'], $groups)) {
                     $this->Database->prepare("DELETE FROM tl_member_group WHERE name=? AND con4gisAuthMemberGroup=1")->execute($currentGroup);
@@ -195,30 +204,17 @@ class tl_c4g_auth_fe_groups extends \Backend
         $authSettings = $this->Database->prepare("SELECT * FROM tl_c4g_auth_settings")->execute()->fetchAllAssoc();
         $authSettings = $authSettings[0];
 
-        $bindDn = $authSettings['bindDn'];
         $baseDn = $authSettings['baseDn'];
-        $password = $authSettings['password'];
         $filter = $dc->activeRecord->filter;
-        $encryption = $authSettings['encryption'];
-        $server = $authSettings['server'];
-        $port = $authSettings['port'];
+
         $groups = [];
 
-        if ($encryption == 'ssl') {
-            $adServer = "ldaps://" . $server . ":" . $port;
-        } else if ($encryption == 'plain') {
-            $adServer = "ldap://" . $server . ":" . $port;
-        }
-
-        $ldap = ldap_connect($adServer);
-
-        ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-        ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-
-        $bind = @ldap_bind($ldap, $bindDn, $password);
+        $ldapConnection = new LdapConnection();
+        $ldap = $ldapConnection->ldapConnect();
+        $bind = $ldapConnection->ldapBind($ldap);
 
         if ($bind) {
-            if ($filter) {
+            if ($filter && $baseDn) {
 
                 $result = ldap_search($ldap, $baseDn, $filter);
                 $ldapGroups = ldap_get_entries($ldap, $result);
@@ -233,7 +229,7 @@ class tl_c4g_auth_fe_groups extends \Backend
 
                 return $groups;
 
-            } else {
+            } elseif ($baseDn) {
                 $result = ldap_search($ldap, $baseDn);
                 $ldapGroups = ldap_get_entries($ldap, $result);
                 array_shift($ldapGroups);
@@ -247,8 +243,6 @@ class tl_c4g_auth_fe_groups extends \Backend
 
                 return $groups;
             }
-        } else {
-            Message::addError($GLOBALS['TL_LANG']['tl_c4g_auth_fe_groups']['bindError']);
         }
 
     }
