@@ -11,7 +11,10 @@
  * @link        https://www.con4gis.org
  *
  */
+
+use con4gis\AuthBundle\Entity\Con4gisAuthSettings;
 use Contao\Message;
+use Contao\System;
 use Contao\UserGroupModel;
 use con4gis\AuthBundle\Classes\LdapConnection;
 
@@ -141,7 +144,8 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
             'inputType'               => 'select',
             'options'                 => [
                 'plain'               => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['plain'],
-                'ssl'                 => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['ssl'],
+//                'ssl'                 => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['ssl'],
+                'tls'                 => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['tls'],
             ],
             'default'                 => 'plain',
             'eval'                    => ['submitOnChange' => false],
@@ -228,6 +232,23 @@ class tl_c4g_auth_settings extends \Backend
         $ldapConnection = new LdapConnection();
 
         $ldap = $ldapConnection->ldapConnect();
+
+        $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
+        $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+        $authSettings = $authSettingsRepo->findAll();
+
+        if ($authSettings && count($authSettings) > 0) {
+            $encryption = $authSettings[0]->getEncryption();
+            $bindDn = $authSettings[0]->getBindDn();
+            $bindPassword = $authSettings[0]->getPassword();
+            $server = $authSettings[0]->getServer();
+            $port = $authSettings[0]->getPort();
+            $baseDn = $authSettings[0]->getBaseDn();
+        }
+
+        if(!ldap) {
+            Message::addError($GLOBALS['TL_LANG']['tl_c4g_auth_settings']['bindError']);
+        }
 
         if (!$ldapConnection->ldapBind($ldap) && !$baseDn && !$bindDn && !$password && !$server && !$port) {
             Message::addError($GLOBALS['TL_LANG']['tl_c4g_auth_settings']['bindError']);

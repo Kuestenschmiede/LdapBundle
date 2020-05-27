@@ -63,7 +63,7 @@ class LoginListener extends System
 
             if ($encryption == 'ssl') {
                 $adServer = 'ldaps://' . $server . ':' . $port;
-            } elseif ($encryption == 'plain') {
+            } elseif ($encryption == 'plain' || $encryption == 'tls') {
                 $adServer = 'ldap://' . $server . ':' . $port;
             }
 

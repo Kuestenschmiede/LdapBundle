@@ -27,6 +27,7 @@ $GLOBALS['TL_LANG']['tl_c4g_auth_settings']['userFilter'] = array('User-Filter',
 /** Options */
 $GLOBALS['TL_LANG']['tl_c4g_auth_settings']['plain'] = 'Ohne Verschlüsselung';
 $GLOBALS['TL_LANG']['tl_c4g_auth_settings']['ssl'] = 'SSL';
+$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['tls'] = 'TLS';
 
 $GLOBALS['TL_LANG']['tl_c4g_auth_settings']['bindError'] = 'Es konnte keine Verbindung mit dem LDAP Server aufgebaut werden.';
 $GLOBALS['TL_LANG']['tl_c4g_auth_settings']['infotext'] =

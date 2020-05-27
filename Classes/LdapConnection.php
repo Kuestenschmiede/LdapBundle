@@ -32,7 +32,7 @@ class LdapConnection
 
         ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-        ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, 0);
+        ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
 
         $bind = $this->ldapBind($ldap);
 
@@ -60,7 +60,7 @@ class LdapConnection
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
         $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
         $authSettings = $authSettingsRepo->findAll();
-//        $ldap = $this->ldapConnect();
+
         $bind = false;
         if ($authSettings && count($authSettings) > 0) {
             $bindDn = $authSettings[0]->getBindDn();
@@ -75,10 +75,25 @@ class LdapConnection
 
     public function filterLdap($bindDn, $password, $filter, $baseDn, $adServer)
     {
-        $ldap = ldap_connect($adServer);
+
+        $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
+        $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+        $authSettings = $authSettingsRepo->findAll();
+
+        if ($authSettings && count($authSettings) > 0) {
+            $encryption = $authSettings[0]->getEncryption();
+        }
+
         ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
         ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-        ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, 0);
+
+        $ldap = ldap_connect($adServer);
+
+        if ($encryption == 'tls') {
+            if(!ldap_start_tls($ldap)) {
+                return false;
+            }
+        }
 
         $bind = @ldap_bind($ldap, $bindDn, $password);
 
@@ -105,16 +120,22 @@ class LdapConnection
             if ($server && $port) {
                 if ($encryption == 'ssl') {
                     $adServer = 'ldaps://' . $server . ':' . $port;
-                } elseif ($encryption == 'plain') {
+                } elseif ($encryption == 'plain' || $encryption == 'tls') {
                     $adServer = 'ldap://' . $server . ':' . $port;
                 }
+
+                ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
 
                 $ldap = ldap_connect($adServer);
 
                 ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
                 ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-                ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
 
+                if ($encryption == 'tls') {
+                    if(!ldap_start_tls($ldap)) {
+                        return false;
+                    }
+                }
             }
         }
 
