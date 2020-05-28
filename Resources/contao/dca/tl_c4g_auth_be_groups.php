@@ -266,7 +266,8 @@ class tl_c4g_auth_be_groups extends \Backend
                 return $groups;
 
             } elseif ($baseDn) {
-                $result = ldap_search($ldap, $baseDn);
+                $filter = "(|(cn=*)(uid=*))";
+                $result = ldap_search($ldap, $baseDn, $filter);
                 $ldapGroups = ldap_get_entries($ldap, $result);
                 array_shift($ldapGroups);
 
