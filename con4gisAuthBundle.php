@@ -11,15 +11,15 @@
  * @link        https://www.con4gis.org
  *
  */
-namespace con4gis\AuthBundle;
+namespace con4gis\LdapBundle;
 
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 /**
- * Class con4gisAuthBundle
- * @package con4gis\AuthBundle
+ * Class con4gisLdapBundle
+ * @package con4gis\LdapBundle
  */
-class con4gisAuthBundle extends Bundle
+class con4gisLdapBundle extends Bundle
 {
 
 }

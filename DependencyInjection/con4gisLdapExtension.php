@@ -12,7 +12,7 @@
  *
  */
 
-namespace con4gis\AuthBundle\DependencyInjection;
+namespace con4gis\LdapBundle\DependencyInjection;
 
 
 use Symfony\Component\Config\FileLocator;

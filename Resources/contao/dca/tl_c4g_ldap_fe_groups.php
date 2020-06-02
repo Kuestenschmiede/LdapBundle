@@ -12,10 +12,10 @@
  *
  */
 
-use con4gis\AuthBundle\Entity\Con4gisLdapSettings;
+use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
 use Contao\Message;
 use Contao\MemberGroupModel;
-use con4gis\AuthBundle\Classes\LdapConnection;
+use con4gis\LdapBundle\Classes\LdapConnection;
 use Contao\System;
 
 /**

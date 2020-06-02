@@ -12,7 +12,7 @@
  *
  */
 
-namespace con4gis\AuthBundle\Entity;
+namespace con4gis\LdapBundle\Entity;
 
 use \Doctrine\ORM\Mapping as ORM;
 
@@ -21,7 +21,7 @@ use \Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Entity
  * @ORM\Table(name="tl_c4g_ldap_fe_groups")
- * @package con4gis\AuthBundle\Entity
+ * @package con4gis\LdapBundle\Entity
  */
 class Con4gisLdapFrontendGroups
 {

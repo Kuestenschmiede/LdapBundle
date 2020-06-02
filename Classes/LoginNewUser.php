@@ -11,17 +11,17 @@
  * @link        https://www.con4gis.org
  *
  */
-namespace con4gis\AuthBundle\Classes;
+namespace con4gis\LdapBundle\Classes;
 
-use con4gis\AuthBundle\Entity\Con4gisLdapFrontendGroups;
+use con4gis\LdapBundle\Entity\Con4gisLdapFrontendGroups;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
-use con4gis\AuthBundle\Resources\contao\models\LdapMemberModel;
-use con4gis\AuthBundle\Resources\contao\models\LdapUserModel;
+use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
+use con4gis\LdapBundle\Resources\contao\models\LdapUserModel;
 use Contao\Database;
 use Contao\System;
 use Terminal42\ServiceAnnotationBundle\ServiceAnnotationInterface;
-use con4gis\AuthBundle\Classes\LdapConnection;
-use con4gis\AuthBundle\Entity\Con4gisLdapSettings;
+use con4gis\LdapBundle\Classes\LdapConnection;
+use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
 
 class LoginNewUser implements ServiceAnnotationInterface
 {

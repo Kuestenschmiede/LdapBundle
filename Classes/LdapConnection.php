@@ -11,9 +11,9 @@
  * @link        https://www.con4gis.org
  *
  */
-namespace con4gis\AuthBundle\Classes;
+namespace con4gis\LdapBundle\Classes;
 
-use con4gis\AuthBundle\Entity\Con4gisLdapSettings;
+use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
 use Contao\System;
 
 class LdapConnection

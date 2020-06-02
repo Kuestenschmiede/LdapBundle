@@ -12,11 +12,11 @@
  *
  */
 
-use con4gis\AuthBundle\Entity\Con4gisLdapSettings;
+use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
 use Contao\Message;
 use Contao\System;
 use Contao\UserGroupModel;
-use con4gis\AuthBundle\Classes\LdapConnection;
+use con4gis\LdapBundle\Classes\LdapConnection;
 
 /**
  * Table tl_c4g_ldap_settings

@@ -11,9 +11,9 @@
  * @link        https://www.con4gis.org
  *
  */
-namespace con4gis\AuthBundle\ContaoManager;
+namespace con4gis\LdapBundle\ContaoManager;
 
-use con4gis\AuthBundle\con4gisAuthBundle;
+use con4gis\LdapBundle\con4gisLdapBundle;
 use Contao\CoreBundle\ContaoCoreBundle;
 use Contao\ManagerPlugin\Bundle\BundlePluginInterface;
 use Contao\ManagerPlugin\Bundle\Config\BundleConfig;
@@ -32,7 +32,7 @@ class Plugin implements BundlePluginInterface
     public function getBundles(ParserInterface $parser)
     {
         return [
-            BundleConfig::create(con4gisAuthBundle::class)
+            BundleConfig::create(con4gisLdapBundle::class)
                 ->setLoadAfter([ContaoCoreBundle::class])
         ];
     }

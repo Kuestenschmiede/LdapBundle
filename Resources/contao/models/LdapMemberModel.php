@@ -11,7 +11,7 @@
  * @link        https://www.con4gis.org
  *
  */
-namespace con4gis\AuthBundle\Resources\contao\models;
+namespace con4gis\LdapBundle\Resources\contao\models;
 
 /**
  * Class LdapMemberModel

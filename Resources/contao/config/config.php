@@ -29,4 +29,4 @@ $GLOBALS['BE_MOD']['con4gis_ldap'] =  array(
 /**
  * Hooks
  */
-$GLOBALS['TL_HOOKS']['importUser'][] = array('con4gis\AuthBundle\Classes\LoginNewUser', 'importUserBeforeAuthenticate');
+$GLOBALS['TL_HOOKS']['importUser'][] = array('con4gis\LdapBundle\Classes\LoginNewUser', 'importUserBeforeAuthenticate');

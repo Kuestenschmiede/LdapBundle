@@ -1,4 +1,4 @@
-# AuthBundle
+# LdapBundle
 
 This bundle adds LDAP functionality for backend and frontend users/groups.
 

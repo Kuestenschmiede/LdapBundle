@@ -2,7 +2,7 @@
     "name": "con4gis/auth",
     "type": "contao-bundle",
     "description": "Authentication bundle with functionality needed for using external authentications for Contao Back-/Frontend",
-    "keywords": ["con4gis", "authentication", "ldap", "active directory", "contao", "con4gis_auth", "AuthBundle"],
+    "keywords": ["con4gis", "authentication", "ldap", "active directory", "contao", "con4gis_auth", "LdapBundle"],
     "homepage": "https://con4gis.org",
     "license": "LGPL-3.0-or-later",
     "authors": [
@@ -19,7 +19,7 @@
     ],
     "support": {
         "email": "support@con4gis.org",
-        "issues": "https://github.com/Kuestenschmiede/AuthBundle/issues"
+        "issues": "https://github.com/Kuestenschmiede/LdapBundle/issues"
     },
     "require": {
         "php": "^7.1",
@@ -34,7 +34,7 @@
     },
     "autoload": {
         "psr-4": {
-            "con4gis\\AuthBundle\\": ""
+            "con4gis\\LdapBundle\\": ""
         },
         "classmap": [
             "Resources/contao/"
@@ -53,6 +53,6 @@
         "branch-alias": {
             "dev-master": "3.1.x-dev"
         },
-        "contao-manager-plugin": "con4gis\\AuthBundle\\ContaoManager\\Plugin"
+        "contao-manager-plugin": "con4gis\\LdapBundle\\ContaoManager\\Plugin"
     }
 }

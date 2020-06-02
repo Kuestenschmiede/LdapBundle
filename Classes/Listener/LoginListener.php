@@ -11,13 +11,13 @@
  * @link        https://www.con4gis.org
  *
  */
-namespace con4gis\AuthBundle\Classes\Listener;
+namespace con4gis\LdapBundle\Classes\Listener;
 
-use con4gis\AuthBundle\Classes\LdapConnection;
-use con4gis\AuthBundle\Entity\Con4gisLdapFrontendGroups;
-use con4gis\AuthBundle\Entity\Con4gisLdapSettings;
-use con4gis\AuthBundle\Resources\contao\models\LdapUserModel;
-use con4gis\AuthBundle\Resources\contao\models\LdapMemberModel;
+use con4gis\LdapBundle\Classes\LdapConnection;
+use con4gis\LdapBundle\Entity\Con4gisLdapFrontendGroups;
+use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
+use con4gis\LdapBundle\Resources\contao\models\LdapUserModel;
+use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
 use Contao\BackendUser;
 use Contao\Controller;
 use Contao\FrontendUser;
@@ -29,7 +29,7 @@ use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Contao\UserModel;
-use con4gis\AuthBundle\Entity\Con4gisLdapBackendGroups;
+use con4gis\LdapBundle\Entity\Con4gisLdapBackendGroups;
 use Contao\Database;
 
 class LoginListener extends System
