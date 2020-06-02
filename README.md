@@ -1,6 +1,6 @@
 # LdapBundle
 
-This bundle adds LDAP functionality for backend and frontend users/groups.
+This bundle adds LDAP functionality for Contao backend and frontend users/groups.
 
 ## Requirements
 
