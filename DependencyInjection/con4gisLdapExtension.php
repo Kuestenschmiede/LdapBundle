@@ -26,7 +26,7 @@ class con4gisLdapExtension extends Extension implements PrependExtensionInterfac
 
 //    public function getAlias()
 //    {
-//        return "con4gis_auth";
+//        return "con4gis_ldap";
 //    }
 
     public function prepend(ContainerBuilder $container)
@@ -39,7 +39,7 @@ class con4gisLdapExtension extends Extension implements PrependExtensionInterfac
 //            foreach ($container->getExtensions() as $name => $extension) {
 //                switch ($name) {
 //                    case 'acme_something':
-//                    case 'con4gis_auth':
+//                    case 'con4gis_ldap':
 //                        // set use_acme_goodbye to false in the config of
 //                        // acme_something and acme_other
 //                        //

@@ -11,20 +11,50 @@
  * @link        https://www.con4gis.org
  *
  */
-$GLOBALS['BE_MOD']['con4gis_ldap'] =  array(
-    'be_groups' => array
-    (
-        'tables'    => array('tl_c4g_ldap_be_groups'),
-    ),
-    'fe_groups' => array
-    (
-        'tables'    => array('tl_c4g_ldap_fe_groups'),
-    ),
-    'c4g_ldap_settings' => array
-    (
-        'tables'    => array('tl_c4g_ldap_settings'),
-    )
-);
+
+if ($GLOBALS['BE_MOD']['con4gis']) {
+    $GLOBALS['BE_MOD']['con4gis'] = array_merge($GLOBALS['BE_MOD']['con4gis'], [
+        'C4gLdapSettings' => array
+        (
+            'brick' => 'ldap',
+            'tables'    => array('tl_c4g_ldap_settings'),
+            'icon'      => 'bundles/con4giscore/images/be-icons/edit.svg'
+        ),
+        'C4gLdapBeGroups' => array
+        (
+            'brick' => 'ldap',
+            'tables'    => array('tl_c4g_ldap_be_groups'),
+            'icon'      => 'bundles/con4gisldap/images/be-icons/con4gis_ldap_user.svg'
+        ),
+        'C4gLdapFeGroups' => array
+        (
+            'brick' => 'ldap',
+            'tables'    => array('tl_c4g_ldap_fe_groups'),
+            'icon'      => 'bundles/con4gisldap/images/be-icons/con4gis_ldap_member.svg'
+        )
+    ]);
+} else {
+    $GLOBALS['BE_MOD']['con4gis_ldap'] = [
+        'C4gLdapSettings' => array
+        (
+            'brick' => 'ldap',
+            'tables'    => array('tl_c4g_ldap_settings'),
+            'icon'      => 'bundles/con4gisldap/images/be-icons/con4gis_ldap_settings.svg'
+        ),
+        'C4gLdapBeGroups' => array
+        (
+            'brick' => 'ldap',
+            'tables'    => array('tl_c4g_ldap_be_groups'),
+            'icon'      => 'bundles/con4gisldap/images/be-icons/con4gis_ldap_user.svg'
+        ),
+        'C4gLdapFeGroups' => array
+        (
+            'brick' => 'ldap',
+            'tables'    => array('tl_c4g_ldap_fe_groups'),
+            'icon'      => 'bundles/con4gisldap/images/be-icons/con4gis_ldap_member.svg'
+        )
+    ];
+}
 
 /**
  * Hooks

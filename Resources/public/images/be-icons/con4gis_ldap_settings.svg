@@ -1,0 +1,21 @@
+<svg id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+  <defs>
+    <style>
+      .cls-1 {
+        fill: #5a5a5a;
+      }
+
+      .cls-2 {
+        fill: #4bb0ff;
+      }
+    </style>
+  </defs>
+  <g>
+    <circle class="cls-1" cx="7.85" cy="8.15" r="4.67"/>
+    <rect class="cls-1" x="7.02" y="1" width="1.67" height="14.28"/>
+    <rect class="cls-1" x="7.02" y="1" width="1.67" height="14.28" transform="translate(16 0.28) rotate(90)"/>
+    <rect class="cls-1" x="7.02" y="1" width="1.67" height="14.28" transform="translate(8.06 -3.17) rotate(45)"/>
+    <rect class="cls-1" x="7.02" y="1.01" width="1.67" height="14.28" transform="translate(-3.46 7.95) rotate(-45)"/>
+    <circle class="cls-2" cx="7.85" cy="8.15" r="2.79"/>
+  </g>
+</svg>
