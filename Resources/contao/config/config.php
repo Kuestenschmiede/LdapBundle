@@ -11,18 +11,18 @@
  * @link        https://www.con4gis.org
  *
  */
-$GLOBALS['BE_MOD']['con4gis_auth'] =  array(
+$GLOBALS['BE_MOD']['con4gis_ldap'] =  array(
     'be_groups' => array
     (
-        'tables'    => array('tl_c4g_auth_be_groups'),
+        'tables'    => array('tl_c4g_ldap_be_groups'),
     ),
     'fe_groups' => array
     (
-        'tables'    => array('tl_c4g_auth_fe_groups'),
+        'tables'    => array('tl_c4g_ldap_fe_groups'),
     ),
-    'c4g_auth_settings' => array
+    'c4g_ldap_settings' => array
     (
-        'tables'    => array('tl_c4g_auth_settings'),
+        'tables'    => array('tl_c4g_ldap_settings'),
     )
 );
 

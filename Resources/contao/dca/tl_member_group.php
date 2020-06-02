@@ -36,7 +36,7 @@ $GLOBALS['TL_DCA']['tl_member_group']['list']['operations']['delete'] = array
 /**
  * Add fields
  */
-$GLOBALS['TL_DCA']['tl_member_group']['fields']['con4gisAuthMemberGroup'] = array
+$GLOBALS['TL_DCA']['tl_member_group']['fields']['con4gisLdapMemberGroup'] = array
 (
         'sorting'                 => true,
         'search'                  => true,
@@ -61,7 +61,7 @@ class tl_member_group_con4gis extends Contao\Backend
      */
     public function deleteUser($row, $href, $label, $title, $icon, $attributes)
     {
-        if ($row['con4gisAuthMemberGroup'] == "1") {
+        if ($row['con4gisLdapMemberGroup'] == "1") {
             return "";
         } else {
             return '<a href="' . $this->addToUrl($href . '&amp;id=' . $row['id']) . '" title="' . Contao\StringUtil::specialchars($title) . '"' . $attributes . '>' . Contao\Image::getHtml($icon, $label) . '</a> ';

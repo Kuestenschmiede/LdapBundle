@@ -20,11 +20,11 @@ use \Doctrine\ORM\Mapping as ORM;
  * Class Service
  *
  * @ORM\Entity
- * @ORM\Table(name="tl_c4g_auth_settings")
+ * @ORM\Table(name="tl_c4g_ldap_settings")
  * @package con4gis\AuthBundle\Entity
  */
 
-class Con4gisAuthSettings
+class Con4gisLdapSettings
 {
     /**
      * @var int
@@ -143,7 +143,7 @@ class Con4gisAuthSettings
     /**
      * @param string $bindDn
      */
-    public function setBindDn(string $bind_dn)
+    public function setBindDn(string $bindDn)
     {
         $this->bindDn = $bindDn;
     }

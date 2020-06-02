@@ -21,7 +21,7 @@ use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 
-class con4gisAuthExtension extends Extension implements PrependExtensionInterface
+class con4gisLdapExtension extends Extension implements PrependExtensionInterface
 {
 
 //    public function getAlias()

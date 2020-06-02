@@ -13,7 +13,7 @@
  */
 namespace con4gis\AuthBundle\Classes;
 
-use con4gis\AuthBundle\Entity\Con4gisAuthSettings;
+use con4gis\AuthBundle\Entity\Con4gisLdapSettings;
 use Contao\System;
 
 class LdapConnection
@@ -58,7 +58,7 @@ class LdapConnection
     {
 
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-        $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+        $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
         $authSettings = $authSettingsRepo->findAll();
 
         $bind = false;
@@ -77,7 +77,7 @@ class LdapConnection
     {
 
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-        $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+        $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
         $authSettings = $authSettingsRepo->findAll();
 
         if ($authSettings && count($authSettings) > 0) {
@@ -109,7 +109,7 @@ class LdapConnection
     public function ldapConnect()
     {
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-        $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+        $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
         $authSettings = $authSettingsRepo->findAll();
         $ldap = false;
         if ($authSettings && count($authSettings) > 0) {

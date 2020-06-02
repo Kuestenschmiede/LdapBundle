@@ -11,6 +11,7 @@
  * @link        https://www.con4gis.org
  *
  */
+
 namespace con4gis\AuthBundle\Entity;
 
 use \Doctrine\ORM\Mapping as ORM;
@@ -19,10 +20,10 @@ use \Doctrine\ORM\Mapping as ORM;
  * Class Service
  *
  * @ORM\Entity
- * @ORM\Table(name="tl_c4g_auth_be_groups")
+ * @ORM\Table(name="tl_c4g_ldap_fe_groups")
  * @package con4gis\AuthBundle\Entity
  */
-class Con4gisAuthBackendGroups
+class Con4gisLdapFrontendGroups
 {
     /**
      * @var int
@@ -49,12 +50,6 @@ class Con4gisAuthBackendGroups
      * @ORM\Column(name="groups", type="blob")
      */
     protected $groups = '';
-
-    /**
-     * @var string
-     * @ORM\Column(name="adminGroup", type="string")
-     */
-    protected $adminGroup = 0;
 
     /**
      * @return int
@@ -120,19 +115,4 @@ class Con4gisAuthBackendGroups
         $this->groups = $groups;
     }
 
-    /**
-     * @return string
-     */
-    public function getAdminGroup(): string
-    {
-        return $this->adminGroup ? $this->adminGroup : '';
-    }
-
-    /**
-     * @param string $adminGroup
-     */
-    public function setAdminGroup(string $adminGroup)
-    {
-        $this->adminGroup = $adminGroup;
-    }
 }

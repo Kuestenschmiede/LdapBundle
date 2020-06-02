@@ -17,7 +17,7 @@ use Contao\Backend;
  * Add fields
  */
 
-$GLOBALS['TL_DCA']['tl_member']['fields']['con4gisAuthMember'] = array
+$GLOBALS['TL_DCA']['tl_member']['fields']['con4gisLdapMember'] = array
 (
         'sorting'                 => true,
         'search'                  => true,

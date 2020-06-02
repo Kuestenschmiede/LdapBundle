@@ -12,16 +12,16 @@
  *
  */
 
-use con4gis\AuthBundle\Entity\Con4gisAuthSettings;
+use con4gis\AuthBundle\Entity\Con4gisLdapSettings;
 use Contao\Message;
 use Contao\System;
 use Contao\UserGroupModel;
 use con4gis\AuthBundle\Classes\LdapConnection;
 
 /**
- * Table tl_c4g_auth_be_groups
+ * Table tl_c4g_ldap_be_groups
  */
-$GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
+$GLOBALS['TL_DCA']['tl_c4g_ldap_be_groups'] = array
 (
 
     // Config
@@ -33,11 +33,11 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
         'notCopyable'                 => true,
         'onload_callback'			  => array
         (
-            array('tl_c4g_auth_be_groups', 'loadDataset'),
+            array('tl_c4g_ldap_be_groups', 'loadDataset'),
         ),
         'onsubmit_callback'           => array
         (
-            array('tl_c4g_auth_be_groups', 'saveDataset'),
+            array('tl_c4g_ldap_be_groups', 'saveDataset'),
         ),
     ),
     'list' => array
@@ -68,7 +68,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
         (
             'edit' => array
             (
-                'label'               => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['edit'],
+                'label'               => &$GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['edit'],
                 'href'                => 'act=edit',
                 'icon'                => 'edit.svg',
             )
@@ -104,7 +104,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
     (
         'id' => array
         (
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['id'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['id'],
             'sorting'                 => true,
             'search'                  => true,
         ),
@@ -115,7 +115,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
 
         'filter' => array
         (
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['filter'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['filter'],
             'sorting'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
@@ -125,32 +125,32 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_be_groups'] = array
 
         'groups' => array(
 
-            'label'            => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['groups'],
+            'label'            => &$GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['groups'],
             'exclude'          => true,
             'filter'           => true,
             'inputType'        => 'checkboxWizard',
             'eval'             => ['maxlength' => 360, 'multiple' => true, 'tl_class' => 'long clr'],
-            'options_callback' => array('tl_c4g_auth_be_groups', 'groupsCallback'),
+            'options_callback' => array('tl_c4g_ldap_be_groups', 'groupsCallback'),
 
         ),
 
         'adminGroup' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['adminGroup'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['adminGroup'],
             'exclude'                 => true,
             'filter'                  => false,
             'inputType'               => 'select',
             'default'                 => '',
             'eval'                    => ['submitOnChange' => false],
-            'options_callback'        => ['tl_c4g_auth_be_groups', 'groupsCallback'],
+            'options_callback'        => ['tl_c4g_ldap_be_groups', 'groupsCallback'],
         ),
 
     ),
 );
-class tl_c4g_auth_be_groups extends \Backend
+class tl_c4g_ldap_be_groups extends \Backend
 {
     public function loadDataset(Contao\DataContainer $dc)
     {
-        $objConfig = Database::getInstance()->prepare("SELECT id FROM tl_c4g_auth_be_groups")->execute();
+        $objConfig = Database::getInstance()->prepare("SELECT id FROM tl_c4g_ldap_be_groups")->execute();
 
         if (\Input::get('key')) return;
 
@@ -166,14 +166,14 @@ class tl_c4g_auth_be_groups extends \Backend
             $this->redirect($this->addToUrl('act=edit&id='.$objConfig->id));
         }
 
-        \Contao\Message::addInfo($GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['infotext']);
+        \Contao\Message::addInfo($GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['infotext']);
 
         $ldapConnection = new LdapConnection();
 
         $ldap = $ldapConnection->ldapConnect();
 
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-        $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+        $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
         $authSettings = $authSettingsRepo->findAll();
 
         if ($authSettings && count($authSettings) > 0) {
@@ -185,12 +185,12 @@ class tl_c4g_auth_be_groups extends \Backend
             $baseDn = $authSettings[0]->getBaseDn();
         }
 
-        if(!ldap) {
-            Message::addError($GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['bindError']);
+        if(!$ldap) {
+            Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['bindError']);
         }
 
         if (!$ldapConnection->ldapBind($ldap) && !$baseDn && !$bindDn && !$password && !$server && !$port) {
-            Message::addError($GLOBALS['TL_LANG']['tl_c4g_auth_be_groups']['bindError']);
+            Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['bindError']);
         }
 
     }
@@ -208,12 +208,12 @@ class tl_c4g_auth_be_groups extends \Backend
 
             $contaoGroup = UserGroupModel::findOneByName($group);
             if (!$contaoGroup) {
-                $this->Database->prepare("INSERT INTO tl_user_group SET tstamp=?, name=?, con4gisAuthUserGroup=1")->execute($currentTime, $group);
+                $this->Database->prepare("INSERT INTO tl_user_group SET tstamp=?, name=?, con4gisLdapUserGroup=1")->execute($currentTime, $group);
             }
 
         }
 
-        $currentGroups = $this->Database->prepare("SELECT name FROM tl_user_group WHERE con4gisAuthUserGroup=1;")->execute();
+        $currentGroups = $this->Database->prepare("SELECT name FROM tl_user_group WHERE con4gisLdapUserGroup=1;")->execute();
         $currentGroups = $currentGroups->fetchAllAssoc();
 
         $ldapConnection = new LdapConnection();
@@ -223,7 +223,7 @@ class tl_c4g_auth_be_groups extends \Backend
         if ($ldap && $ldapConnection->ldapBind($ldap)) {
             foreach ($currentGroups as $currentGroup) {
                 if (!in_array($currentGroup['name'], $groups)) {
-                    $this->Database->prepare("DELETE FROM tl_user_group WHERE name=? AND con4gisAuthUserGroup=1")->execute($currentGroup);
+                    $this->Database->prepare("DELETE FROM tl_user_group WHERE name=? AND con4gisLdapUserGroup=1")->execute($currentGroup);
                 }
             }
         }
@@ -232,7 +232,7 @@ class tl_c4g_auth_be_groups extends \Backend
 
     public function groupsCallback(Contao\DataContainer $dc) {
 
-        $authSettings = $this->Database->prepare("SELECT * FROM tl_c4g_auth_settings")->execute()->fetchAllAssoc();
+        $authSettings = $this->Database->prepare("SELECT * FROM tl_c4g_ldap_settings")->execute()->fetchAllAssoc();
         $authSettings = $authSettings[0];
 //
         $baseDn = $authSettings['baseDn'];

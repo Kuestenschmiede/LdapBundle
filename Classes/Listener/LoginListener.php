@@ -14,10 +14,10 @@
 namespace con4gis\AuthBundle\Classes\Listener;
 
 use con4gis\AuthBundle\Classes\LdapConnection;
-use con4gis\AuthBundle\Entity\Con4gisAuthFrontendGroups;
-use con4gis\AuthBundle\Entity\Con4gisAuthSettings;
-use con4gis\AuthBundle\Resources\contao\models\AuthUserModel;
-use con4gis\AuthBundle\Resources\contao\models\AuthMemberModel;
+use con4gis\AuthBundle\Entity\Con4gisLdapFrontendGroups;
+use con4gis\AuthBundle\Entity\Con4gisLdapSettings;
+use con4gis\AuthBundle\Resources\contao\models\LdapUserModel;
+use con4gis\AuthBundle\Resources\contao\models\LdapMemberModel;
 use Contao\BackendUser;
 use Contao\Controller;
 use Contao\FrontendUser;
@@ -29,7 +29,7 @@ use Symfony\Component\Security\Core\Event\AuthenticationEvent;
 use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use Contao\UserModel;
-use con4gis\AuthBundle\Entity\Con4gisAuthBackendGroups;
+use con4gis\AuthBundle\Entity\Con4gisLdapBackendGroups;
 use Contao\Database;
 
 class LoginListener extends System
@@ -45,9 +45,9 @@ class LoginListener extends System
     {
         $loginUsername = $event->getAuthenticationToken()->getUsername();
 
-        if (AuthUserModel::findByUsername($loginUsername)->con4gisAuthUser == '1' || AuthMemberModel::findByUsername($loginUsername)->con4gisAuthMember == '1') {
+        if (LdapUserModel::findByUsername($loginUsername)->con4gisAuthUser == '1' || LdapMemberModel::findByUsername($loginUsername)->con4gisAuthMember == '1') {
             $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-            $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+            $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
             $authSettings = $authSettingsRepo->findAll();
 
             $encryption = $authSettings[0]->getEncryption();
@@ -71,15 +71,15 @@ class LoginListener extends System
         }
 
         if (TL_MODE == 'BE') {
-            $beUser = AuthUserModel::findByUsername($loginUsername);
+            $beUser = LdapUserModel::findByUsername($loginUsername);
 
             if ($beUser && $beUser->con4gisAuthUser == '1') {
 
                 //Get LDAP Admin Group
-                $authBeGroupsRepo = $em->getRepository(Con4gisAuthBackendGroups::class);
+                $authBeGroupsRepo = $em->getRepository(Con4gisLdapBackendGroups::class);
                 $authBeGroups = $authBeGroupsRepo->findAll();
 
-                $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+                $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
                 $authSettings = $authSettingsRepo->findAll();
 
                 $adminGroup = $authBeGroups[0]->getAdminGroup();
@@ -106,7 +106,7 @@ class LoginListener extends System
                     $beUser->con4gisAuthUser = '1';
                 }
 
-                $user = AuthUserModel::findByUsername($loginUsername);
+                $user = LdapUserModel::findByUsername($loginUsername);
                 if ($user) {
                     foreach ($groups as $group) {
                         if ($group == $adminGroup) {
@@ -141,11 +141,11 @@ class LoginListener extends System
             }
 
         } elseif (TL_MODE == 'FE') {
-            $feUser = AuthMemberModel::findByUsername($loginUsername);
+            $feUser = LdapMemberModel::findByUsername($loginUsername);
 
             if ($feUser && $feUser->con4gisAuthMember == '1') {
 
-                $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+                $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
                 $authSettings = $authSettingsRepo->findAll();
 
                 $groups = $ldapConnection->getLdapUserGroups($loginUsername, $authSettings);

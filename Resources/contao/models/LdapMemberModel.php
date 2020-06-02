@@ -14,10 +14,10 @@
 namespace con4gis\AuthBundle\Resources\contao\models;
 
 /**
- * Class AuthMemberModel
- * @property integer    $con4gisAuthMember
+ * Class LdapMemberModel
+ * @property integer    $con4gisLdapMember
  */
-class AuthMemberModel extends \Contao\MemberModel
+class LdapMemberModel extends \Contao\MemberModel
 {
     
 }

@@ -12,16 +12,16 @@
  *
  */
 
-use con4gis\AuthBundle\Entity\Con4gisAuthSettings;
+use con4gis\AuthBundle\Entity\Con4gisLdapSettings;
 use Contao\Message;
 use Contao\System;
 use Contao\UserGroupModel;
 use con4gis\AuthBundle\Classes\LdapConnection;
 
 /**
- * Table tl_c4g_auth_settings
+ * Table tl_c4g_ldap_settings
  */
-$GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
+$GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
 (
 
     // Config
@@ -33,7 +33,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
         'notCopyable'                 => true,
         'onload_callback'			  => array
         (
-            array('tl_c4g_auth_settings', 'loadDataset'),
+            array('tl_c4g_ldap_settings', 'loadDataset'),
         ),
     ),
     'list' => array
@@ -64,7 +64,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
         (
             'edit' => array
             (
-                'label'               => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['edit'],
+                'label'               => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['edit'],
                 'href'                => 'act=edit',
                 'icon'                => 'edit.svg',
             )
@@ -100,7 +100,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
     (
         'id' => array
         (
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['id'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['id'],
             'sorting'                 => true,
             'search'                  => true,
         ),
@@ -110,7 +110,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
         ),
 
         'bindDn' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['bindDn'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['bindDn'],
             'sorting'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
@@ -119,7 +119,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
         ),
 
         'baseDn' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['baseDn'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['baseDn'],
             'sorting'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
@@ -129,7 +129,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
 
         'password' => array
         (
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['password'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['password'],
             'default'                 => '',
             'exclude'                 => true,
             'inputType'               => 'text',
@@ -138,21 +138,21 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
 
         'encryption' => array
         (
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['encryption'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['encryption'],
             'exclude'                 => true,
             'filter'                  => false,
             'inputType'               => 'select',
             'options'                 => [
-                'plain'               => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['plain'],
-//                'ssl'                 => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['ssl'],
-                'tls'                 => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['tls'],
+                'plain'               => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['plain'],
+//                'ssl'                 => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['ssl'],
+                'tls'                 => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['tls'],
             ],
             'default'                 => 'plain',
             'eval'                    => ['submitOnChange' => false],
         ),
 
         'server' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['server'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['server'],
             'sorting'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
@@ -161,7 +161,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
         ),
 
         'port' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['port'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['port'],
             'sorting'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
@@ -170,7 +170,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
         ),
 
         'email' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['email'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['email'],
             'sorting'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
@@ -179,7 +179,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
         ),
 
         'firstname' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['firstname'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['firstname'],
             'sorting'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
@@ -188,7 +188,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
         ),
 
         'lastname' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['lastname'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['lastname'],
             'sorting'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
@@ -198,7 +198,7 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
 
         'userFilter' => array
         (
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_auth_settings']['userFilter'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['userFilter'],
             'sorting'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
@@ -207,11 +207,11 @@ $GLOBALS['TL_DCA']['tl_c4g_auth_settings'] = array
         ),
     ),
 );
-class tl_c4g_auth_settings extends \Backend
+class tl_c4g_ldap_settings extends \Backend
 {
     public function loadDataset(Contao\DataContainer $dc)
     {
-        $objConfig = Database::getInstance()->prepare("SELECT id FROM tl_c4g_auth_settings")->execute();
+        $objConfig = Database::getInstance()->prepare("SELECT id FROM tl_c4g_ldap_settings")->execute();
 
         if (\Input::get('key')) return;
 
@@ -227,14 +227,14 @@ class tl_c4g_auth_settings extends \Backend
             $this->redirect($this->addToUrl('act=edit&id='.$objConfig->id));
         }
 
-        \Contao\Message::addInfo($GLOBALS['TL_LANG']['tl_c4g_auth_settings']['infotext']);
+        \Contao\Message::addInfo($GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['infotext']);
 
         $ldapConnection = new LdapConnection();
 
         $ldap = $ldapConnection->ldapConnect();
 
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-        $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+        $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
         $authSettings = $authSettingsRepo->findAll();
 
         if ($authSettings && count($authSettings) > 0) {
@@ -246,12 +246,12 @@ class tl_c4g_auth_settings extends \Backend
             $baseDn = $authSettings[0]->getBaseDn();
         }
 
-        if(!ldap) {
-            Message::addError($GLOBALS['TL_LANG']['tl_c4g_auth_settings']['bindError']);
+        if(!$ldap) {
+            Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['bindError']);
         }
 
         if (!$ldapConnection->ldapBind($ldap) && !$baseDn && !$bindDn && !$password && !$server && !$port) {
-            Message::addError($GLOBALS['TL_LANG']['tl_c4g_auth_settings']['bindError']);
+            Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['bindError']);
         }
 
     }

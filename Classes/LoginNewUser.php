@@ -13,15 +13,15 @@
  */
 namespace con4gis\AuthBundle\Classes;
 
-use con4gis\AuthBundle\Entity\Con4gisAuthFrontendGroups;
+use con4gis\AuthBundle\Entity\Con4gisLdapFrontendGroups;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
-use con4gis\AuthBundle\Resources\contao\models\AuthMemberModel;
-use con4gis\AuthBundle\Resources\contao\models\AuthUserModel;
+use con4gis\AuthBundle\Resources\contao\models\LdapMemberModel;
+use con4gis\AuthBundle\Resources\contao\models\LdapUserModel;
 use Contao\Database;
 use Contao\System;
 use Terminal42\ServiceAnnotationBundle\ServiceAnnotationInterface;
 use con4gis\AuthBundle\Classes\LdapConnection;
-use con4gis\AuthBundle\Entity\Con4gisAuthSettings;
+use con4gis\AuthBundle\Entity\Con4gisLdapSettings;
 
 class LoginNewUser implements ServiceAnnotationInterface
 {
@@ -33,7 +33,7 @@ class LoginNewUser implements ServiceAnnotationInterface
     {
 
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-        $authSettingsRepo = $em->getRepository(Con4gisAuthSettings::class);
+        $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
         $authSettings = $authSettingsRepo->findAll();
 
         $encryption = $authSettings[0]->getEncryption();
@@ -59,19 +59,19 @@ class LoginNewUser implements ServiceAnnotationInterface
 
             if ('tl_user' === $table) {
                 // Import user from an LDAP server
-                if (AuthUserModel::findByUsername($username)) {
+                if (LdapUserModel::findByUsername($username)) {
                     return true;
                 }
-                $user = new AuthUserModel();
-                $user->con4gisAuthUser = 1;
+                $user = new LdapUserModel();
+                $user->con4gisLdapUser = 1;
             } elseif ('tl_member' === $table) {
                 // Import user from an LDAP server
-                if (AuthMemberModel::findByUsername($username)) {
+                if (LdapMemberModel::findByUsername($username)) {
                     return true;
                 }
-                $user = new AuthMemberModel();
+                $user = new LdapMemberModel();
                 $user->login = '1';
-                $user->con4gisAuthMember = 1;
+                $user->con4gisLdapMember = 1;
             } else {
                 return false;
             }
