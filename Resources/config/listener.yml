@@ -1,5 +1,5 @@
 services:
-    con4gis.auth.listener.interactive.login:
+    con4gis.ldap.listener.interactive.login:
         class: con4gis\LdapBundle\Classes\Listener\LoginListener
         tags:
             - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin, priority: 10 }

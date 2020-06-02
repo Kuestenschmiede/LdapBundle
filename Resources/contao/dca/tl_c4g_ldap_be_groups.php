@@ -173,16 +173,16 @@ class tl_c4g_ldap_be_groups extends \Backend
         $ldap = $ldapConnection->ldapConnect();
 
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-        $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
-        $authSettings = $authSettingsRepo->findAll();
+        $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
+        $ldapSettings = $ldapSettingsRepo->findAll();
 
-        if ($authSettings && count($authSettings) > 0) {
-            $encryption = $authSettings[0]->getEncryption();
-            $bindDn = $authSettings[0]->getBindDn();
-            $bindPassword = $authSettings[0]->getPassword();
-            $server = $authSettings[0]->getServer();
-            $port = $authSettings[0]->getPort();
-            $baseDn = $authSettings[0]->getBaseDn();
+        if ($ldapSettings && count($ldapSettings) > 0) {
+            $encryption = $ldapSettings[0]->getEncryption();
+            $bindDn = $ldapSettings[0]->getBindDn();
+            $bindPassword = $ldapSettings[0]->getPassword();
+            $server = $ldapSettings[0]->getServer();
+            $port = $ldapSettings[0]->getPort();
+            $baseDn = $ldapSettings[0]->getBaseDn();
         }
 
         if(!$ldap) {
@@ -232,10 +232,10 @@ class tl_c4g_ldap_be_groups extends \Backend
 
     public function groupsCallback(Contao\DataContainer $dc) {
 
-        $authSettings = $this->Database->prepare("SELECT * FROM tl_c4g_ldap_settings")->execute()->fetchAllAssoc();
-        $authSettings = $authSettings[0];
+        $ldapSettings = $this->Database->prepare("SELECT * FROM tl_c4g_ldap_settings")->execute()->fetchAllAssoc();
+        $ldapSettings = $ldapSettings[0];
 //
-        $baseDn = $authSettings['baseDn'];
+        $baseDn = $ldapSettings['baseDn'];
         $filter = $dc->activeRecord->filter;
 
         $groups = [];

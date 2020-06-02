@@ -45,21 +45,21 @@ class LoginListener extends System
     {
         $loginUsername = $event->getAuthenticationToken()->getUsername();
 
-        if (LdapUserModel::findByUsername($loginUsername)->con4gisAuthUser == '1' || LdapMemberModel::findByUsername($loginUsername)->con4gisAuthMember == '1') {
+        if (LdapUserModel::findByUsername($loginUsername)->con4gisLdapUser == '1' || LdapMemberModel::findByUsername($loginUsername)->con4gisAuthMember == '1') {
             $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-            $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
-            $authSettings = $authSettingsRepo->findAll();
+            $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
+            $ldapSettings = $ldapSettingsRepo->findAll();
 
-            $encryption = $authSettings[0]->getEncryption();
-            $server = $authSettings[0]->getServer();
-            $port = $authSettings[0]->getPort();
-            $bindDn = $authSettings[0]->getBindDn();
-            $baseDn = $authSettings[0]->getBaseDn();
-            $bindPassword = $authSettings[0]->getPassword();
-            $mailField = strtolower($authSettings[0]->getEmail());
-            $firstnameField = strtolower($authSettings[0]->getFirstname());
-            $lastnameField = strtolower($authSettings[0]->getLastname());
-            $userFilter = '(&(' . $authSettings[0]->getUserFilter() . '=' . $loginUsername . '))';
+            $encryption = $ldapSettings[0]->getEncryption();
+            $server = $ldapSettings[0]->getServer();
+            $port = $ldapSettings[0]->getPort();
+            $bindDn = $ldapSettings[0]->getBindDn();
+            $baseDn = $ldapSettings[0]->getBaseDn();
+            $bindPassword = $ldapSettings[0]->getPassword();
+            $mailField = strtolower($ldapSettings[0]->getEmail());
+            $firstnameField = strtolower($ldapSettings[0]->getFirstname());
+            $lastnameField = strtolower($ldapSettings[0]->getLastname());
+            $userFilter = '(&(' . $ldapSettings[0]->getUserFilter() . '=' . $loginUsername . '))';
 
             if ($encryption == 'ssl') {
                 $adServer = 'ldaps://' . $server . ':' . $port;
@@ -73,18 +73,18 @@ class LoginListener extends System
         if (TL_MODE == 'BE') {
             $beUser = LdapUserModel::findByUsername($loginUsername);
 
-            if ($beUser && $beUser->con4gisAuthUser == '1') {
+            if ($beUser && $beUser->con4gisLdapUser == '1') {
 
                 //Get LDAP Admin Group
-                $authBeGroupsRepo = $em->getRepository(Con4gisLdapBackendGroups::class);
-                $authBeGroups = $authBeGroupsRepo->findAll();
+                $ldapBeGroupsRepo = $em->getRepository(Con4gisLdapBackendGroups::class);
+                $ldapBeGroups = $ldapBeGroupsRepo->findAll();
 
-                $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
-                $authSettings = $authSettingsRepo->findAll();
+                $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
+                $ldapSettings = $ldapSettingsRepo->findAll();
 
-                $adminGroup = $authBeGroups[0]->getAdminGroup();
+                $adminGroup = $ldapBeGroups[0]->getAdminGroup();
 
-                $groups = $ldapConnection->getLdapUserGroups($loginUsername, $authSettings);
+                $groups = $ldapConnection->getLdapUserGroups($loginUsername, $ldapSettings);
 
                 $contaoGroups = [];
 
@@ -102,8 +102,8 @@ class LoginListener extends System
                     $beUser->tstamp = time();
                 }
 
-                if ($beUser->con4gisAuthUser == '0') {
-                    $beUser->con4gisAuthUser = '1';
+                if ($beUser->con4gisLdapUser == '0') {
+                    $beUser->con4gisLdapUser = '1';
                 }
 
                 $user = LdapUserModel::findByUsername($loginUsername);
@@ -143,12 +143,12 @@ class LoginListener extends System
         } elseif (TL_MODE == 'FE') {
             $feUser = LdapMemberModel::findByUsername($loginUsername);
 
-            if ($feUser && $feUser->con4gisAuthMember == '1') {
+            if ($feUser && $feUser->con4gisLdapMember == '1') {
 
-                $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
-                $authSettings = $authSettingsRepo->findAll();
+                $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
+                $ldapSettings = $ldapSettingsRepo->findAll();
 
-                $groups = $ldapConnection->getLdapUserGroups($loginUsername, $authSettings);
+                $groups = $ldapConnection->getLdapUserGroups($loginUsername, $ldapSettings);
 
                 $contaoGroups = [];
 
@@ -166,8 +166,8 @@ class LoginListener extends System
                     $feUser->tstamp = time();
                 }
 
-                if ($feUser->con4gisAuthMember == '0') {
-                    $feUser->con4gisAuthMember = '1';
+                if ($feUser->con4gisLdapMember == '0') {
+                    $feUser->con4gisLdapMember = '1';
                 }
 
                 if ($feUser->firstname == '' || $feUser->lastname || $feUser->email == '') {
@@ -193,7 +193,7 @@ class LoginListener extends System
 
                 $feUser->password = $this->generatePassword();
 
-                $feUser->con4gisAuthMember = '1';
+                $feUser->con4gisLdapMember = '1';
             }
         }
     }

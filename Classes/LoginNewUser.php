@@ -33,16 +33,16 @@ class LoginNewUser implements ServiceAnnotationInterface
     {
 
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-        $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
-        $authSettings = $authSettingsRepo->findAll();
+        $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
+        $ldapSettings = $ldapSettingsRepo->findAll();
 
-        $encryption = $authSettings[0]->getEncryption();
-        $server = $authSettings[0]->getServer();
-        $port = $authSettings[0]->getPort();
-        $bindDn = $authSettings[0]->getBindDn();
-        $baseDn = $authSettings[0]->getBaseDn();
-        $bindPassword = $authSettings[0]->getPassword();
-        $userFilter = '(&(' . $authSettings[0]->getUserFilter() . '=' . $username . '))';
+        $encryption = $ldapSettings[0]->getEncryption();
+        $server = $ldapSettings[0]->getServer();
+        $port = $ldapSettings[0]->getPort();
+        $bindDn = $ldapSettings[0]->getBindDn();
+        $baseDn = $ldapSettings[0]->getBaseDn();
+        $bindPassword = $ldapSettings[0]->getPassword();
+        $userFilter = '(&(' . $ldapSettings[0]->getUserFilter() . '=' . $username . '))';
 
         if ($encryption == 'ssl') {
             $adServer = 'ldaps://' . $server . ':' . $port;

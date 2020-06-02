@@ -13,10 +13,10 @@ For everything to work you need to install and activate the PHP extension "php-l
 You can install the bundle using composer or the contao manager. For composer use the following command:
 
 ```bash
-$ composer require con4gis/auth
+$ composer require con4gis/ldap
 ```
 
-In the contao manager, you can find the bundle under "con4gis/auth".
+In the contao manager, you can find the bundle under "con4gis/ldap".
 
 ### Step 2: Configure the bundle
 

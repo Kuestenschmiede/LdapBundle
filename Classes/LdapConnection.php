@@ -18,15 +18,15 @@ use Contao\System;
 
 class LdapConnection
 {
-    public function getLdapUserGroups($loginUsername, $authSettings)
+    public function getLdapUserGroups($loginUsername, $ldapSettings)
     {
         //Check if Login User is in Admin Group
 
-        $baseDn = $authSettings[0]->getBaseDn();
+        $baseDn = $ldapSettings[0]->getBaseDn();
 
         $groups = [];
 
-        $userFilter = '(&(' . $authSettings[0]->getUserFilter() . '=' . $loginUsername . '))';
+        $userFilter = '(&(' . $ldapSettings[0]->getUserFilter() . '=' . $loginUsername . '))';
 
         $ldap = $this->ldapConnect();
 
@@ -58,13 +58,13 @@ class LdapConnection
     {
 
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-        $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
-        $authSettings = $authSettingsRepo->findAll();
+        $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
+        $ldapSettings = $ldapSettingsRepo->findAll();
 
         $bind = false;
-        if ($authSettings && count($authSettings) > 0) {
-            $bindDn = $authSettings[0]->getBindDn();
-            $bindPassword = $authSettings[0]->getPassword();
+        if ($ldapSettings && count($ldapSettings) > 0) {
+            $bindDn = $ldapSettings[0]->getBindDn();
+            $bindPassword = $ldapSettings[0]->getPassword();
             if ($ldap) {
                 $bind = @ldap_bind($ldap, $bindDn, $bindPassword);
             }
@@ -77,11 +77,11 @@ class LdapConnection
     {
 
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-        $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
-        $authSettings = $authSettingsRepo->findAll();
+        $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
+        $ldapSettings = $ldapSettingsRepo->findAll();
 
-        if ($authSettings && count($authSettings) > 0) {
-            $encryption = $authSettings[0]->getEncryption();
+        if ($ldapSettings && count($ldapSettings) > 0) {
+            $encryption = $ldapSettings[0]->getEncryption();
         }
 
         ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
@@ -109,13 +109,13 @@ class LdapConnection
     public function ldapConnect()
     {
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-        $authSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
-        $authSettings = $authSettingsRepo->findAll();
+        $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
+        $ldapSettings = $ldapSettingsRepo->findAll();
         $ldap = false;
-        if ($authSettings && count($authSettings) > 0) {
-            $encryption = $authSettings[0]->getEncryption();
-            $server = $authSettings[0]->getServer();
-            $port = $authSettings[0]->getPort();
+        if ($ldapSettings && count($ldapSettings) > 0) {
+            $encryption = $ldapSettings[0]->getEncryption();
+            $server = $ldapSettings[0]->getServer();
+            $port = $ldapSettings[0]->getPort();
 
             if ($server && $port) {
                 if ($encryption == 'ssl') {
