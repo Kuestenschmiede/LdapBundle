@@ -1,5 +1,5 @@
 {
-    "name": "con4gis/auth",
+    "name": "con4gis/ldap",
     "type": "contao-bundle",
     "description": "Authentication bundle with functionality needed for using external authentications for Contao Back-/Frontend",
     "keywords": ["con4gis", "authentication", "ldap", "active directory", "contao", "con4gis_auth", "LdapBundle"],
