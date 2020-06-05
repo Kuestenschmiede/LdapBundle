@@ -9,7 +9,6 @@
  * @license     LGPL-3.0-or-later
  * @copyright   Küstenschmiede GmbH Software & Design
  * @link        https://www.con4gis.org
- *
  */
 namespace con4gis\LdapBundle\Classes;
 
@@ -56,7 +55,6 @@ class LdapConnection
 
     public function ldapBind($ldap)
     {
-
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
         $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
         $ldapSettings = $ldapSettingsRepo->findAll();
@@ -69,13 +67,12 @@ class LdapConnection
                 $bind = @ldap_bind($ldap, $bindDn, $bindPassword);
             }
         }
-        return $bind;
 
+        return $bind;
     }
 
     public function filterLdap($bindDn, $password, $filter, $baseDn, $adServer)
     {
-
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
         $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
         $ldapSettings = $ldapSettingsRepo->findAll();
@@ -90,7 +87,7 @@ class LdapConnection
         $ldap = ldap_connect($adServer);
 
         if ($encryption == 'tls') {
-            if(!ldap_start_tls($ldap)) {
+            if (!ldap_start_tls($ldap)) {
                 return false;
             }
         }
@@ -124,7 +121,7 @@ class LdapConnection
                     $adServer = 'ldap://' . $server . ':' . $port;
                 }
 
-                ldap_set_option(NULL, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
+                ldap_set_option(null, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
 
                 $ldap = ldap_connect($adServer);
 
@@ -132,7 +129,7 @@ class LdapConnection
                 ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
                 if ($encryption == 'tls') {
-                    if(!ldap_start_tls($ldap)) {
+                    if (!ldap_start_tls($ldap)) {
                         return false;
                     }
                 }
@@ -141,6 +138,4 @@ class LdapConnection
 
         return $ldap;
     }
-
 }
-

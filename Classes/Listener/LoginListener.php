@@ -9,26 +9,19 @@
  * @license     LGPL-3.0-or-later
  * @copyright   Küstenschmiede GmbH Software & Design
  * @link        https://www.con4gis.org
- *
  */
 namespace con4gis\LdapBundle\Classes\Listener;
 
 use con4gis\LdapBundle\Classes\LdapConnection;
-use con4gis\LdapBundle\Entity\Con4gisLdapFrontendGroups;
 use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
 use con4gis\LdapBundle\Resources\contao\models\LdapUserModel;
 use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
 use Contao\BackendUser;
-use Contao\Controller;
 use Contao\FrontendUser;
 use Contao\MemberGroupModel;
-use Contao\MemberModel;
 use Contao\System;
 use Contao\UserGroupModel;
-use Symfony\Component\Security\Core\Event\AuthenticationEvent;
-use Symfony\Component\Security\Core\User\User;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
-use Contao\UserModel;
 use con4gis\LdapBundle\Entity\Con4gisLdapBackendGroups;
 use Contao\Database;
 
@@ -121,7 +114,6 @@ class LoginListener extends System
                 }
 
                 if ($beUser->name == '' or $beUser->email == '') {
-
                     $ldapUser = $ldapConnection->filterLdap($bindDn, $bindPassword, $userFilter, $baseDn, $adServer);
                     $userMail = $ldapUser[0][$mailField][0];
                     $userFirstname = $ldapUser[0][$firstnameField][0];
@@ -137,14 +129,11 @@ class LoginListener extends System
                 }
 
                 $beUser->password = $this->generatePassword();
-
             }
-
         } elseif (TL_MODE == 'FE') {
             $feUser = LdapMemberModel::findByUsername($loginUsername);
 
             if ($feUser && $feUser->con4gisLdapMember == '1') {
-
                 $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
                 $ldapSettings = $ldapSettingsRepo->findAll();
 
@@ -171,7 +160,6 @@ class LoginListener extends System
                 }
 
                 if ($feUser->firstname == '' || $feUser->lastname || $feUser->email == '') {
-
                     $ldapUser = $ldapConnection->filterLdap($bindDn, $bindPassword, $userFilter, $baseDn, $adServer);
                     $userMail = $ldapUser[0][$mailField][0];
 
@@ -198,8 +186,10 @@ class LoginListener extends System
         }
     }
 
-    public function generatePassword() {
+    public function generatePassword()
+    {
         $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*_-';
+
         return hash('sha384', substr(str_shuffle($chars), 0, 18));
     }
 }

@@ -9,29 +9,23 @@
  * @license     LGPL-3.0-or-later
  * @copyright   Küstenschmiede GmbH Software & Design
  * @link        https://www.con4gis.org
- *
  */
 namespace con4gis\LdapBundle\Classes;
 
-use con4gis\LdapBundle\Entity\Con4gisLdapFrontendGroups;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
 use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
 use con4gis\LdapBundle\Resources\contao\models\LdapUserModel;
-use Contao\Database;
 use Contao\System;
 use Terminal42\ServiceAnnotationBundle\ServiceAnnotationInterface;
-use con4gis\LdapBundle\Classes\LdapConnection;
 use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
 
 class LoginNewUser implements ServiceAnnotationInterface
 {
-
     /**
      * @Hook("importUser")
      */
     public function importUserBeforeAuthenticate(string $username, string $password, string $table): bool
     {
-
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
         $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
         $ldapSettings = $ldapSettingsRepo->findAll();
@@ -82,8 +76,8 @@ class LoginNewUser implements ServiceAnnotationInterface
             $user->save();
 
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 }
