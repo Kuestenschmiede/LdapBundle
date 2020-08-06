@@ -91,7 +91,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_fe_groups'] = array
     'palettes' => array
     (
         '__selector__'                => array(''),
-        'default'                     => '{ldap}, filter, groups'
+        'default'                     => '{ldap}, fieldMapping, filter, groups'
     ),
 
     'subpalettes' => array
@@ -111,6 +111,33 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_fe_groups'] = array
 
         'tstamp' => array(
             'default'                 => 0,
+        ),
+
+        'fieldMapping' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['fieldMapping'],
+            'sorting'                 => true,
+            'search'                  => true,
+            'inputType'               => 'multiColumnWizard',
+            'default'                 => 'a:0:{}',
+            'eval'                    => array(
+                'columnFields' => array(
+                    'contaoField' => array(
+                        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['contaoField'],
+                        'filter'                  => false,
+                        'inputType'               => 'text',
+                        'eval'                    => array('tl_class' => 'w50'),
+                    ),
+                    'ldapField' => array(
+                        'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['ldapField'],
+                        'sorting'                 => true,
+                        'search'                  => true,
+                        'inputType'               => 'text',
+                        'default'                 => '',
+                        'eval'                    => array('tl_class' => 'w50'),
+                    ),
+                ),
+            ),
         ),
 
         'filter' => array

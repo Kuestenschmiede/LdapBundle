@@ -41,6 +41,12 @@ class Con4gisLdapFrontendGroups
 
     /**
      * @var string
+     * @ORM\Column(name="fieldMapping", type="array")
+     */
+    protected $fieldMapping = [];
+
+    /**
+     * @var string
      * @ORM\Column(name="filter", type="string")
      */
     protected $filter = '';
@@ -65,6 +71,22 @@ class Con4gisLdapFrontendGroups
     public function setId(int $id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * @return array
+     */
+    public function getFieldMapping(): array
+    {
+        return $this->fieldMapping ? $this->fieldMapping : [];
+    }
+
+    /**
+     * @param array $fieldMapping
+     */
+    public function setFieldMapping(array $fieldMapping)
+    {
+        $this->fieldMapping = $fieldMapping;
     }
 
     /**

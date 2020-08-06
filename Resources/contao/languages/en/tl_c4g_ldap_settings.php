@@ -23,6 +23,8 @@ $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['email'] = array('E-Mail', 'Enter th
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['firstname'] = array('Firstname', 'Enter the field from the LDAP server that contains the firstname.');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['lastname'] = array('Lastname', 'Enter the field from the LDAP server that contains the lastname.');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['userFilter'] = array('User filter', 'Name the attribute that contains the user name here. (Example: uid oder sAMAccountName)');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateData'] = array('Automatically update data from LDAP', 'Activate this checkbox if the LDAP data should be updated every minute via Contao Web Cron.');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateFilter'] = array('Updatefilter', 'Here you can filter which members from the LDAP should be imported and updated regularly. (Example: (&(objectClass=user)) )');
 
 /** Options */
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['plain'] = 'No encryption';

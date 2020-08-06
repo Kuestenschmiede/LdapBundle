@@ -16,6 +16,9 @@ $GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['ldap'] = 'LDAP Einstellungen';
 $GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['filter'] = array('Filter', 'Hiermit kann gefilter werden, welche Gruppen zum Import bereitstehen sollen. (Beispiel: (&(objectClass=group)) )');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['groups'] = array('Verfügbare Gruppen');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['adminGroup'] = array('Administratoren-Gruppe', 'Hier die Gruppe auswählen, für die ein Admin-Zugang angelegt wird. Diese Gruppe muss NICHT importiert werden.');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['fieldMapping'] = array("Abbildung LDAP- auf Contao-Felder");
+$GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['contaoField'] = array("Contao-Feldname");
+$GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['ldapField'] = array("LDAP-Feldname");
 
 $GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['infotext'] =
     'Die Gruppen werden bei jedem speichern dieser Einstellungen aktualisiert. Die Zuordnung der Gruppen zu den Usern erfolgt bei jedem Login. Falls der Filter geändert wird, werden dann nicht mehr vorhandene Gruppen automatisch gelöscht.';

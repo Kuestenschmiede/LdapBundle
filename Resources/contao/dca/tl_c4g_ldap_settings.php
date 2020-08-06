@@ -86,13 +86,13 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
     // Palettes
     'palettes' => array
     (
-        '__selector__'                => array(''),
-        'default'                     => '{ldap}, server, port, encryption, baseDn, bindDn, password, userFilter, email, firstname, lastname'
+        '__selector__'                => array('updateData'),
+        'default'                     => '{ldap}, server, port, encryption, baseDn, bindDn, password, userFilter, email, firstname, lastname, updateData'
     ),
 
     'subpalettes' => array
     (
-        ''                                 => ''
+        'updateData'                                 => 'updateFilter'
     ),
 
     // Fields
@@ -204,6 +204,25 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
             'inputType'               => 'text',
             'default'                 => '',
             'eval'                    => array('decodeEntities' => true, 'mandatory' => true),
+        ),
+
+        'updateData' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateData'],
+            'exclude'                 => true,
+            'default'                 => false,
+            'inputType'               => 'checkbox',
+            'eval'                    => ['tl_class'=>'clr', 'submitOnChange' => true],
+        ),
+
+        'updateFilter' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateFilter'],
+            'sorting'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'default'                 => '',
+            'eval'                    => array('decodeEntities' => true,),
         ),
     ),
 );

@@ -101,6 +101,18 @@ class Con4gisLdapSettings
     protected $userFilter = '';
 
     /**
+     * @var string
+     * @ORM\Column(name="updateData", type="string")
+     */
+    protected $updateData = '';
+
+    /**
+     * @var string
+     * @ORM\Column(name="updateFilter", type="string")
+     */
+    protected $updateFilter = '';
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -290,5 +302,37 @@ class Con4gisLdapSettings
     public function getUserFilter(): string
     {
         return $this->userFilter ? $this->userFilter : '';
+    }
+
+    /**
+     * @param string $updateData
+     */
+    public function setUpdateData(string $updateData)
+    {
+        $this->updateData = $updateData;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdateData(): string
+    {
+        return $this->updateData ? $this->updateData : '';
+    }
+
+    /**
+     * @param string $updateFilter
+     */
+    public function setUpdateFilter(string $updateFilter)
+    {
+        $this->updateFilter = $updateFilter;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUpdateFilter(): string
+    {
+        return $this->updateFilter ? $this->updateFilter : '';
     }
 }

@@ -60,3 +60,8 @@ if ($GLOBALS['BE_MOD']['con4gis']) {
  * Hooks
  */
 $GLOBALS['TL_HOOKS']['importUser'][] = array('con4gis\LdapBundle\Classes\LoginNewUser', 'importUserBeforeAuthenticate');
+
+/**
+ * Crons
+ */
+$GLOBALS['TL_CRON']['minutely'][] = [\con4gis\LdapBundle\Classes\Cron\SyncLdapDataCron::class, 'onMinutely'];
