@@ -17,6 +17,11 @@ Contao\CoreBundle\DataContainer\PaletteManipulator::create()
     ->addField(['internalUserId'], 'personal_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
     ->applyToPalette('default', 'tl_member');
 
+Contao\CoreBundle\DataContainer\PaletteManipulator::create()
+    ->addLegend('company_data', 'personal_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_AFTER, true)
+    ->addField(['department', 'room'], 'company_data', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
+    ->applyToPalette('default', 'tl_member');
+
 /**
  * Add fields
  */
@@ -36,7 +41,29 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['internalUserId'] = array
     'sorting'                 => true,
     'search'                  => true,
     'inputType'               => 'text',
-    'default'                 => 0,
+    'default'                 => '',
+    'eval'                    => array('tl_class'=>'w50'),
+    'sql'                     => "varchar(100) unsigned NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_member']['fields']['department'] = array
+(
+    'label'                   => &$GLOBALS['TL_LANG']['tl_member']['department'],
+    'sorting'                 => true,
+    'search'                  => true,
+    'inputType'               => 'text',
+    'default'                 => '',
+    'eval'                    => array('tl_class'=>'w50'),
+    'sql'                     => "varchar(100) unsigned NOT NULL default ''"
+);
+
+$GLOBALS['TL_DCA']['tl_member']['fields']['room'] = array
+(
+    'label'                   => &$GLOBALS['TL_LANG']['tl_member']['room'],
+    'sorting'                 => true,
+    'search'                  => true,
+    'inputType'               => 'text',
+    'default'                 => '',
     'eval'                    => array('tl_class'=>'w50'),
     'sql'                     => "varchar(100) unsigned NOT NULL default ''"
 );

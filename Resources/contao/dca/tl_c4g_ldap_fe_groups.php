@@ -91,7 +91,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_fe_groups'] = array
     'palettes' => array
     (
         '__selector__'                => array(''),
-        'default'                     => '{ldap}, fieldMapping, filter, groups'
+        'default'                     => '{ldap}, filter, groups, fieldMapping'
     ),
 
     'subpalettes' => array

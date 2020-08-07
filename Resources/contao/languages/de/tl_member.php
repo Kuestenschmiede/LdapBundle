@@ -11,5 +11,10 @@
  * @link        https://www.con4gis.org
  *
  */
+
+$GLOBALS['TL_LANG']['tl_member']['company_data'] = "Unternehmensdaten";
+
 /** Field Labels */
 $GLOBALS['TL_LANG']['tl_member']['internalUserId'] = array('Interne Benutzerkennung', 'Bitte geben Sie hier die interne Benutzerkennung aus dem LDAP an.');
+$GLOBALS['TL_LANG']['tl_member']['department'] = array('Abteilung', 'Bitte geben Sie hier die Abteilung an.');
+$GLOBALS['TL_LANG']['tl_member']['room'] = array('Raumnummer', 'Bitte geben Sie hier die Raumnummer an.');
