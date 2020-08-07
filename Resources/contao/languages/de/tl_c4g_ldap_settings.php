@@ -23,7 +23,7 @@ $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['email'] = array('E-Mail', 'Hier das
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['firstname'] = array('Vorame', 'Hier das Feld vom LDAP-Server eintragen, welches den Vornamen enthält.');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['lastname'] = array('Nachname', 'Hier das Feld vom LDAP-Server eintragen, welches den Nachnamen enthält.');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['userFilter'] = array('User-Filter', 'Hier das Attribut benennen, welches den Benutzernamen enthält. (Beispiel: uid oder sAMAccountName)');
-$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateData'] = array('Daten aus dem LDAP automatisch akutalisieren', 'Diese Checkbox aktivieren, falls die LDAP-Daten jede Minute per Contao Web Cron aktualisiert werden sollen.');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateData'] = array('Daten aus dem LDAP automatisch akutalisieren', 'Diese Checkbox aktivieren, falls die LDAP-Daten jede Minute per Contao Cron aktualisiert werden sollen.');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateFilter'] = array('Updatefilter', 'Hier kannst Du filtern welche Mitglieder aus dem LDAP regelmäßig importiert und aktualisiert werden sollen. (Beispiel: (&(objectClass=user)) )');
 
 /** Options */
