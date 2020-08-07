@@ -62,6 +62,8 @@ class SyncLdapDataCron
                             $member->username = $username;
                             $member->dateAdded = time();
                             $member->con4gisLdapMember = '1';
+                            $member->login = '1';
+                            $member->password = $this->generatePassword();
                             $member->save();
                             $member = LdapMemberModel::findByUsername($username);
                         }
@@ -86,18 +88,24 @@ class SyncLdapDataCron
                         }
 
                         //ToDo: Individuellen Felder aus dem MultiColumnWizard verknüpfen
-//                        foreach ($mappingDatas as $mappingData) {
-//                            foreach ($mappingData as $contaoField => $ldapField) {
-//                                $member->$mappingData[$contaoField] = $ldapUser[$mappingData[$ldapField]][0];
-//                            }
-//                        }
+                        foreach ($mappingDatas as $mappingData) {
+                            $contaoField = $mappingData['contaoField'];
+                            $ldapField = strtolower($mappingData['ldapField']);
+//                            $member->$mappingData['contaoField'] = $ldapUser[$mappingData['ldapField']][0];
+                            $member->$contaoField = $ldapUser[$ldapField][0];
+                        }
                         $member->save();
-                        $test = "test";
                     }
-                    $test = "test";
                 }
             }
 
         }
+    }
+
+    public function generatePassword()
+    {
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*_-';
+
+        return hash('sha384', substr(str_shuffle($chars), 0, 18));
     }
 }
