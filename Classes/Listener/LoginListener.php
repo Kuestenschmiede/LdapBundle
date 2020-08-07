@@ -37,6 +37,8 @@ class LoginListener extends System
     public function onInteractiveLogin(InteractiveLoginEvent $event)
     {
         $loginUsername = $event->getAuthenticationToken()->getUsername();
+        $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
+        $ldapConnection = new LdapConnection();
 
         if (LdapUserModel::findByUsername($loginUsername)->con4gisLdapUser == '1' || LdapMemberModel::findByUsername($loginUsername)->con4gisAuthMember == '1') {
             $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
@@ -59,8 +61,6 @@ class LoginListener extends System
             } elseif ($encryption == 'plain' || $encryption == 'tls') {
                 $adServer = 'ldap://' . $server . ':' . $port;
             }
-
-            $ldapConnection = new LdapConnection();
         }
 
         if (TL_MODE == 'BE') {
