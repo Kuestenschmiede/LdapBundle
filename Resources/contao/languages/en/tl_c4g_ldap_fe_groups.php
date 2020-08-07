@@ -15,7 +15,7 @@
 $GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['ldap'] = 'LDAP settings';
 $GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['filter'] = array('Filter', 'This can be used to filter which groups should be available for import. (example: (&(objectClass=group)) )');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['groups'] = array('Available groups');
-$GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['fieldMapping'] = array("Mapping LDAP to Contao fields");
+$GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['fieldMapping'] = array("Mapping LDAP to Contao fields", "Here you can link Contao member fields with the data from the LDAP server. The data is then stored internally on the Contao member.");
 $GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['contaoField'] = array("Contao field name");
 $GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['ldapField'] = array("LDAP field name");
 
