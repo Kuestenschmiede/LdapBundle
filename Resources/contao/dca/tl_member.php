@@ -14,12 +14,12 @@
 use Contao\Backend;
 
 Contao\CoreBundle\DataContainer\PaletteManipulator::create()
-    ->addField(['internalUserId'], 'personal_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
+    ->addField(['c4g_internalUserId'], 'personal_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
     ->applyToPalette('default', 'tl_member');
 
 Contao\CoreBundle\DataContainer\PaletteManipulator::create()
-    ->addLegend('company_data', 'personal_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_AFTER, true)
-    ->addField(['department', 'room'], 'company_data', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
+    ->addLegend('c4g_company_data', 'personal_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_AFTER, true)
+    ->addField(['c4g_department', 'c4g_room'], 'c4g_company_data', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
     ->applyToPalette('default', 'tl_member');
 
 /**
@@ -35,9 +35,9 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['con4gisLdapMember'] = array
         'sql'                     => "int(10) unsigned NOT NULL default '0'"
 );
 
-$GLOBALS['TL_DCA']['tl_member']['fields']['internalUserId'] = array
+$GLOBALS['TL_DCA']['tl_member']['fields']['c4g_internalUserId'] = array
 (
-    'label'                   => &$GLOBALS['TL_LANG']['tl_member']['internalUserId'],
+    'label'                   => &$GLOBALS['TL_LANG']['tl_member']['c4g_internalUserId'],
     'sorting'                 => true,
     'search'                  => true,
     'inputType'               => 'text',
@@ -46,9 +46,9 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['internalUserId'] = array
     'sql'                     => "varchar(100) unsigned NOT NULL default ''"
 );
 
-$GLOBALS['TL_DCA']['tl_member']['fields']['department'] = array
+$GLOBALS['TL_DCA']['tl_member']['fields']['c4g_department'] = array
 (
-    'label'                   => &$GLOBALS['TL_LANG']['tl_member']['department'],
+    'label'                   => &$GLOBALS['TL_LANG']['tl_member']['c4g_department'],
     'sorting'                 => true,
     'search'                  => true,
     'inputType'               => 'text',
@@ -57,9 +57,9 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['department'] = array
     'sql'                     => "varchar(100) unsigned NOT NULL default ''"
 );
 
-$GLOBALS['TL_DCA']['tl_member']['fields']['room'] = array
+$GLOBALS['TL_DCA']['tl_member']['fields']['c4g_room'] = array
 (
-    'label'                   => &$GLOBALS['TL_LANG']['tl_member']['room'],
+    'label'                   => &$GLOBALS['TL_LANG']['tl_member']['c4g_room'],
     'sorting'                 => true,
     'search'                  => true,
     'inputType'               => 'text',
