@@ -36,79 +36,79 @@ class Con4gisLdapSettings
 
     /**
      * @var int
-     * @ORM\Column(name="tstamp", type="integer")
+     * @ORM\Column(name="tstamp", type="integer", options={"default": "0"})
      */
     protected $tstamp = '';
 
     /**
      * @var string
-     * @ORM\Column(name="bindDn", type="string")
+     * @ORM\Column(name="bindDn", type="string", options={"default": ""})
      */
     protected $bindDn = '';
 
     /**
      * @var string
-     * @ORM\Column(name="baseDn", type="string")
+     * @ORM\Column(name="baseDn", type="string", options={"default": ""})
      */
     protected $baseDn = '';
 
     /**
      * @var string
-     * @ORM\Column(name="password", type="string")
+     * @ORM\Column(name="password", type="string", options={"default": ""})
      */
     protected $password = '';
 
     /**
      * @var string
-     * @ORM\Column(name="encryption", type="string")
+     * @ORM\Column(name="encryption", type="string", options={"default": ""})
      */
     protected $encryption = '';
 
     /**
      * @var string
-     * @ORM\Column(name="server", type="string")
+     * @ORM\Column(name="server", type="string", options={"default": ""})
      */
     protected $server = '';
 
     /**
      * @var string
-     * @ORM\Column(name="port", type="string")
+     * @ORM\Column(name="port", type="string", options={"default": ""})
      */
     protected $port = '';
 
     /**
      * @var string
-     * @ORM\Column(name="email", type="string")
+     * @ORM\Column(name="email", type="string", options={"default": ""})
      */
     protected $email = '';
 
     /**
      * @var string
-     * @ORM\Column(name="lastname", type="string")
+     * @ORM\Column(name="lastname", type="string", options={"default": ""})
      */
     protected $lastname = '';
 
     /**
      * @var string
-     * @ORM\Column(name="firstname", type="string")
+     * @ORM\Column(name="firstname", type="string", options={"default": ""})
      */
     protected $firstname = '';
 
     /**
      * @var string
-     * @ORM\Column(name="userFilter", type="string")
+     * @ORM\Column(name="userFilter", type="string", options={"default": ""})
      */
     protected $userFilter = '';
 
     /**
      * @var string
-     * @ORM\Column(name="updateData", type="string")
+     * @ORM\Column(name="updateData", type="string", options={"default": ""})
      */
     protected $updateData = '';
 
     /**
      * @var string
-     * @ORM\Column(name="updateFilter", type="string")
+     * @ORM\Column(name="updateFilter", type="string", options={"default": ""})
      */
     protected $updateFilter = '';
 

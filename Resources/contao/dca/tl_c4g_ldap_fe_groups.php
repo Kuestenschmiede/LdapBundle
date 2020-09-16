@@ -156,6 +156,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_fe_groups'] = array
             'exclude'          => true,
             'filter'           => true,
             'inputType'        => 'checkboxWizard',
+            'default'          => '',
             'eval'             => ['maxlength' => 360, 'multiple' => true, 'tl_class' => 'long clr'],
             'options_callback' => array('tl_c4g_ldap_fe_groups', 'groupsCallback'),
 

@@ -34,25 +34,25 @@ class Con4gisLdapBackendGroups
 
     /**
      * @var int
-     * @ORM\Column(name="tstamp", type="integer")
+     * @ORM\Column(name="tstamp", type="integer", options={"default": "0"})
      */
     protected $tstamp = '';
 
     /**
      * @var string
-     * @ORM\Column(name="filter", type="string")
+     * @ORM\Column(name="filter", type="string", options={"default": ""})
      */
     protected $filter = '';
 
     /**
      * @var string
-     * @ORM\Column(name="groups", type="blob")
+     * @ORM\Column(name="groups", type="blob", options={"default": ""})
      */
     protected $groups = '';
 
     /**
      * @var string
-     * @ORM\Column(name="adminGroup", type="string")
+     * @ORM\Column(name="adminGroup", type="string", options={"default": "0"})
      */
     protected $adminGroup = 0;
 

@@ -35,7 +35,7 @@ class Con4gisLdapFrontendGroups
 
     /**
      * @var int
-     * @ORM\Column(name="tstamp", type="integer")
+     * @ORM\Column(name="tstamp", type="integer", options={"default": "0"})
      */
     protected $tstamp = '';
 
@@ -47,13 +47,13 @@ class Con4gisLdapFrontendGroups
 
     /**
      * @var string
-     * @ORM\Column(name="filter", type="string")
+     * @ORM\Column(name="filter", type="string", options={"default": ""})
      */
     protected $filter = '';
 
     /**
      * @var string
-     * @ORM\Column(name="groups", type="blob")
+     * @ORM\Column(name="groups", type="blob", options={"default": ""})
      */
     protected $groups = '';
 
