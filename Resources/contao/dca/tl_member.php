@@ -43,7 +43,7 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['c4g_internalUserId'] = array
     'inputType'               => 'text',
     'default'                 => '',
     'eval'                    => array('tl_class'=>'w50'),
-    'sql'                     => "varchar(100) unsigned NOT NULL default ''"
+    'sql'                     => "varchar(100) NOT NULL default ''"
 );
 
 $GLOBALS['TL_DCA']['tl_member']['fields']['c4g_department'] = array
@@ -54,7 +54,7 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['c4g_department'] = array
     'inputType'               => 'text',
     'default'                 => '',
     'eval'                    => array('tl_class'=>'w50'),
-    'sql'                     => "varchar(100) unsigned NOT NULL default ''"
+    'sql'                     => "varchar(100) NOT NULL default ''"
 );
 
 $GLOBALS['TL_DCA']['tl_member']['fields']['c4g_room'] = array
@@ -65,5 +65,5 @@ $GLOBALS['TL_DCA']['tl_member']['fields']['c4g_room'] = array
     'inputType'               => 'text',
     'default'                 => '',
     'eval'                    => array('tl_class'=>'w50'),
-    'sql'                     => "varchar(100) unsigned NOT NULL default ''"
+    'sql'                     => "varchar(100) NOT NULL default ''"
 );
