@@ -24,7 +24,6 @@
     "require": {
         "php": "^7.1",
         "contao/core-bundle": "^4.9",
-        "con4gis/core": "^4.0",
         "menatwork/contao-multicolumnwizard": "^3.3",
         "doctrine/orm": "^2.5.14",
         "symfony/ldap": "^4.4"
@@ -32,6 +31,9 @@
     "conflict": {
         "contao/core": "*",
         "contao/manager-plugin": "<2.0 || >=3.0"
+    },
+    "suggest": {
+        "con4gis/core": "For integration with other con4gis applications"
     },
     "autoload": {
         "psr-4": {
