@@ -58,10 +58,8 @@ class LoginNewUser implements ServiceAnnotationInterface
                 if (LdapUserModel::findByUsername($username)) {
                     return true;
                 }
-                $ldapBeGroupsRepo = $em->getRepository(Con4gisLdapBackendGroups::class);
-                $ldapBeGroups = $ldapBeGroupsRepo->findAll();
 
-                if ($ldapBeGroups[0]->shouldLinkWithUserMail() && !empty(LdapUserModel::findOneByEmail($ldapUser[0][$mailField][0]))) {
+                if ($ldapSettings[0]->shouldLinkWithUserMail() && !empty(LdapUserModel::findOneByEmail($ldapUser[0][$mailField][0]))) {
                     $user = LdapUserModel::findOneByEmail($ldapUser[0][$mailField][0]);
                 } else {
                     $user = new LdapUserModel();
@@ -72,7 +70,11 @@ class LoginNewUser implements ServiceAnnotationInterface
                 if (LdapMemberModel::findByUsername($username)) {
                     return true;
                 }
-                $user = new LdapMemberModel();
+                if ($ldapSettings[0]->shouldLinkWithUserMail() && !empty(LdapUserModel::findOneByEmail($ldapUser[0][$mailField][0]))) {
+                    $user = LdapMemberModel::findOneByEmail($ldapUser[0][$mailField][0]);
+                } else {
+                    $user = new LdapMemberModel();
+                }
                 $user->login = '1';
                 $user->con4gisLdapMember = 1;
             } else {

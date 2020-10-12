@@ -57,12 +57,6 @@ class Con4gisLdapBackendGroups
     protected $adminGroup = 0;
 
     /**
-     * @var boolean
-     * @ORM\Column(name="linkWithUserMail", type="boolean", options={"default": "false"})
-     */
-    protected $linkWithUserMail = false;
-
-    /**
      * @return int
      */
     public function getId(): int
@@ -141,22 +135,5 @@ class Con4gisLdapBackendGroups
     {
         $this->adminGroup = $adminGroup;
     }
-
-    /**
-     * @return boolean
-     */
-    public function shouldLinkWithUserMail(): string
-    {
-        return $this->linkWithUserMail;
-    }
-
-    /**
-     * @param boolean $linkWithUserMail
-     */
-    public function setLinkWithUserMail(string $linkWithUserMail)
-    {
-        $this->linkWithUserMail = $linkWithUserMail;
-    }
-
 
 }

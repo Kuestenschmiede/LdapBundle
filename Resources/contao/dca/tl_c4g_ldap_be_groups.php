@@ -91,7 +91,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_be_groups'] = array
     'palettes' => array
     (
         '__selector__'                => array(''),
-        'default'                     => '{ldap}, filter, linkWithUserMail, adminGroup, groups'
+        'default'                     => '{ldap}, filter, adminGroup, groups'
     ),
 
     'subpalettes' => array
@@ -143,15 +143,6 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_be_groups'] = array
             'eval'                    => ['submitOnChange' => false, 'includeBlankOption' => true],
             'options_callback'        => ['tl_c4g_ldap_be_groups', 'groupsCallback'],
         ),
-        'linkWithUserMail' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['linkWithUserMail'],
-            'exclude'                 => true,
-            'filter'                  => false,
-            'inputType'               => 'checkbox',
-            'default'                 => '',
-            'eval'                    => ['submitOnChange' => false],
-        ),
-
     ),
 );
 class tl_c4g_ldap_be_groups extends \Backend
