@@ -70,7 +70,7 @@ class LoginNewUser implements ServiceAnnotationInterface
                 if (LdapMemberModel::findByUsername($username)) {
                     return true;
                 }
-                if ($ldapSettings[0]->shouldLinkWithUserMail() && !empty(LdapUserModel::findOneByEmail($ldapUser[0][$mailField][0]))) {
+                if ($ldapSettings[0]->shouldLinkWithUserMail() && !empty(LdapMemberModel::findOneByEmail($ldapUser[0][$mailField][0]))) {
                     $user = LdapMemberModel::findOneByEmail($ldapUser[0][$mailField][0]);
                 } else {
                     $user = new LdapMemberModel();
