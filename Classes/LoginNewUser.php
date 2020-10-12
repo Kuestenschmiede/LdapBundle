@@ -63,6 +63,7 @@ class LoginNewUser implements ServiceAnnotationInterface
                     $user = LdapUserModel::findOneByEmail($ldapUser[0][$mailField][0]);
                 } else {
                     $user = new LdapUserModel();
+                    $user->dateAdded = time();
                 }
                 $user->con4gisLdapUser = 1;
             } elseif ('tl_member' === $table) {
@@ -74,6 +75,7 @@ class LoginNewUser implements ServiceAnnotationInterface
                     $user = LdapMemberModel::findOneByEmail($ldapUser[0][$mailField][0]);
                 } else {
                     $user = new LdapMemberModel();
+                    $user->dateAdded = time();
                 }
                 $user->login = '1';
                 $user->con4gisLdapMember = 1;
@@ -83,7 +85,6 @@ class LoginNewUser implements ServiceAnnotationInterface
 
             $user->username = $username;
             $user->password = $password;
-            $user->dateAdded = time();
             $user->save();
 
             return true;
