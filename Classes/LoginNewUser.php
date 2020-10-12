@@ -12,6 +12,7 @@
  */
 namespace con4gis\LdapBundle\Classes;
 
+use con4gis\LdapBundle\Entity\Con4gisLdapBackendGroups;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
 use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
 use con4gis\LdapBundle\Resources\contao\models\LdapUserModel;
@@ -37,6 +38,7 @@ class LoginNewUser implements ServiceAnnotationInterface
         $baseDn = $ldapSettings[0]->getBaseDn();
         $bindPassword = $ldapSettings[0]->getPassword();
         $userFilter = '(&(' . $ldapSettings[0]->getUserFilter() . '=' . $username . '))';
+        $mailField = strtolower($ldapSettings[0]->getEmail());
 
         if ($encryption == 'ssl') {
             $adServer = 'ldaps://' . $server . ':' . $port;
@@ -56,7 +58,14 @@ class LoginNewUser implements ServiceAnnotationInterface
                 if (LdapUserModel::findByUsername($username)) {
                     return true;
                 }
-                $user = new LdapUserModel();
+                $ldapBeGroupsRepo = $em->getRepository(Con4gisLdapBackendGroups::class);
+                $ldapBeGroups = $ldapBeGroupsRepo->findAll();
+
+                if ($ldapBeGroups[0]->shouldLinkWithUserMail() && !empty(LdapUserModel::findOneByEmail($ldapUser[0][$mailField][0]))) {
+                    $user = LdapUserModel::findOneByEmail($ldapUser[0][$mailField][0]);
+                } else {
+                    $user = new LdapUserModel();
+                }
                 $user->con4gisLdapUser = 1;
             } elseif ('tl_member' === $table) {
                 // Import user from an LDAP server
