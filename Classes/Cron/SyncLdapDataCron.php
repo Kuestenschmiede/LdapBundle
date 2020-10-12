@@ -13,63 +13,58 @@ use con4gis\LdapBundle\Classes\LdapConnection;
 
 class SyncLdapDataCron
 {
-    public function onMinutely() {
+    public function onMinutely()
+    {
         $db = Database::getInstance();
-        $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-
-
-
-
-
-        $ldapConnection = new LdapConnection();
-
-        $ldap = $ldapConnection->ldapConnect();
-        $bind = $ldapConnection->ldapBind($ldap);
-
-        $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
-        $ldapSettings = $ldapSettingsRepo->findAll();
-
-        $baseDn = $ldapSettings[0]->getBaseDn();
-        $bindDn = $ldapSettings[0]->getBindDn();
-        $bindPassword = $ldapSettings[0]->getPassword();
-        $encryption = $ldapSettings[0]->getEncryption();
-        $server = $ldapSettings[0]->getServer();
-        $port = $ldapSettings[0]->getPort();
-        $updateFilter = "(|(cn=*)(uid=*))";
-        $ldapUsernames = [];
-        if ($server && $port && $encryption) {
-            if ($encryption == 'ssl') {
-                $adServer = 'ldaps://' . $server . ':' . $port;
-            } elseif ($encryption == 'plain' || $encryption == 'tls') {
-                $adServer = 'ldap://' . $server . ':' . $port;
-            }
-        }
-        if ($adServer) {
-            $ldapUsers = $ldapConnection->filterLdap($bindDn, $bindPassword, $updateFilter, $baseDn, $adServer);
-            array_shift($ldapUsers);
-            $ldapUsernameField = strtolower($ldapSettings[0]->getUserFilter());
-            $ldapEmailField = strtolower($ldapSettings[0]->getEmail());
-            $ldapFirstnameField = strtolower($ldapSettings[0]->getFirstname());
-            $ldapLastnameField = strtolower($ldapSettings[0]->getLastname());
-
-            foreach ($ldapUsers as $ldapUser) {
-                $ldapFrontendGroupsRepo = $em->getRepository(Con4gisLdapFrontendGroups::class);
-                $ldapFrontendGroups = $ldapFrontendGroupsRepo->findAll();
-                $mappingDatas = $ldapFrontendGroups[0]->getFieldMapping();
-                $username = $ldapUser[$ldapUsernameField][0];
-                if ($username) {
-                    $ldapUsernames[] = $username;
-                }
-            }
-        }
-
-
-
-
-
         $ldapSettings = $db->prepare("SELECT * FROM tl_c4g_ldap_settings")->execute()->fetchAssoc();
 
         if ($ldapSettings['updateData'] == 1) {
+            $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
+
+
+            $ldapConnection = new LdapConnection();
+
+            $ldap = $ldapConnection->ldapConnect();
+            $bind = $ldapConnection->ldapBind($ldap);
+
+            $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
+            $ldapSettings = $ldapSettingsRepo->findAll();
+
+            $baseDn = $ldapSettings[0]->getBaseDn();
+            $bindDn = $ldapSettings[0]->getBindDn();
+            $bindPassword = $ldapSettings[0]->getPassword();
+            $encryption = $ldapSettings[0]->getEncryption();
+            $server = $ldapSettings[0]->getServer();
+            $port = $ldapSettings[0]->getPort();
+            $updateFilter = "(|(cn=*)(uid=*))";
+            $ldapUsernames = [];
+            if ($server && $port && $encryption) {
+                if ($encryption == 'ssl') {
+                    $adServer = 'ldaps://' . $server . ':' . $port;
+                } elseif ($encryption == 'plain' || $encryption == 'tls') {
+                    $adServer = 'ldap://' . $server . ':' . $port;
+                }
+            }
+            if ($adServer) {
+                $ldapUsers = $ldapConnection->filterLdap($bindDn, $bindPassword, $updateFilter, $baseDn, $adServer);
+                array_shift($ldapUsers);
+                $ldapUsernameField = strtolower($ldapSettings[0]->getUserFilter());
+                $ldapEmailField = strtolower($ldapSettings[0]->getEmail());
+                $ldapFirstnameField = strtolower($ldapSettings[0]->getFirstname());
+                $ldapLastnameField = strtolower($ldapSettings[0]->getLastname());
+
+                foreach ($ldapUsers as $ldapUser) {
+                    $ldapFrontendGroupsRepo = $em->getRepository(Con4gisLdapFrontendGroups::class);
+                    $ldapFrontendGroups = $ldapFrontendGroupsRepo->findAll();
+                    $mappingDatas = $ldapFrontendGroups[0]->getFieldMapping();
+                    $username = $ldapUser[$ldapUsernameField][0];
+                    if ($username) {
+                        $ldapUsernames[] = $username;
+                    }
+                }
+            }
+
+
             $ldapConnection = new LdapConnection();
 
             $ldap = $ldapConnection->ldapConnect();
