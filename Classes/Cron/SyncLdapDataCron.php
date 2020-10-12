@@ -13,8 +13,7 @@ use con4gis\LdapBundle\Classes\LdapConnection;
 
 class SyncLdapDataCron
 {
-    public function onMinutely()
-    {
+    public function onMinutely() {
         $db = Database::getInstance();
         $ldapSettings = $db->prepare("SELECT * FROM tl_c4g_ldap_settings")->execute()->fetchAssoc();
 
@@ -63,7 +62,6 @@ class SyncLdapDataCron
                     }
                 }
             }
-
 
             $ldapConnection = new LdapConnection();
 
@@ -160,14 +158,6 @@ class SyncLdapDataCron
                 }
             }
 
-        } else {
-            //Delete old con4gis LDAP member
-            $allMember = MemberModel::findBy('con4gisLdapMember', '1');
-            foreach ($allMember as $oneMember) {
-                if (in_array($oneMember->username, $ldapUsernames) && $oneMember->currentLogin == 0) {
-                    $oneMember->delete();
-                }
-            }
         }
     }
 
