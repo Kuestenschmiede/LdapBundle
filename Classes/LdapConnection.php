@@ -41,6 +41,10 @@ class LdapConnection
                 $ldapUser = ldap_get_entries($ldap, $result);
 
                 $memberGroups = $ldapUser[0]['memberof'];
+
+                if(empty($memberGroups))
+                    return $groups;
+
                 array_shift($memberGroups);
                 foreach ($memberGroups as $memberGroup) {
                     $group = strstr($memberGroup, ',', true);
