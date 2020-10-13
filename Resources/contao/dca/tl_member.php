@@ -11,7 +11,8 @@
  * @link        https://www.con4gis.org
  *
  */
-use Contao\Backend;
+
+use con4gis\LdapBundle\Classes\LdapCallback;
 
 Contao\CoreBundle\DataContainer\PaletteManipulator::create()
     ->addField(['c4g_internalUserId'], 'personal_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
@@ -21,6 +22,12 @@ Contao\CoreBundle\DataContainer\PaletteManipulator::create()
     ->addLegend('c4g_company_data', 'personal_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_AFTER, true)
     ->addField(['c4g_department', 'c4g_room'], 'c4g_company_data', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
     ->applyToPalette('default', 'tl_member');
+/**
+ * Register callbacks
+ */
+$GLOBALS['TL_DCA']['tl_member']['config']['onload_callback'][] = [
+    LdapCallback::class, 'onLoadCallback'
+];
 
 /**
  * Add fields

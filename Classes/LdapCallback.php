@@ -15,16 +15,12 @@ namespace con4gis\LdapBundle\Classes;
 use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
 use con4gis\LdapBundle\Resources\contao\models\LdapUserModel;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
-use Contao\CoreBundle\ServiceAnnotation\Callback;
 use Contao\DataContainer;
 use Contao\Message;
 
 class LdapCallback {
     /**
      * Remove password field, make username and mail read-only if LDAP User/Member
-     *
-     * @Callback(table="tl_user", target="config.onload")
-     * @Callback(table="tl_member", target="config.onload")
      * @param DataContainer $dc
      */
     public function onLoadCallback(DataContainer $dc) : void {
@@ -47,10 +43,10 @@ class LdapCallback {
         }
 
             foreach (['username', 'email'] as $field) {
-                if(!array_key_exists('eval', $GLOBALS['TL_DCA']['tl_user']['fields'][$field]))
-                    $GLOBALS['TL_DCA']['tl_user']['fields'][$field]['eval'] = [];
+                if(!array_key_exists('eval', $GLOBALS['TL_DCA'][$dc->table]['fields'][$field]))
+                    $GLOBALS['TL_DCA'][$dc->table]['fields'][$field]['eval'] = [];
 
-                $GLOBALS['TL_DCA']['tl_user']['fields'][$field]['eval']['readonly'] = true;
+                $GLOBALS['TL_DCA'][$dc->table]['fields'][$field]['eval']['readonly'] = true;
             }
 
             if($dc->table == 'tl_user') {

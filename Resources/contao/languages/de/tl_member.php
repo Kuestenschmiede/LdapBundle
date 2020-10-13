@@ -18,3 +18,5 @@ $GLOBALS['TL_LANG']['tl_member']['c4g_company_data'] = "Unternehmensdaten";
 $GLOBALS['TL_LANG']['tl_member']['c4g_internalUserId'] = array('Interne Benutzerkennung', 'Bitte geben Sie hier die interne Benutzerkennung aus dem LDAP an.');
 $GLOBALS['TL_LANG']['tl_member']['c4g_department'] = array('Abteilung', 'Bitte geben Sie hier die Abteilung an.');
 $GLOBALS['TL_LANG']['tl_member']['c4g_room'] = array('Raumnummer', 'Bitte geben Sie hier die Raumnummer an.');
+
+$GLOBALS['TL_LANG']['tl_member']['ldap_readonly_info'] = 'Dieser Nutzer wird über LDAP verwaltet, daher sind einige Eigenschaften schreibgeschützt';
