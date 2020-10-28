@@ -113,6 +113,13 @@ class Con4gisLdapSettings
     protected $updateFilter = '';
 
     /**
+     * @var boolean
+     * @ORM\Column(name="linkWithUserMail", type="boolean", options={"default": "0"})
+     */
+    protected $linkWithUserMail = false;
+
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -334,5 +341,21 @@ class Con4gisLdapSettings
     public function getUpdateFilter(): string
     {
         return $this->updateFilter ? $this->updateFilter : '';
+    }
+
+    /**
+     * @return boolean
+     */
+    public function shouldLinkWithUserMail(): string
+    {
+        return $this->linkWithUserMail;
+    }
+
+    /**
+     * @param boolean $linkWithUserMail
+     */
+    public function setLinkWithUserMail(string $linkWithUserMail)
+    {
+        $this->linkWithUserMail = $linkWithUserMail;
     }
 }

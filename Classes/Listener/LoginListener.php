@@ -102,7 +102,7 @@ class LoginListener extends System
                 $user = LdapUserModel::findByUsername($loginUsername);
                 if ($user) {
                     foreach ($groups as $group) {
-                        if ($group == $adminGroup) {
+                        if ($group == $adminGroup && !empty($adminGroup)) {
                             $beUser->admin = '1';
                             $beUser->tstamp = time();
 

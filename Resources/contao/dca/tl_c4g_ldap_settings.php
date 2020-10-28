@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
     'palettes' => array
     (
         '__selector__'                => array('updateData'),
-        'default'                     => '{ldap}, server, port, encryption, baseDn, bindDn, password, userFilter, email, firstname, lastname, updateData'
+        'default'                     => '{ldap}, server, port, encryption, baseDn, bindDn, password, userFilter, email, firstname, lastname, updateData, linkWithUserMail'
     ),
 
     'subpalettes' => array
@@ -224,6 +224,15 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
             'default'                 => '',
             'eval'                    => array('decodeEntities' => true,),
         ),
+        'linkWithUserMail' => array(
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['linkWithUserMail'],
+            'exclude'                 => true,
+            'filter'                  => false,
+            'inputType'               => 'checkbox',
+            'default'                 => '',
+            'eval'                    => ['submitOnChange' => false, 'tl_class'=>'clr'],
+        ),
+
     ),
 );
 class tl_c4g_ldap_settings extends \Backend

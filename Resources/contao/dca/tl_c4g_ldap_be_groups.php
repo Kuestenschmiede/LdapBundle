@@ -134,17 +134,15 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_be_groups'] = array
             'options_callback' => array('tl_c4g_ldap_be_groups', 'groupsCallback'),
 
         ),
-
         'adminGroup' => array(
             'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['adminGroup'],
             'exclude'                 => true,
             'filter'                  => false,
             'inputType'               => 'select',
             'default'                 => '',
-            'eval'                    => ['submitOnChange' => false],
+            'eval'                    => ['submitOnChange' => false, 'includeBlankOption' => true],
             'options_callback'        => ['tl_c4g_ldap_be_groups', 'groupsCallback'],
         ),
-
     ),
 );
 class tl_c4g_ldap_be_groups extends \Backend

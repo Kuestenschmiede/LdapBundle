@@ -135,4 +135,5 @@ class Con4gisLdapBackendGroups
     {
         $this->adminGroup = $adminGroup;
     }
+
 }

@@ -25,6 +25,7 @@ $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['lastname'] = array('Lastname', 'Ent
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['userFilter'] = array('User filter', 'Name the attribute that contains the user name here. (Example: uid oder sAMAccountName)');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateData'] = array('Automatically update data from LDAP', 'Activate this checkbox if the LDAP data should be updated every minute via Contao Cron.');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateFilter'] = array('Updatefilter', 'Here you can filter which members from the LDAP should be imported and updated regularly. (Example: (&(objectClass=user)) )');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['linkWithUserMail'] = array('Migrate existing user', 'If a user with the same email address already exists, the LDAP user is merged with it. Afterwards, a login is only possible with the LDAP user, the old username is changed.');
 
 /** Options */
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['plain'] = 'No encryption';
