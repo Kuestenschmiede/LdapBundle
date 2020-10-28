@@ -18,3 +18,5 @@ $GLOBALS['TL_LANG']['tl_member']['c4g_company_data'] = "Company details";
 $GLOBALS['TL_LANG']['tl_member']['c4g_internalUserId'] = array('Internal user id', 'Please enter the internal user ID from LDAP here.');
 $GLOBALS['TL_LANG']['tl_member']['c4g_department'] = array('Department', 'Please enter the department here.');
 $GLOBALS['TL_LANG']['tl_member']['c4g_room'] = array('Room no.', 'Please enter the room number here.');
+
+$GLOBALS['TL_LANG']['tl_member']['ldap_readonly_info'] = 'This account is managed via LDAP, some properties are read-only';

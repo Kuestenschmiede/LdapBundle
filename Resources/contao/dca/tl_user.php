@@ -11,8 +11,15 @@
  * @link        https://www.con4gis.org
  *
  */
-use Contao\Backend;
 
+use con4gis\LdapBundle\Classes\LdapCallback;
+
+/**
+ * Register callbacks
+ */
+$GLOBALS['TL_DCA']['tl_user']['config']['onload_callback'][] = [
+    LdapCallback::class, 'onLoadCallback'
+];
 /**
  * Add fields
  */
