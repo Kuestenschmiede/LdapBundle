@@ -14,7 +14,7 @@
 /**
  * Back end modules
  */
-$GLOBALS['TL_LANG']['BE_MOD']['con4gis_ldap'] = array('con4gis user authentication', 'External authentication');
+$GLOBALS['TL_LANG']['MOD']['con4gis_ldap'] = array('con4gis LDAP', 'External authentication');
 $GLOBALS['TL_LANG']['MOD']['C4gLdapBeGroups'] = array('Backend groups', 'Manage backend groups');
 $GLOBALS['TL_LANG']['MOD']['C4gLdapFeGroups'] = array('Frontend groups', 'Manage frontend groups');
 $GLOBALS['TL_LANG']['MOD']['C4gLdapSettings'] = array('Settings', 'General Settings');
