@@ -12,6 +12,9 @@
  *
  */
 
+use Contao\System;
+
+//ToDo doesn't work with wrong loading sequence
 if ($GLOBALS['BE_MOD']['con4gis']) {
     $GLOBALS['BE_MOD']['con4gis'] = array_merge($GLOBALS['BE_MOD']['con4gis'], [
         'C4gLdapSettings' => array
