@@ -15,6 +15,7 @@ namespace con4gis\LdapBundle\Classes;
 use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
 use con4gis\LdapBundle\Resources\contao\models\LdapUserModel;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
+use Contao\CoreBundle\DataContainer\PaletteNotFoundException;
 use Contao\DataContainer;
 use Contao\Message;
 
@@ -51,10 +52,15 @@ class LdapCallback {
 
             if($dc->table == 'tl_user') {
                 foreach (['login', 'admin', 'default', 'group', 'extend', 'custom'] as $palette) {
-                    PaletteManipulator::create()
-                        ->removeField('password', 'password_legend')
-                        ->removeField('pwChange')
-                        ->applyToPalette($palette, 'tl_user');
+                    // Sometimes not all palettes are available
+                    try {
+                        PaletteManipulator::create()
+                            ->removeField('password', 'password_legend')
+                            ->removeField('pwChange')
+                            ->applyToPalette($palette, 'tl_user');
+                    } catch (PaletteNotFoundException $e) {
+                        continue;
+                    }
                 }
             } elseif ($dc->table == 'tl_member') {
                 PaletteManipulator::create()
