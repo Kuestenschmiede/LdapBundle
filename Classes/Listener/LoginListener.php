@@ -44,7 +44,9 @@ class LoginListener extends System
             $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
             $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
             $ldapSettings = $ldapSettingsRepo->findAll();
-
+            if (empty($ldapSettings)) {
+                return false;
+            }
             $encryption = $ldapSettings[0]->getEncryption();
             $server = $ldapSettings[0]->getServer();
             $port = $ldapSettings[0]->getPort();
