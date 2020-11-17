@@ -229,7 +229,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
             'exclude'                 => true,
             'filter'                  => false,
             'inputType'               => 'checkbox',
-            'default'                 => '',
+            'default'                 => false,
             'eval'                    => ['submitOnChange' => false, 'tl_class'=>'clr'],
         ),
 

@@ -346,15 +346,15 @@ class Con4gisLdapSettings
     /**
      * @return boolean
      */
-    public function shouldLinkWithUserMail(): string
+    public function getLinkWithUserMail(): bool
     {
-        return $this->linkWithUserMail;
+        return $this->linkWithUserMail ? $this->linkWithUserMail : false;
     }
 
     /**
      * @param boolean $linkWithUserMail
      */
-    public function setLinkWithUserMail(string $linkWithUserMail)
+    public function setLinkWithUserMail(bool $linkWithUserMail)
     {
         $this->linkWithUserMail = $linkWithUserMail;
     }
