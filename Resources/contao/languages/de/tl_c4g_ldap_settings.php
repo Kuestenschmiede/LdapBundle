@@ -24,7 +24,7 @@ $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['firstname'] = array('Vorame', 'Hier
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['lastname'] = array('Nachname', 'Hier das Feld vom LDAP-Server eintragen, welches den Nachnamen enthält.');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['userFilter'] = array('User-Filter', 'Hier das Attribut benennen, welches den Benutzernamen enthält. (Beispiel: uid oder sAMAccountName)');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateData'] = array('Daten aus dem LDAP automatisch akutalisieren', 'Diese Checkbox aktivieren, falls die LDAP-Daten jede Minute per Contao Cron aktualisiert werden sollen.');
-$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateFilter'] = array('Updatefilter', 'Hier kannst Du filtern welche Mitglieder aus dem LDAP regelmäßig importiert und aktualisiert werden sollen. (Beispiel: (&(objectClass=user)) )');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateFilter'] = array('Updatefilter', 'Hier kann gefiltert werden welche Mitglieder aus dem LDAP regelmäßig importiert und aktualisiert werden sollen. (Beispiel: (&(objectClass=user)) )');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['linkWithUserMail'] = array('Migriere bestehenden Nutzer', 'Falls bereits ein Nutzer mit der selben Mailadresse besteht, wird dieser mit dem LDAP Nutzer zusammengeführt. Ein Login ist danach nur noch über den LDAP Nutzer möglich, der Nutzername wird angepasst.');
 
 /** Options */

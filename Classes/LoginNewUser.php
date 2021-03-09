@@ -12,7 +12,6 @@
  */
 namespace con4gis\LdapBundle\Classes;
 
-use con4gis\LdapBundle\Entity\Con4gisLdapBackendGroups;
 use Contao\CoreBundle\ServiceAnnotation\Hook;
 use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
 use con4gis\LdapBundle\Resources\contao\models\LdapUserModel;

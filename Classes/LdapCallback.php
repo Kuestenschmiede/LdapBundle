@@ -19,55 +19,58 @@ use Contao\CoreBundle\DataContainer\PaletteNotFoundException;
 use Contao\DataContainer;
 use Contao\Message;
 
-class LdapCallback {
+class LdapCallback
+{
     /**
      * Remove password field, make username and mail read-only if LDAP User/Member
      * @param DataContainer $dc
      */
-    public function onLoadCallback(DataContainer $dc) : void {
-        if($dc->id == null)
+    public function onLoadCallback(DataContainer $dc) : void
+    {
+        if ($dc->id == null) {
             return;
-
+        }
 
         $currentRecord = null;
 
         if ($dc->table == 'tl_user') {
             $currentRecord = LdapUserModel::findById($dc->id);
-            if($currentRecord == null || $currentRecord->con4gisLdapUser == 0)
+            if ($currentRecord == null || $currentRecord->con4gisLdapUser == 0) {
                 return;
-
+            }
         } elseif ($dc->table == 'tl_member') {
             $currentRecord = LdapMemberModel::findById($dc->id);
-            if($currentRecord == null || $currentRecord->con4gisLdapMember == 0)
+            if ($currentRecord == null || $currentRecord->con4gisLdapMember == 0) {
                 return;
-
+            }
         }
 
-            foreach (['username', 'email'] as $field) {
-                if(!array_key_exists('eval', $GLOBALS['TL_DCA'][$dc->table]['fields'][$field]))
-                    $GLOBALS['TL_DCA'][$dc->table]['fields'][$field]['eval'] = [];
-
-                $GLOBALS['TL_DCA'][$dc->table]['fields'][$field]['eval']['readonly'] = true;
+        foreach (['username', 'email'] as $field) {
+            if (!array_key_exists('eval', $GLOBALS['TL_DCA'][$dc->table]['fields'][$field])) {
+                $GLOBALS['TL_DCA'][$dc->table]['fields'][$field]['eval'] = [];
             }
 
-            if($dc->table == 'tl_user') {
-                foreach (['login', 'admin', 'default', 'group', 'extend', 'custom'] as $palette) {
-                    // Sometimes not all palettes are available
-                    try {
-                        PaletteManipulator::create()
+            $GLOBALS['TL_DCA'][$dc->table]['fields'][$field]['eval']['readonly'] = true;
+        }
+
+        if ($dc->table == 'tl_user') {
+            foreach (['login', 'admin', 'default', 'group', 'extend', 'custom'] as $palette) {
+                // Sometimes not all palettes are available
+                try {
+                    PaletteManipulator::create()
                             ->removeField('password', 'password_legend')
                             ->removeField('pwChange')
                             ->applyToPalette($palette, 'tl_user');
-                    } catch (PaletteNotFoundException $e) {
-                        continue;
-                    }
+                } catch (PaletteNotFoundException $e) {
+                    continue;
                 }
-            } elseif ($dc->table == 'tl_member') {
-                PaletteManipulator::create()
+            }
+        } elseif ($dc->table == 'tl_member') {
+            PaletteManipulator::create()
                     ->removeField('password')
                     ->applyToSubpalette('login', 'tl_member');
-            }
-
-            Message::addInfo($GLOBALS['TL_LANG'][$dc->table]['ldap_readonly_info']);
         }
+
+        Message::addInfo($GLOBALS['TL_LANG'][$dc->table]['ldap_readonly_info']);
+    }
 }

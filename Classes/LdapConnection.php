@@ -42,8 +42,9 @@ class LdapConnection
 
                 $memberGroups = $ldapUser[0]['memberof'];
 
-                if(empty($memberGroups))
+                if (empty($memberGroups)) {
                     return $groups;
+                }
 
                 array_shift($memberGroups);
                 foreach ($memberGroups as $memberGroup) {

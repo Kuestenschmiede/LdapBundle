@@ -1,5 +1,15 @@
 <?php
-
+/**
+ * This file is part of con4gis,
+ * the gis-kit for Contao CMS.
+ *
+ * @package     con4gis
+ * @version     7
+ * @author      con4gis contributors (see "authors.txt")
+ * @license     LGPL-3.0-or-later
+ * @copyright   Küstenschmiede GmbH Software & Design
+ * @link        https://www.con4gis.org
+ */
 namespace con4gis\LdapBundle\Classes\Cron;
 
 use con4gis\LdapBundle\Entity\Con4gisLdapFrontendGroups;
@@ -13,13 +23,13 @@ use con4gis\LdapBundle\Classes\LdapConnection;
 
 class SyncLdapDataCron
 {
-    public function onMinutely() {
+    public function onMinutely()
+    {
         $db = Database::getInstance();
-        $ldapSettings = $db->prepare("SELECT * FROM tl_c4g_ldap_settings")->execute()->fetchAssoc();
+        $ldapSettings = $db->prepare('SELECT * FROM tl_c4g_ldap_settings')->execute()->fetchAssoc();
 
         if ($ldapSettings['updateData'] == 1) {
             $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-
 
             $ldapConnection = new LdapConnection();
 
@@ -35,7 +45,7 @@ class SyncLdapDataCron
             $encryption = $ldapSettings[0]->getEncryption();
             $server = $ldapSettings[0]->getServer();
             $port = $ldapSettings[0]->getPort();
-            $updateFilter = "(|(cn=*)(uid=*))";
+            $updateFilter = '(|(cn=*)(uid=*))';
             $ldapUsernames = [];
             if ($server && $port && $encryption) {
                 if ($encryption == 'ssl') {
@@ -68,7 +78,7 @@ class SyncLdapDataCron
             $ldap = $ldapConnection->ldapConnect();
             $bind = $ldapConnection->ldapBind($ldap);
 
-            if ($ldapSettings['updateFilter'] != "") {
+            if ($ldapSettings['updateFilter'] != '') {
                 $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
                 $ldapSettings = $ldapSettingsRepo->findAll();
 
@@ -139,7 +149,7 @@ class SyncLdapDataCron
                             $contaoField = $mappingData['contaoField'];
                             $ldapField = strtolower($mappingData['ldapField']);
                             $ldapFieldData = $ldapUser[$ldapField][0];
-                            if ($contaoField == "country") {
+                            if ($contaoField == 'country') {
                                 $ldapFieldData = strtolower($ldapFieldData);
                             }
                             $member->$contaoField = $ldapFieldData;
@@ -154,10 +164,9 @@ class SyncLdapDataCron
                             $oneMember->delete();
                         }
                     }
-                    $test = "test";
+                    $test = 'test';
                 }
             }
-
         }
     }
 
