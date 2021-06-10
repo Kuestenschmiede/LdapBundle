@@ -221,8 +221,8 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
             'sorting'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
-            'default'                 => '',
-            'eval'                    => array('decodeEntities' => true,),
+            'default'                 => '(&(objectClass=person))',
+            'eval'                    => array('decodeEntities' => true, 'mandatory' => true),
         ),
         'linkWithUserMail' => array(
             'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['linkWithUserMail'],

@@ -78,7 +78,7 @@ class SyncLdapDataCron
             $ldap = $ldapConnection->ldapConnect();
             $bind = $ldapConnection->ldapBind($ldap);
 
-            if ($ldapSettings['updateFilter'] != '') {
+            if ($ldapSettings[0]->getUpdateFilter() != '') {
                 $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
                 $ldapSettings = $ldapSettingsRepo->findAll();
 
