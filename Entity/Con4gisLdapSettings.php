@@ -108,9 +108,21 @@ class Con4gisLdapSettings
 
     /**
      * @var string
-     * @ORM\Column(name="updateFilter", type="string", options={"default": ""})
+     * @ORM\Column(name="updateFilter", type="string", options={"default": "(objectClass=user)"})
      */
     protected $updateFilter = '';
+
+    /**
+     * @var string
+     * @ORM\Column(name="groupFilterCheck", type="string", options={"default": ""})
+     */
+    protected $groupFilterCheck = '';
+
+    /**
+     * @var string
+     * @ORM\Column(name="groupFilter", type="string", options={"default": "(objectClass=groupOfNames)"})
+     */
+    protected $groupFilter = '';
 
     /**
      * @var string
@@ -340,6 +352,38 @@ class Con4gisLdapSettings
     public function getUpdateFilter(): string
     {
         return $this->updateFilter ? $this->updateFilter : '';
+    }
+
+    /**
+     * @param string $groupFilterCheck
+     */
+    public function setGroupFilterCheck(string $groupFilterCheck)
+    {
+        $this->groupFilterCheck = $groupFilterCheck;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroupFilterCheck(): string
+    {
+        return $this->groupFilterCheck ? $this->groupFilterCheck : '';
+    }
+
+    /**
+     * @param string $groupFilter
+     */
+    public function setGroupFilter(string $groupFilter)
+    {
+        $this->groupFilter = $groupFilter;
+    }
+
+    /**
+     * @return string
+     */
+    public function getGroupFilter(): string
+    {
+        return $this->groupFilter ? $this->groupFilter : '';
     }
 
     /**

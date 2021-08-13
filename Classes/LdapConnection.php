@@ -22,6 +22,7 @@ class LdapConnection
         //Check if Login User is in Admin Group
 
         $baseDn = $ldapSettings[0]->getBaseDn();
+        $checkGroupFilter = $ldapSettings[0]->getGroupFilterCheck();
 
         $groups = [];
 
@@ -39,18 +40,40 @@ class LdapConnection
             if ($userFilter && $baseDn) {
                 $result = ldap_search($ldap, $baseDn, $userFilter);
                 $ldapUser = ldap_get_entries($ldap, $result);
+                $firstUserEntry = ldap_first_entry($ldap, $result);
+                $ldapUserDn = ldap_get_dn($ldap, $firstUserEntry);
 
-                $memberGroups = $ldapUser[0]['memberof'];
+                if ($checkGroupFilter != '1') {
+                    $memberGroups = $ldapUser[0]['memberof'];
 
-                if (empty($memberGroups)) {
-                    return $groups;
-                }
+                    if (empty($memberGroups)) {
+                        return $groups;
+                    }
 
-                array_shift($memberGroups);
-                foreach ($memberGroups as $memberGroup) {
-                    $group = strstr($memberGroup, ',', true);
-                    $group = trim(substr($group, strpos($group, '=') + 1));
-                    $groups[] = $group;
+                    array_shift($memberGroups);
+                    foreach ($memberGroups as $memberGroup) {
+                        $group = strstr($memberGroup, ',', true);
+                        $group = trim(substr($group, strpos($group, '=') + 1));
+                        $groups[] = $group;
+                    }
+                } else {
+                    $groupFilter = $ldapSettings[0]->getGroupFilter();
+                    $ldapGroups = ldap_search($ldap, $baseDn, $groupFilter);
+                    if ($ldapGroups) {
+                        $ldapGroups = ldap_get_entries($ldap, $ldapGroups);
+                        unset($ldapGroups['count']);
+                        foreach ($ldapGroups as $ldapGroup) {
+                            if (isset($ldapGroup['member'])) {
+                                unset($ldapGroup['member']['count']);
+                                foreach ($ldapGroup['member'] as $groupMember) {
+                                    if ($groupMember == $ldapUserDn) {
+                                        $groups[] = $ldapGroup['cn'][0];
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

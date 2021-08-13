@@ -24,7 +24,9 @@ $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['firstname'] = array('Firstname', 'E
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['lastname'] = array('Lastname', 'Enter the field from the LDAP server that contains the lastname.');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['userFilter'] = array('User filter', 'Name the attribute that contains the user name here. (Example: uid oder sAMAccountName)');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateData'] = array('Automatically update data from LDAP', 'Activate this checkbox if the LDAP data should be updated every minute via Contao Cron.');
-$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateFilter'] = array('Updatefilter', 'Here you can filter which members from the LDAP should be imported and updated regularly. (Example: (&(objectClass=user)) )');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateFilter'] = array('Update filter', 'Here you can filter which members from the LDAP should be imported and updated regularly. (Example: (&(objectClass=user)) )');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['groupFilterCheck'] = array('Filter for groups', 'Activat this checkbox if the group memberships cant be resolved with the attrivute memberOf. Instead the system uses the filter to determine the connected groups.');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['groupFilter'] = array('Group filter', 'Here you can filter which which data are groups. (Example: (&(objectClass=groupOfNames)) )');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['linkWithUserMail'] = array('Migrate existing user', 'If a user with the same email address already exists, the LDAP user is merged with it. Afterwards, a login is only possible with the LDAP user, the old username is changed.');
 
 /** Options */

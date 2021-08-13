@@ -25,6 +25,8 @@ $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['lastname'] = array('Nachname', 'Hie
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['userFilter'] = array('User-Filter', 'Hier das Attribut benennen, welches den Benutzernamen enthält. (Beispiel: uid oder sAMAccountName)');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateData'] = array('Daten aus dem LDAP automatisch akutalisieren', 'Diese Checkbox aktivieren, falls die LDAP-Daten jede Minute per Contao Cron aktualisiert werden sollen.');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateFilter'] = array('Updatefilter', 'Hier kann gefiltert werden welche Mitglieder aus dem LDAP regelmäßig importiert und aktualisiert werden sollen. (Beispiel: (&(objectClass=user)) )');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['groupFilterCheck'] = array('Filter für Gruppen', 'Diese Checkbox aktivieren, falls die Gruppenzugehörigkeiten nicht über das Attribut memberOf ermittelt werden können. Stattdessen werden hierüber die Gruppen des genannten Filter durchsucht.');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['groupFilter'] = array('Gruppenfilter', 'Hier kann gefiltert werden, bei welchen Einträgen es sich um Gruppen handelt. (Beispiel: (&(objectClass=groupOfNames)) )');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['linkWithUserMail'] = array('Migriere bestehenden Nutzer', 'Falls bereits ein Nutzer mit der selben Mailadresse besteht, wird dieser mit dem LDAP Nutzer zusammengeführt. Ein Login ist danach nur noch über den LDAP Nutzer möglich, der Nutzername wird angepasst.');
 
 /** Options */

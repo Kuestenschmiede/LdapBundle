@@ -86,13 +86,14 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
     // Palettes
     'palettes' => array
     (
-        '__selector__'                => array('updateData'),
-        'default'                     => '{ldap}, server, port, encryption, baseDn, bindDn, password, userFilter, email, firstname, lastname, updateData, linkWithUserMail'
+        '__selector__'                => array('updateData','groupFilterCheck'),
+        'default'                     => '{ldap}, server, port, encryption, baseDn, bindDn, password, userFilter, email, firstname, lastname, updateData, groupFilterCheck, linkWithUserMail'
     ),
 
     'subpalettes' => array
     (
-        'updateData'                                 => 'updateFilter'
+        'updateData'                                 => 'updateFilter',
+        'groupFilterCheck'                           => 'groupFilter'
     ),
 
     // Fields
@@ -224,6 +225,26 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
             'default'                 => '(&(objectClass=person))',
             'eval'                    => array('decodeEntities' => true, 'mandatory' => true),
         ),
+
+        'groupFilterCheck' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['groupFilterCheck'],
+            'exclude'                 => true,
+            'default'                 => false,
+            'inputType'               => 'checkbox',
+            'eval'                    => ['tl_class'=>'clr', 'submitOnChange' => true],
+        ),
+
+        'groupFilter' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['groupFilter'],
+            'sorting'                 => true,
+            'search'                  => true,
+            'inputType'               => 'text',
+            'default'                 => '(&(objectClass=groupOfNames))',
+            'eval'                    => array('decodeEntities' => true, 'mandatory' => true),
+        ),
+
         'linkWithUserMail' => array(
             'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['linkWithUserMail'],
             'exclude'                 => true,
