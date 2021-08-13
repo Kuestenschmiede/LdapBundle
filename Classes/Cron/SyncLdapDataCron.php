@@ -20,6 +20,8 @@ use Contao\MemberGroupModel;
 use Contao\MemberModel;
 use Contao\System;
 use con4gis\LdapBundle\Classes\LdapConnection;
+use Psr\Log\LogLevel;
+use Contao\CoreBundle\Monolog\ContaoContext;
 
 class SyncLdapDataCron
 {
@@ -152,9 +154,21 @@ class SyncLdapDataCron
                             if ($contaoField == 'country') {
                                 $ldapFieldData = strtolower($ldapFieldData);
                             }
+                            if (!$ldapFieldData) {
+                                $ldapFieldData = '';
+                            }
                             $member->$contaoField = $ldapFieldData;
                         }
-                        $member->save();
+                        try {
+                            $member->save();
+                        } catch (\Exception $e) {
+                            \System::getContainer()
+                                ->get('monolog.logger.contao')
+                                ->log(LogLevel::ERROR, 'Fehler beim automatischen Abgleich der Mitglieder über LDAP: '.$e, array(
+                                    'contao' => new ContaoContext(__CLASS__.'::'.__FUNCTION__, TL_CRON
+                                    )));
+                            break;
+                        }
                     }
 
                     //Delete old con4gis LDAP member
