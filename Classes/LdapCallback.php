@@ -45,7 +45,9 @@ class LdapCallback
             }
         }
 
-        foreach (['username', 'email'] as $field) {
+        $allDCAFields = array_keys($GLOBALS['TL_DCA'][$dc->table]['fields']);
+
+        foreach ($allDCAFields as $field) {
             if (!array_key_exists('eval', $GLOBALS['TL_DCA'][$dc->table]['fields'][$field])) {
                 $GLOBALS['TL_DCA'][$dc->table]['fields'][$field]['eval'] = [];
             }
