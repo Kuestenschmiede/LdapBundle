@@ -17,6 +17,7 @@ $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['bindDn'] = array('Bind-DN', 'Benutz
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['baseDn'] = array('Base-DN', 'Startpunkt für die Suche im LDAP. (Beispiel: dc=ad,dc=example,dc=com)');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['password'] = array('Passwort', 'Hier das Password des Bind-DN Nutzers eingeben');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['encryption'] = array('Verschlüsselung', 'Lege hier die Art der Verschlüsselung fest.');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['serverType'] = array('LDAP-Server', 'Lege hier die Art des LDAP-Servers fest.');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['server'] = array('Serveradresse', 'IP oder Adresse des LDAP-Servers');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['port'] = array('Port', 'Standardport 389');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['email'] = array('E-Mail', 'Hier das Feld vom LDAP-Server eintragen, welches die E-Mail Adresse enthält.');
@@ -33,6 +34,8 @@ $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['linkWithUserMail'] = array('Migrier
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['plain'] = 'Ohne Verschlüsselung';
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['ssl'] = 'SSL';
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['tls'] = 'TLS';
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['windows_ad'] = 'Windows AD';
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['openldap'] = 'OpenLDAP';
 
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['bindError'] = 'Es konnte keine Verbindung mit dem LDAP Server aufgebaut werden.';
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['infotext'] =

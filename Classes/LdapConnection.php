@@ -166,4 +166,11 @@ class LdapConnection
 
         return $ldap;
     }
+
+    public function generatePassword()
+    {
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*_-';
+
+        return hash('sha384', substr(str_shuffle($chars), 0, 18));
+    }
 }

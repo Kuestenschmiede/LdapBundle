@@ -87,7 +87,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
     'palettes' => array
     (
         '__selector__'                => array('updateData','groupFilterCheck'),
-        'default'                     => '{ldap}, server, port, encryption, baseDn, bindDn, password, userFilter, email, firstname, lastname, updateData, groupFilterCheck, linkWithUserMail'
+        'default'                     => '{ldap}, serverType, server, port, encryption, baseDn, bindDn, password, userFilter, email, firstname, lastname, updateData, groupFilterCheck, linkWithUserMail'
     ),
 
     'subpalettes' => array
@@ -108,6 +108,19 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
 
         'tstamp' => array(
             'default'                 => 0,
+        ),
+
+        'serverType' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['serverType'],
+            'exclude'                 => true,
+            'filter'                  => false,
+            'inputType'               => 'select',
+            'options'                 => [
+                'windows_ad'               => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['windows_ad'],
+                'openldap'                 => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['openldap'],
+            ],
+            'default'                 => 'windows_ad',
         ),
 
         'bindDn' => array(
