@@ -17,20 +17,22 @@ namespace con4gis\LdapBundle\Classes;
 use con4gis\LdapBundle\Entity\Con4gisLdapFrontendGroups;
 use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
 use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
+use Contao\Database;
 use Contao\Module;
 use con4gis\LdapBundle\Classes\LdapConnection;
 use Contao\System;
+use League\Uri\Data;
 use Psr\Log\LogLevel;
 use Contao\CoreBundle\Monolog\ContaoContext;
 
 class CreateLdapAccount
 {
     public function onAccountCreation(int $userId, array $userData, Module $module) {
-        
+        $db = Database::getInstance();
+        $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
         if ($module && $userData && $userId) {
             $ldapRegistration = $module->c4gLdapRegistration;
             if ($ldapRegistration == "1") {
-                $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
                 $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
                 $ldapFrontendGroupsRepo = $em->getRepository(Con4gisLdapFrontendGroups::class);
                 $ldapSettings = $ldapSettingsRepo->findAll();
@@ -45,7 +47,9 @@ class CreateLdapAccount
                     return false;
                 }
 
+                $baseDn = $ldapSettings[0]->getBaseDn();
                 $serverType = $ldapSettings[0]->getServerType();
+                $groupFilter = $ldapSettings[0]->getGroupFilter();
                 $mailField = strtolower($ldapSettings[0]->getEmail());
                 $firstnameField = strtolower($ldapSettings[0]->getFirstname());
                 $lastnameField = strtolower($ldapSettings[0]->getLastname());
@@ -102,8 +106,9 @@ class CreateLdapAccount
 
                 //ToDo: check if user is already on the ldap server
 
-                //add to ldap server
-                ldap_add($ldap, $userRDNKey."=".$userRDNObject.",".$module->c4gLdapRegistrationOu, $adduserAD);
+                //add user to ldap server
+                $userDn = $userRDNKey."=".$userRDNObject.",".$module->c4gLdapRegistrationOu;
+                ldap_add($ldap, $userDn, $adduserAD);
                 $ldapError = ldap_error($ldap);
                 if ($ldapError != "Success") {
                     if ($ldapError == "Invalid syntax") {
@@ -118,6 +123,36 @@ class CreateLdapAccount
                     return false;
                 }
 
+                //check for connected ldap groups
+                $groups = unserialize($module->reg_groups);
+                foreach ($groups as $group) {
+                    $group = $db->prepare("SELECT name FROM tl_member_group WHERE con4gisLdapMemberGroup=1 AND id=?")
+                        ->execute($group)->fetchAssoc();
+                    if ($group) {
+                        $registeredGroups[] = $group['name'];
+                    }
+                }
+
+                //adding registered ldap groups
+                if (isset($registeredGroups)) {
+                    $ldapGroups = ldap_search($ldap, $baseDn, $groupFilter);
+                    if ($ldapGroups) {
+                        $ldapGroups = ldap_get_entries($ldap, $ldapGroups);
+                        unset($ldapGroups['count']);
+                        foreach ($ldapGroups as $ldapGroup) {
+                            $groupDn = $ldapGroup['dn'];
+                            $rdnArray = explode(",", $groupDn);
+                            $rdnFirstObject = str_replace("=", "", strstr($rdnArray[0], "="));
+                            if (in_array($rdnFirstObject, $registeredGroups)) {
+                                //Add this group to registered member
+                                //ToDo: check if user is already in the group
+                                $newGroupEntry['member'][0] = $userDn;
+                                ldap_mod_add($ldap, $groupDn, $newGroupEntry);
+                            }
+                        }
+                    }
+                }
+
                 ldap_unbind($ldap);
 
                 $newMember = LdapMemberModel::findById($userId);
@@ -126,8 +161,6 @@ class CreateLdapAccount
                     $newMember->password = $ldapConnection->generatePassword();
                     $newMember->save();
                 }
-
-                $test = "test";
             }
         }
     }
