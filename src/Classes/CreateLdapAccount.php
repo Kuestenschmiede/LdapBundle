@@ -30,12 +30,14 @@ class CreateLdapAccount
     public function onAccountCreation(int $userId, array $userData, Module $module) {
         $db = Database::getInstance();
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
+
         if ($module && $userData && $userId) {
-            $ldapRegistration = $module->c4gLdapRegistration;
+            $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
+            $ldapSettings = $ldapSettingsRepo->findAll();
+            $ldapRegistration = $ldapSettings[0]->getC4gLdapRegistration();
+
             if ($ldapRegistration == "1") {
-                $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
                 $ldapFrontendGroupsRepo = $em->getRepository(Con4gisLdapFrontendGroups::class);
-                $ldapSettings = $ldapSettingsRepo->findAll();
                 $ldapFrontendGroups = $ldapFrontendGroupsRepo->findAll();
 
                 if (empty($ldapSettings)) {
@@ -107,7 +109,8 @@ class CreateLdapAccount
                 //ToDo: check if user is already on the ldap server
 
                 //add user to ldap server
-                $userDn = $userRDNKey."=".$userRDNObject.",".$module->c4gLdapRegistrationOu;
+                $ldapRegistrationOu = $ldapSettings[0]->getC4gLdapRegistrationOu();
+                $userDn = $userRDNKey."=".$userRDNObject.",".$ldapRegistrationOu;
                 ldap_add($ldap, $userDn, $adduserAD);
                 $ldapError = ldap_error($ldap);
                 if ($ldapError != "Success") {
@@ -153,6 +156,7 @@ class CreateLdapAccount
                     }
                 }
 
+                //close ldap connection
                 ldap_unbind($ldap);
 
                 $newMember = LdapMemberModel::findById($userId);

@@ -60,9 +60,6 @@ class SyncLdapDataCron
                 $ldapUsers = $ldapConnection->filterLdap($bindDn, $bindPassword, $updateFilter, $baseDn, $adServer);
                 array_shift($ldapUsers);
                 $ldapUsernameField = strtolower($ldapSettings[0]->getUserFilter());
-                $ldapEmailField = strtolower($ldapSettings[0]->getEmail());
-                $ldapFirstnameField = strtolower($ldapSettings[0]->getFirstname());
-                $ldapLastnameField = strtolower($ldapSettings[0]->getLastname());
 
                 foreach ($ldapUsers as $ldapUser) {
                     $ldapFrontendGroupsRepo = $em->getRepository(Con4gisLdapFrontendGroups::class);

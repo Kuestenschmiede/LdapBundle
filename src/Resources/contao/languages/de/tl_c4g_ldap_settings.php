@@ -29,8 +29,12 @@ $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateFilter'] = array('Updatefilte
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['groupFilterCheck'] = array('Filter für Gruppen', 'Diese Checkbox aktivieren, falls die Gruppenzugehörigkeiten nicht über das Attribut memberOf ermittelt werden können. Stattdessen werden hierüber die Gruppen des genannten Filter durchsucht.');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['groupFilter'] = array('Gruppenfilter', 'Hier kann gefiltert werden, bei welchen Einträgen es sich um Gruppen handelt. (Beispiel: (&(objectClass=groupOfNames)) )');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['linkWithUserMail'] = array('Migriere bestehenden Nutzer', 'Falls bereits ein Nutzer mit der selben Mailadresse besteht, wird dieser mit dem LDAP Nutzer zusammengeführt. Ein Login ist danach nur noch über den LDAP Nutzer möglich, der Nutzername wird angepasst.');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['twoDirectionalSync'] = array('Daten im LDAP aktualisieren', 'Diese Checkbox aktivieren, falls Mitgliederänderungen aus dem FrontEnd an das LDAP übertragen werden sollen.');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['c4gLdapRegistration'] = ['Mitglied im LDAP verknüpfen', 'Diese Checkbox aktivieren, falls die Mitglieder im LDAP angelegt/angepasst werden sollen.'];
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['c4gLdapRegistrationOu'] = ['OU der Mitglieder', 'Hier den DN-String der OU angeben, an der die Mitglieder gespeichert werden sollen.'];
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['registration'] = 'Registrierung';
 
-/** Options */
+    /** Options */
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['plain'] = 'Ohne Verschlüsselung';
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['ssl'] = 'SSL';
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['tls'] = 'TLS';

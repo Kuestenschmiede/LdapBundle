@@ -18,6 +18,10 @@ PaletteManipulator::create()
     ->addField(['c4gLdapRegistration'], 'config_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
     ->applyToPalette('registration', 'tl_module');
 
+PaletteManipulator::create()
+    ->addField(['c4gLdapRegistration'], 'config_legend', Contao\CoreBundle\DataContainer\PaletteManipulator::POSITION_APPEND)
+    ->applyToPalette('personalData', 'tl_module');
+
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'c4gLdapRegistration';
 $GLOBALS['TL_DCA']['tl_module']['subpalettes']['c4gLdapRegistration'] = 'c4gLdapRegistrationOu';
 

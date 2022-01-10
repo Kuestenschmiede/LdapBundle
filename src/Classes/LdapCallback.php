@@ -25,7 +25,7 @@ class LdapCallback
      * Remove password field, make username and mail read-only if LDAP User/Member
      * @param DataContainer $dc
      */
-    public function onLoadCallback(DataContainer $dc) : void
+    public function onLoadCallback(DataContainer $dc = null) : void
     {
         if ($dc->id == null) {
             return;
