@@ -52,6 +52,9 @@ class LdapAccount
                 $baseDn = $ldapSettings[0]->getBaseDn();
                 $serverType = $ldapSettings[0]->getServerType();
                 $groupFilter = $ldapSettings[0]->getGroupFilter();
+                if (!$groupFilter) {
+                    $groupFilter = "(|(cn=*)(uid=*))";
+                }
                 $mailField = strtolower($ldapSettings[0]->getEmail());
                 $firstnameField = strtolower($ldapSettings[0]->getFirstname());
                 $lastnameField = strtolower($ldapSettings[0]->getLastname());
