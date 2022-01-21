@@ -249,7 +249,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
             'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['linkWithUserMail'],
             'exclude'                 => true,
             'filter'                  => false,
-            'inputType'               => 'text',
+            'inputType'               => 'checkbox',
             'default'                 => '',
             'eval'                    => ['submitOnChange' => false, 'tl_class'=>'clr'],
         ),
