@@ -157,7 +157,7 @@ class LdapConnection
                 ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
                 if ($encryption == 'tls') {
-                    if (!ldap_start_tls($ldap)) {
+                    if (!$startTls = ldap_start_tls($ldap)) {
                         return false;
                     }
                 }

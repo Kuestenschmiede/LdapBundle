@@ -63,7 +63,8 @@ if ($GLOBALS['BE_MOD']['con4gis']) {
  * Hooks
  */
 $GLOBALS['TL_HOOKS']['importUser'][] = array('con4gis\LdapBundle\Classes\LoginNewUser', 'importUserBeforeAuthenticate');
-$GLOBALS['TL_HOOKS']['createNewUser'][] = array('con4gis\LdapBundle\Classes\CreateLdapAccount', 'onAccountCreation');
+$GLOBALS['TL_HOOKS']['createNewUser'][] = array('con4gis\LdapBundle\Classes\LdapAccount', 'onAccountCreation');
+$GLOBALS['TL_HOOKS']['activateAccount'][] = array('con4gis\LdapBundle\Classes\LdapAccount', 'onAccountActivation');
 $GLOBALS['TL_HOOKS']['updatePersonalData'][] = array('con4gis\LdapBundle\Classes\MemberAccountData', 'updateMemberData');
 $GLOBALS['TL_HOOKS']['setNewPassword'][] = array('con4gis\LdapBundle\Classes\MemberAccountData', 'updateMemberPassword');
 
