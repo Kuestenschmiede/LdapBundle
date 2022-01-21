@@ -23,7 +23,6 @@ PaletteManipulator::create()
     ->applyToPalette('personalData', 'tl_module');
 
 $GLOBALS['TL_DCA']['tl_module']['palettes']['__selector__'][] = 'c4gLdapRegistration';
-$GLOBALS['TL_DCA']['tl_module']['subpalettes']['c4gLdapRegistration'] = 'c4gLdapRegistrationOu';
 
 $GLOBALS['TL_DCA']['tl_module']['fields']['c4gLdapRegistration'] = [
     'exclude'                 => true,
@@ -31,13 +30,4 @@ $GLOBALS['TL_DCA']['tl_module']['fields']['c4gLdapRegistration'] = [
     'inputType'               => 'checkbox',
     'eval'                    => array('submitOnChange' => true),
     'sql'                     => "char(1) NOT NULL default ''",
-];
-
-$GLOBALS['TL_DCA']['tl_module']['fields']['c4gLdapRegistrationOu'] = [
-    'sorting'                 => true,
-    'search'                  => true,
-    'inputType'               => 'text',
-    'default'                 => '',
-    'eval'                    => array('decodeEntities' => true, 'mandatory' => true),
-    'sql'                     => "varchar(256) NOT NULL default ''",
 ];

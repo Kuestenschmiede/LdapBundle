@@ -16,10 +16,13 @@ namespace con4gis\LdapBundle\Classes;
 
 use con4gis\LdapBundle\Entity\Con4gisLdapFrontendGroups;
 use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
+use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
+use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
 use Contao\Module;
 use Contao\FrontendUser;
 use Contao\System;
+use Psr\Log\LogLevel;
 
 class MemberAccountData
 {
@@ -41,9 +44,10 @@ class MemberAccountData
             $mailField = strtolower($ldapSettings[0]->getEmail());
             $firstnameField = strtolower($ldapSettings[0]->getFirstname());
             $lastnameField = strtolower($ldapSettings[0]->getLastname());
+            $ldapRegistrationOu = $ldapSettings[0]->getC4gLdapRegistrationOu();
 
             if ($serverType == "windows_ad") {
-                $userRDNKey = "cn";
+                $userRDNKey = "CN";
                 $userRDNObject = $member->firstname." ".$member->lastname;
             } else {
                 $userRDNKey = "uid";
@@ -79,53 +83,80 @@ class MemberAccountData
             $bind = $ldapConnection->ldapBind($ldap);
 
             //edit user in ldap
-            $userDn = $userRDNKey."=".$userRDNObject.",".$module->c4gLdapRegistrationOu;
+            $userDn = $userRDNKey."=".$userRDNObject.",".$ldapRegistrationOu;
             ldap_mod_replace($ldap, $userDn, $updateEntry);
+            $ldapError = ldap_error($ldap);
+            if ($ldapError != "Success" && !is_null($ldapError)) {
+                \System::getContainer()
+                    ->get('monolog.logger.contao')
+                    ->log(LogLevel::ERROR, 'Fehler beim Aktualisieren des Passworts: '.$ldapError, array(
+                        'contao' => new ContaoContext(__CLASS__.'::'.__FUNCTION__, TL_CRON
+                        )));
+            }
 
             //close ldap connection
             ldap_unbind($ldap);
-
-            $test = "test";
+            ldap_close($ldap);
         }
     }
 
     public function updateMemberPassword($member, string $password, Module $module = null) {
-        if ($module) {
-            $ldapRegistration = $module->c4gLdapRegistration;
-            if ($ldapRegistration == "1") {
-                //get new user password
-                $userPwdPlain = $_POST['password'];
+        //get ldap settings
+        $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
+        $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
+        $ldapSettings = $ldapSettingsRepo->findAll();
+        $serverType = $ldapSettings[0]->getServerType();
+        $ldapRegistrationOu = $ldapSettings[0]->getC4gLdapRegistrationOu();
+        $twoDirectionalSync = $ldapSettings[0]->getTwoDirectionalSync();
+
+        if ($twoDirectionalSync == "1") {
+            //get new user password
+            $userPwdPlain = $_POST['password'];
+
+            //get user dn and password entry
+            if ($serverType == "windows_ad") {
+                $userRDNKey = "CN";
+                $userRDNObject = $member->firstname." ".$member->lastname;
+
+                $ADPass = "\"" . $userPwdPlain . "\"";
+                $ADPass = mb_convert_encoding($ADPass, "UTF-16LE");
+                $updateEntry = array('unicodePwd' => $ADPass);
+                $updateEntry["lockouttime"][0]=0;
+            } else {
+                $userRDNKey = "uid";
+                $userRDNObject = $member->username;
+
                 $userPwdHash = base64_encode(hash("sha512", $userPwdPlain, true));
                 $ldapUserPwd = "{SHA512}".$userPwdHash;
 
-                //create updated entry for new password
                 $updateEntry["userPassword"][0] = $ldapUserPwd;
-
-                //get user dn
-                $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-                $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
-                $ldapSettings = $ldapSettingsRepo->findAll();
-                $serverType = $ldapSettings[0]->getServerType();
-                if ($serverType == "windows_ad") {
-                    $userRDNKey = "cn";
-                    $userRDNObject = $member->firstname." ".$member->lastname;
-                } else {
-                    $userRDNKey = "uid";
-                    $userRDNObject = $member->username;
-                }
-
-                //connect to ldap server
-                $ldapConnection = new LdapConnection();
-                $ldap = $ldapConnection->ldapConnect();
-                $bind = $ldapConnection->ldapBind($ldap);
-
-                //edit user in ldap
-                $userDn = $userRDNKey."=".$userRDNObject.",".$module->c4gLdapRegistrationOu;
-                ldap_mod_replace($ldap, $userDn, $updateEntry);
-
-                //close ldap connection
-                ldap_unbind($ldap);
             }
+
+            //connect to ldap server
+            $ldapConnection = new LdapConnection();
+            $ldap = $ldapConnection->ldapConnect();
+            $bind = $ldapConnection->ldapBind($ldap);
+
+            //edit user in ldap
+            $userDn = $userRDNKey."=".$userRDNObject.",".$ldapRegistrationOu;
+            ldap_mod_replace($ldap, $userDn, $updateEntry);
+            $ldapError = ldap_error($ldap);
+            if ($ldapError != "Success" && !is_null($ldapError)) {
+                \System::getContainer()
+                    ->get('monolog.logger.contao')
+                    ->log(LogLevel::ERROR, 'Fehler beim Aktualisieren des Passworts: '.$ldapError, array(
+                        'contao' => new ContaoContext(__CLASS__.'::'.__FUNCTION__, TL_CRON
+                        )));
+            }
+
+            //set random contao member password
+            $member = LdapMemberModel::findByUsername($member->username);
+            $member->password = $ldapConnection->generatePassword();
+            $member->save();
+
+            //close ldap connection
+            ldap_unbind($ldap);
+            ldap_close($ldap);
         }
     }
 }
