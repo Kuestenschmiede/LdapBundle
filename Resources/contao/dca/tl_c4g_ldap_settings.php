@@ -145,7 +145,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
             'inputType'               => 'select',
             'options'                 => [
                 'plain'               => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['plain'],
-//                'ssl'                 => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['ssl'],
+                'ssl'                 => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['ssl'],
                 'tls'                 => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['tls'],
             ],
             'default'                 => 'plain',
