@@ -26,7 +26,7 @@
         "contao/core-bundle": "^4.9",
         "menatwork/contao-multicolumnwizard-bundle": "^3.5.2",
         "doctrine/orm": "^2.8.1",
-        "symfony/ldap": "^4.4"
+        "symfony/ldap": "^4.4 || ^5.4"
     },
     "conflict": {
         "contao/core": "*",
