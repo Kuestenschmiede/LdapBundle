@@ -171,7 +171,6 @@ class LdapAccount
                         $user->delete();
                     }
                     ldap_unbind($ldap);
-                    ldap_close($ldap);
                     return false;
                 }
 
@@ -221,7 +220,6 @@ class LdapAccount
 
                 //close ldap connection
                 ldap_unbind($ldap);
-                ldap_close($ldap);
 
                 $newMember = LdapMemberModel::findById($userId);
                 if ($newMember) {

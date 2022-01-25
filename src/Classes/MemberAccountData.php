@@ -96,7 +96,6 @@ class MemberAccountData
 
             //close ldap connection
             ldap_unbind($ldap);
-            ldap_close($ldap);
         }
     }
 
@@ -156,7 +155,6 @@ class MemberAccountData
 
             //close ldap connection
             ldap_unbind($ldap);
-            ldap_close($ldap);
         }
     }
 }
