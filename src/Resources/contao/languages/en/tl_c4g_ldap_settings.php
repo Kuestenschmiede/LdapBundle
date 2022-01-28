@@ -17,6 +17,7 @@ $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['bindDn'] = array('Bind-DN', 'User t
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['baseDn'] = array('Base-DN', 'Starting point for the search in LDAP. (Example: dc=ad,dc=example,dc=com)');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['password'] = array('Password', 'Enter the password of the Bind-DN user here');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['encryption'] = array('Encryption', 'Specify the type of encryption here.');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['serverType'] = array('LDAP server', 'Specify the type of the ldap server.');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['server'] = array('Server address', 'IP or address of the LDAP servers');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['port'] = array('Port', 'Standard port 389');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['email'] = array('E-Mail', 'Enter the field from the LDAP server that contains the e-mail address.');
@@ -28,11 +29,17 @@ $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['updateFilter'] = array('Update filt
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['groupFilterCheck'] = array('Filter for groups', 'Activat this checkbox if the group memberships cant be resolved with the attrivute memberOf. Instead the system uses the filter to determine the connected groups.');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['groupFilter'] = array('Group filter', 'Here you can filter which which data are groups. (Example: (&(objectClass=groupOfNames)) )');
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['linkWithUserMail'] = array('Migrate existing user', 'If a user with the same email address already exists, the LDAP user is merged with it. Afterwards, a login is only possible with the LDAP user, the old username is changed.');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['twoDirectionalSync'] = array('Update data in LDAP', 'Activate this checkbox if member changes in the FrontEnd should be updated on the ldap server.');
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['c4gLdapRegistration'] = ['Save member in LDAP.', 'Activate, if activated members should be created on the LDAP Server'];
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['c4gLdapRegistrationOu'] = ['OU of new members.', 'The DN String of the OU where new members will be saved'];
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['registration'] = 'Registration';
 
 /** Options */
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['plain'] = 'No encryption';
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['ssl'] = 'SSL';
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['tls'] = 'TLS';
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['windows_ad'] = 'Windows AD';
+$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['openldap'] = 'OpenLDAP';
 
 $GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['infotext'] = 'The groups are updated each time these settings are saved. The groups are assigned to the users at each login. If the filter is changed, groups that no longer exist are automatically deleted.';
 

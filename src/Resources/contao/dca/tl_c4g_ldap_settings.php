@@ -86,14 +86,15 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
     // Palettes
     'palettes' => array
     (
-        '__selector__'                => array('updateData','groupFilterCheck'),
-        'default'                     => '{ldap}, server, port, encryption, baseDn, bindDn, password, userFilter, email, firstname, lastname, updateData, groupFilterCheck, linkWithUserMail'
+        '__selector__'                => array('updateData','groupFilterCheck','c4gLdapRegistration'),
+        'default'                     => '{ldap}, serverType, server, port, encryption, baseDn, bindDn, password, userFilter, email, firstname, lastname, updateData, groupFilterCheck, linkWithUserMail; {registration}, c4gLdapRegistration, twoDirectionalSync'
     ),
 
     'subpalettes' => array
     (
         'updateData'                                 => 'updateFilter',
-        'groupFilterCheck'                           => 'groupFilter'
+        'groupFilterCheck'                           => 'groupFilter',
+        'c4gLdapRegistration'                        => 'c4gLdapRegistrationOu',
     ),
 
     // Fields
@@ -108,6 +109,19 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
 
         'tstamp' => array(
             'default'                 => 0,
+        ),
+
+        'serverType' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['serverType'],
+            'exclude'                 => true,
+            'filter'                  => false,
+            'inputType'               => 'select',
+            'options'                 => [
+                'windows_ad'               => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['windows_ad'],
+                'openldap'                 => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['openldap'],
+            ],
+            'default'                 => 'windows_ad',
         ),
 
         'bindDn' => array(
@@ -246,12 +260,39 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
         ),
 
         'linkWithUserMail' => array(
-            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['linkWithUserMail'],
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['linkWithUserMail'],
             'exclude'                 => true,
             'filter'                  => false,
             'inputType'               => 'checkbox',
             'default'                 => '',
             'eval'                    => ['submitOnChange' => false, 'tl_class'=>'clr'],
+        ),
+
+        'twoDirectionalSync' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['twoDirectionalSync'],
+            'exclude'                 => true,
+            'default'                 => false,
+            'inputType'               => 'checkbox',
+            'eval'                    => ['tl_class'=>'clr'],
+        ),
+
+        'c4gLdapRegistration' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['c4gLdapRegistration'],
+            'exclude'                 => true,
+            'default'                 => false,
+            'inputType'               => 'checkbox',
+            'eval'                    => ['tl_class'=>'clr', 'submitOnChange' => true],
+        ),
+
+        'c4gLdapRegistrationOu' => array
+        (
+            'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['c4gLdapRegistrationOu'],
+            'exclude'                 => true,
+            'default'                 => '',
+            'inputType'               => 'text',
+            'eval'                    => ['tl_class'=>'clr', 'decodeEntities' => true],
         ),
 
     ),

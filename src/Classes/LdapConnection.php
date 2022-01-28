@@ -157,7 +157,7 @@ class LdapConnection
                 ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
                 if ($encryption == 'tls') {
-                    if (!ldap_start_tls($ldap)) {
+                    if (!$startTls = ldap_start_tls($ldap)) {
                         return false;
                     }
                 }
@@ -165,5 +165,12 @@ class LdapConnection
         }
 
         return $ldap;
+    }
+
+    public function generatePassword()
+    {
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*_-';
+
+        return hash('sha384', substr(str_shuffle($chars), 0, 18));
     }
 }

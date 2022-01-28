@@ -22,11 +22,11 @@
         "issues": "https://github.com/Kuestenschmiede/LdapBundle/issues"
     },
     "require": {
-        "php": "^7.2",
+        "php": "^7.4",
         "contao/core-bundle": "^4.9",
-        "menatwork/contao-multicolumnwizard-bundle": "^3.4",
-        "doctrine/orm": "^2.5.14",
-        "symfony/ldap": "^4.4"
+        "menatwork/contao-multicolumnwizard-bundle": "^3.5.2",
+        "doctrine/orm": "^2.8.1",
+        "symfony/ldap": "^4.4 || ^5.4"
     },
     "conflict": {
         "contao/core": "*",
@@ -37,16 +37,16 @@
     },
     "autoload": {
         "psr-4": {
-            "con4gis\\LdapBundle\\": ""
+            "con4gis\\LdapBundle\\": "src/"
         },
         "classmap": [
-            "Resources/contao/"
+            "src/Resources/contao/"
         ],
         "exclude-from-classmap": [
-            "Resources/contao/config/",
-            "Resources/contao/dca/",
-            "Resources/contao/languages/",
-            "Resources/contao/templates/"
+            "src/Resources/contao/config/",
+            "src/Resources/contao/dca/",
+            "src/Resources/contao/languages/",
+            "src/Resources/contao/templates/"
         ]
     },
     "config": {

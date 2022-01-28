@@ -42,6 +42,12 @@ class Con4gisLdapSettings
 
     /**
      * @var string
+     * @ORM\Column(name="serverType", type="string", options={"default": ""})
+     */
+    protected $serverType = '';
+
+    /**
+     * @var string
      * @ORM\Column(name="bindDn", type="string", options={"default": ""})
      */
     protected $bindDn = '';
@@ -131,6 +137,24 @@ class Con4gisLdapSettings
     protected $linkWithUserMail = '';
 
     /**
+     * @var string
+     * @ORM\Column(name="twoDirectionalSync", type="string", options={"default": ""})
+     */
+    protected $twoDirectionalSync = '';
+
+    /**
+     * @var string
+     * @ORM\Column(name="c4gLdapRegistration", type="string", options={"default": ""})
+     */
+    protected $c4gLdapRegistration = '';
+
+    /**
+     * @var string
+     * @ORM\Column(name="c4gLdapRegistrationOu", type="string", options={"default": ""})
+     */
+    protected $c4gLdapRegistrationOu = '';
+
+    /**
      * @return int
      */
     public function getId(): int
@@ -208,6 +232,22 @@ class Con4gisLdapSettings
     public function setPassword(string $password)
     {
         $this->password = $password;
+    }
+
+    /**
+     * @return string
+     */
+    public function getServerType(): string
+    {
+        return $this->serverType ? $this->serverType : '';
+    }
+
+    /**
+     * @param string $serverType
+     */
+    public function setServerType(string $serverType)
+    {
+        $this->serverType = $serverType;
     }
 
     /**
@@ -400,5 +440,53 @@ class Con4gisLdapSettings
     public function setLinkWithUserMail(string $linkWithUserMail)
     {
         $this->linkWithUserMail = $linkWithUserMail;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTwoDirectionalSync(): string
+    {
+        return $this->twoDirectionalSync ? $this->twoDirectionalSync : '';
+    }
+
+    /**
+     * @param string $twoDirectionalSync
+     */
+    public function setTwoDirectionalSync(string $twoDirectionalSync)
+    {
+        $this->twoDirectionalSync = $twoDirectionalSync;
+    }
+
+    /**
+     * @return string
+     */
+    public function getC4gLdapRegistration(): string
+    {
+        return $this->c4gLdapRegistration ? $this->c4gLdapRegistration : '';
+    }
+
+    /**
+     * @param string $c4gLdapRegistration
+     */
+    public function setC4gLdapRegistration(string $c4gLdapRegistration)
+    {
+        $this->c4gLdapRegistration = $c4gLdapRegistration;
+    }
+
+    /**
+     * @return string
+     */
+    public function getC4gLdapRegistrationOu(): string
+    {
+        return $this->c4gLdapRegistrationOu ? $this->c4gLdapRegistrationOu : '';
+    }
+
+    /**
+     * @param string $c4gLdapRegistrationOu
+     */
+    public function setC4gLdapRegistrationOu(string $c4gLdapRegistrationOu)
+    {
+        $this->c4gLdapRegistrationOu = $c4gLdapRegistrationOu;
     }
 }

@@ -40,29 +40,27 @@ class LoginListener extends System
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
         $ldapConnection = new LdapConnection();
 
-        if (LdapUserModel::findByUsername($loginUsername)->con4gisLdapUser == '1' || LdapMemberModel::findByUsername($loginUsername)->con4gisAuthMember == '1') {
-            $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
-            $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
-            $ldapSettings = $ldapSettingsRepo->findAll();
-            if (empty($ldapSettings)) {
-                return false;
-            }
-            $encryption = $ldapSettings[0]->getEncryption();
-            $server = $ldapSettings[0]->getServer();
-            $port = $ldapSettings[0]->getPort();
-            $bindDn = $ldapSettings[0]->getBindDn();
-            $baseDn = $ldapSettings[0]->getBaseDn();
-            $bindPassword = $ldapSettings[0]->getPassword();
-            $mailField = strtolower($ldapSettings[0]->getEmail());
-            $firstnameField = strtolower($ldapSettings[0]->getFirstname());
-            $lastnameField = strtolower($ldapSettings[0]->getLastname());
-            $userFilter = '(&(' . $ldapSettings[0]->getUserFilter() . '=' . $loginUsername . '))';
+        $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
+        $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
+        $ldapSettings = $ldapSettingsRepo->findAll();
+        if (empty($ldapSettings)) {
+            return false;
+        }
+        $encryption = $ldapSettings[0]->getEncryption();
+        $server = $ldapSettings[0]->getServer();
+        $port = $ldapSettings[0]->getPort();
+        $bindDn = $ldapSettings[0]->getBindDn();
+        $baseDn = $ldapSettings[0]->getBaseDn();
+        $bindPassword = $ldapSettings[0]->getPassword();
+        $mailField = strtolower($ldapSettings[0]->getEmail());
+        $firstnameField = strtolower($ldapSettings[0]->getFirstname());
+        $lastnameField = strtolower($ldapSettings[0]->getLastname());
+        $userFilter = '(&(' . $ldapSettings[0]->getUserFilter() . '=' . $loginUsername . '))';
 
-            if ($encryption == 'ssl') {
-                $adServer = 'ldaps://' . $server . ':' . $port;
-            } elseif ($encryption == 'plain' || $encryption == 'tls') {
-                $adServer = 'ldap://' . $server . ':' . $port;
-            }
+        if ($encryption == 'ssl') {
+            $adServer = 'ldaps://' . $server . ':' . $port;
+        } elseif ($encryption == 'plain' || $encryption == 'tls') {
+            $adServer = 'ldap://' . $server . ':' . $port;
         }
 
         if (TL_MODE == 'BE') {
