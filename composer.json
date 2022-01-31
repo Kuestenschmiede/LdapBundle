@@ -22,7 +22,7 @@
         "issues": "https://github.com/Kuestenschmiede/LdapBundle/issues"
     },
     "require": {
-        "php": "^7.4",
+        "php": ">=7.4",
         "contao/core-bundle": "^4.9",
         "menatwork/contao-multicolumnwizard-bundle": "^3.5.2",
         "doctrine/orm": "^2.8.1",
