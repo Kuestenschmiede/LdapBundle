@@ -15,7 +15,12 @@
 use Contao\System;
 
 //ToDo doesn't work with wrong loading sequence
-if ($GLOBALS['BE_MOD']['con4gis']) {
+if (
+    array_key_exists('BE_MOD', $GLOBALS) &&
+    is_array($GLOBALS['BE_MOD']) &&
+    array_key_exists('con4gis', $GLOBALS['BE_MOD']) &&
+    is_array($GLOBALS['BE_MOD']['con4gis'])
+) {
     $GLOBALS['BE_MOD']['con4gis'] = array_merge($GLOBALS['BE_MOD']['con4gis'], [
         'C4gLdapSettings' => array
         (
