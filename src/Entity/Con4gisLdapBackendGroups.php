@@ -45,16 +45,16 @@ class Con4gisLdapBackendGroups
     protected $filter = '';
 
     /**
-     * @var string
-     * @ORM\Column(name="groups", type="blob", options={"default": ""})
+     * @var array
+     * @ORM\Column(name="groups", type="array", options={"default": ""})
      */
     protected $groups = '';
 
     /**
-     * @var string
-     * @ORM\Column(name="adminGroup", type="string", options={"default": "0"})
+     * @var array
+     * @ORM\Column(name="adminGroup", type="array", options={"default": ""})
      */
-    protected $adminGroup = 0;
+    protected $adminGroup = "";
 
     /**
      * @return int
@@ -121,17 +121,17 @@ class Con4gisLdapBackendGroups
     }
 
     /**
-     * @return string
+     * @return array
      */
-    public function getAdminGroup(): string
+    public function getAdminGroup(): array
     {
-        return $this->adminGroup ? $this->adminGroup : '';
+        return $this->adminGroup ?: '';
     }
 
     /**
      * @param string $adminGroup
      */
-    public function setAdminGroup(string $adminGroup)
+    public function setAdminGroup(array $adminGroup)
     {
         $this->adminGroup = $adminGroup;
     }

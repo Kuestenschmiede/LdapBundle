@@ -139,8 +139,9 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_be_groups'] = array
             'exclude'                 => true,
             'filter'                  => false,
             'inputType'               => 'select',
-            'default'                 => '',
-            'eval'                    => ['submitOnChange' => false, 'includeBlankOption' => true],
+            'default'                 => [],
+            'load_callback'           => [['tl_c4g_ldap_be_groups', 'checkForSingleAdminGroup']],
+            'eval'                    => ['submitOnChange' => false, 'includeBlankOption' => true, 'multiple' => true, 'chosen' => true],
             'options_callback'        => ['tl_c4g_ldap_be_groups', 'groupsCallback'],
         ),
     ),
@@ -280,6 +281,15 @@ class tl_c4g_ldap_be_groups extends \Backend
                 return $groups;
             }
         }
+    }
+    
+    public function checkForSingleAdminGroup($value)
+    {
+        if (is_int($value)) {
+            $value = [$value];
+        }
+        
+        return $value;
     }
 
 }

@@ -170,11 +170,14 @@ class SyncLdapDataCron
 
                     //Delete old con4gis LDAP member
                     $allMember = MemberModel::findBy('con4gisLdapMember', '1');
-                    foreach ($allMember as $oneMember) {
-                        if (!in_array($oneMember->username, $ldapUsernames)) {
-                            $oneMember->delete();
+                    if ($allMember) {
+                        foreach ($allMember as $oneMember) {
+                            if (!in_array($oneMember->username, $ldapUsernames)) {
+                                $oneMember->delete();
+                            }
                         }
                     }
+                    
                     $test = 'test';
                 }
             }

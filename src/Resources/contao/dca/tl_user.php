@@ -20,10 +20,10 @@ use con4gis\LdapBundle\Classes\LdapCallback;
 $GLOBALS['TL_DCA']['tl_user']['config']['onload_callback'][] = [
     LdapCallback::class, 'onLoadCallback'
 ];
+
 /**
  * Add fields
  */
-
 $GLOBALS['TL_DCA']['tl_user']['fields']['con4gisLdapUser'] = array
 (
         'sorting'                 => true,

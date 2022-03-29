@@ -109,8 +109,8 @@ class LdapConnection
             $encryption = $ldapSettings[0]->getEncryption();
         }
 
-        ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-        ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+        \Safe\ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+        \Safe\ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
         $ldap = ldap_connect($adServer);
 
@@ -149,12 +149,12 @@ class LdapConnection
                     $adServer = 'ldap://' . $server . ':' . $port;
                 }
 
-                ldap_set_option(null, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
+                \Safe\ldap_set_option(null, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
 
                 $ldap = ldap_connect($adServer);
 
-                ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-                ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+                \Safe\ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+                \Safe\ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
                 if ($encryption == 'tls') {
                     if (!$startTls = ldap_start_tls($ldap)) {

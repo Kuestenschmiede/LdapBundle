@@ -19,6 +19,7 @@ use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
 use Contao\BackendUser;
 use Contao\FrontendUser;
 use Contao\MemberGroupModel;
+use Contao\StringUtil;
 use Contao\System;
 use Contao\UserGroupModel;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
@@ -76,6 +77,8 @@ class LoginListener extends System
                 $ldapSettings = $ldapSettingsRepo->findAll();
 
                 $adminGroup = $ldapBeGroups[0]->getAdminGroup();
+                
+                $arrAdminGroups = StringUtil::deserialize($adminGroup, true);
 
                 $groups = $ldapConnection->getLdapUserGroups($loginUsername, $ldapSettings);
 
@@ -102,12 +105,14 @@ class LoginListener extends System
                 $user = LdapUserModel::findByUsername($loginUsername);
                 if ($user) {
                     foreach ($groups as $group) {
-                        if ($group == $adminGroup && !empty($adminGroup)) {
+                        
+                        if (in_array($group, $arrAdminGroups)) {
                             $beUser->admin = '1';
                             $beUser->tstamp = time();
 
                             break;
                         }
+                        
                         $beUser->admin = '0';
                         $beUser->tstamp = time();
                     }
