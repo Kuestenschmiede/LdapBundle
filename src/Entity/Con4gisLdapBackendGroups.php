@@ -46,13 +46,13 @@ class Con4gisLdapBackendGroups
 
     /**
      * @var array
-     * @ORM\Column(name="groups", type="array", options={"default": ""})
+     * @ORM\Column(name="groups", type="array")
      */
     protected $groups = '';
 
     /**
      * @var array
-     * @ORM\Column(name="adminGroup", type="array", options={"default": ""})
+     * @ORM\Column(name="adminGroup", type="array")
      */
     protected $adminGroup = "";
 
