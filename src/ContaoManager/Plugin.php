@@ -31,10 +31,17 @@ class Plugin implements BundlePluginInterface
      */
     public function getBundles(ParserInterface $parser)
     {
-        return [
-            BundleConfig::create(con4gisLdapBundle::class)
-                ->setLoadAfter([ContaoCoreBundle::class])
-        ];
+        if (file_exists($_SERVER["DOCUMENT_ROOT"].'/../vendor/con4gis/core/src/ContaoManager/Plugin.php')) {
+            return [
+                BundleConfig::create(con4gisLdapBundle::class)
+                    ->setLoadAfter([ContaoCoreBundle::class, \con4gis\CoreBundle\ContaoManager\Plugin::class])
+            ];
+        } else {
+            return [
+                BundleConfig::create(con4gisLdapBundle::class)
+                    ->setLoadAfter([ContaoCoreBundle::class])
+            ];
+        }
     }
 
 }

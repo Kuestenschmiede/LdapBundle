@@ -14,55 +14,28 @@
 
 use Contao\System;
 
-//ToDo doesn't work with wrong loading sequence
-if (
-    array_key_exists('BE_MOD', $GLOBALS) &&
-    is_array($GLOBALS['BE_MOD']) &&
-    array_key_exists('con4gis', $GLOBALS['BE_MOD']) &&
-    is_array($GLOBALS['BE_MOD']['con4gis'])
-) {
-    $GLOBALS['BE_MOD']['con4gis'] = array_merge($GLOBALS['BE_MOD']['con4gis'], [
-        'C4gLdapSettings' => array
-        (
-            'brick' => 'ldap',
-            'tables'    => array('tl_c4g_ldap_settings'),
-            'icon'      => 'bundles/con4giscore/images/be-icons/edit.svg'
-        ),
-        'C4gLdapBeGroups' => array
-        (
-            'brick' => 'ldap',
-            'tables'    => array('tl_c4g_ldap_be_groups'),
-            'icon'      => 'bundles/con4gisldap/images/be-icons/con4gis_ldap_user.svg'
-        ),
-        'C4gLdapFeGroups' => array
-        (
-            'brick' => 'ldap',
-            'tables'    => array('tl_c4g_ldap_fe_groups'),
-            'icon'      => 'bundles/con4gisldap/images/be-icons/con4gis_ldap_member.svg'
-        )
-    ]);
-} else {
-    $GLOBALS['BE_MOD']['con4gis_ldap'] = [
-        'C4gLdapSettings' => array
-        (
-            'brick' => 'ldap',
-            'tables'    => array('tl_c4g_ldap_settings'),
-            'icon'      => 'bundles/con4gisldap/images/be-icons/con4gis_ldap_settings.svg'
-        ),
-        'C4gLdapBeGroups' => array
-        (
-            'brick' => 'ldap',
-            'tables'    => array('tl_c4g_ldap_be_groups'),
-            'icon'      => 'bundles/con4gisldap/images/be-icons/con4gis_ldap_user.svg'
-        ),
-        'C4gLdapFeGroups' => array
-        (
-            'brick' => 'ldap',
-            'tables'    => array('tl_c4g_ldap_fe_groups'),
-            'icon'      => 'bundles/con4gisldap/images/be-icons/con4gis_ldap_member.svg'
-        )
-    ];
-}
+$GLOBALS['BE_MOD']['con4gis'] = $GLOBALS['BE_MOD']['con4gis'] ?: [];
+
+$GLOBALS['BE_MOD']['con4gis'] = array_merge($GLOBALS['BE_MOD']['con4gis'], [
+    'C4gLdapSettings' => array
+    (
+        'brick' => 'ldap',
+        'tables'    => array('tl_c4g_ldap_settings'),
+        'icon'      => 'bundles/con4giscore/images/be-icons/edit.svg'
+    ),
+    'C4gLdapBeGroups' => array
+    (
+        'brick' => 'ldap',
+        'tables'    => array('tl_c4g_ldap_be_groups'),
+        'icon'      => 'bundles/con4gisldap/images/be-icons/con4gis_ldap_user.svg'
+    ),
+    'C4gLdapFeGroups' => array
+    (
+        'brick' => 'ldap',
+        'tables'    => array('tl_c4g_ldap_fe_groups'),
+        'icon'      => 'bundles/con4gisldap/images/be-icons/con4gis_ldap_member.svg'
+    )
+]);
 
 /**
  * Hooks
