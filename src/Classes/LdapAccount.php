@@ -203,16 +203,18 @@ class LdapAccount
                     $ldapGroups = ldap_search($ldap, $baseDn, $groupFilter);
                     if ($ldapGroups) {
                         $ldapGroups = ldap_get_entries($ldap, $ldapGroups);
-                        unset($ldapGroups['count']);
-                        foreach ($ldapGroups as $ldapGroup) {
-                            $groupDn = $ldapGroup['dn'];
-                            $rdnArray = explode(",", $groupDn);
-                            $rdnFirstObject = str_replace("=", "", strstr($rdnArray[0], "="));
-                            if (in_array($rdnFirstObject, $registeredGroups)) {
-                                //Add this group to registered member
-                                //ToDo: check if user is already in the group
-                                $newGroupEntry['member'][0] = $userDn;
-                                ldap_mod_add($ldap, $groupDn, $newGroupEntry);
+                        if ($ldapGroups) {
+                            unset($ldapGroups['count']);
+                            foreach ($ldapGroups as $ldapGroup) {
+                                $groupDn = $ldapGroup['dn'];
+                                $rdnArray = explode(",", $groupDn);
+                                $rdnFirstObject = str_replace("=", "", strstr($rdnArray[0], "="));
+                                if (in_array($rdnFirstObject, $registeredGroups)) {
+                                    //Add this group to registered member
+                                    //ToDo: check if user is already in the group
+                                    $newGroupEntry['member'][0] = $userDn;
+                                    ldap_mod_add($ldap, $groupDn, $newGroupEntry);
+                                }
                             }
                         }
                     }

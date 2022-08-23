@@ -44,7 +44,7 @@ class LdapConnection
                 $ldapUserDn = ldap_get_dn($ldap, $firstUserEntry);
 
                 if ($checkGroupFilter != '1') {
-                    $memberGroups = $ldapUser[0]['memberof'];
+                    $memberGroups = $ldapUser ? $ldapUser[0]['memberof'] : [];
 
                     if (empty($memberGroups)) {
                         return $groups;
@@ -61,14 +61,16 @@ class LdapConnection
                     $ldapGroups = ldap_search($ldap, $baseDn, $groupFilter);
                     if ($ldapGroups) {
                         $ldapGroups = ldap_get_entries($ldap, $ldapGroups);
-                        unset($ldapGroups['count']);
-                        foreach ($ldapGroups as $ldapGroup) {
-                            if (isset($ldapGroup['member'])) {
-                                unset($ldapGroup['member']['count']);
-                                foreach ($ldapGroup['member'] as $groupMember) {
-                                    if ($groupMember == $ldapUserDn) {
-                                        $groups[] = $ldapGroup['cn'][0];
-                                        break;
+                        if ($ldapGroups) {
+                            unset($ldapGroups['count']);
+                            foreach ($ldapGroups as $ldapGroup) {
+                                if (isset($ldapGroup['member'])) {
+                                    unset($ldapGroup['member']['count']);
+                                    foreach ($ldapGroup['member'] as $groupMember) {
+                                        if ($groupMember == $ldapUserDn) {
+                                            $groups[] = $ldapGroup['cn'][0];
+                                            break;
+                                        }
                                     }
                                 }
                             }

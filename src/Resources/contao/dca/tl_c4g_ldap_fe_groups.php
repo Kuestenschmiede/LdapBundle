@@ -277,27 +277,26 @@ class tl_c4g_ldap_fe_groups extends \Backend
                     $group = trim(substr($group, strpos($group, '=') + 1));
                     $groups[$group] = $group;
                 }
-
-                return $groups;
-
             } elseif ($baseDn) {
 
                 $filter = "(|(cn=*)(uid=*))";
                 $result = ldap_search($ldap, $baseDn, $filter);
-                $ldapGroups = ldap_get_entries($ldap, $result);
-                array_shift($ldapGroups);
+                $ldapGroups = $ldap && $result ? ldap_get_entries($ldap, $result) : false;
 
-                foreach ($ldapGroups as $ldapGroup) {
+                if ($ldapGroups) {
+                    array_shift($ldapGroups);
 
-                    $group = strstr($ldapGroup['dn'], ',', true);
-                    $group = trim(substr($group, strpos($group, '=') + 1));
-                    $groups[$group] = $group;
+                    foreach ($ldapGroups as $ldapGroup) {
+
+                        $group = strstr($ldapGroup['dn'], ',', true);
+                        $group = trim(substr($group, strpos($group, '=') + 1));
+                        $groups[$group] = $group;
+                    }
                 }
-
-                return $groups;
             }
         }
 
+        return $groups;
     }
 
 }
