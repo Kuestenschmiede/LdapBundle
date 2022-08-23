@@ -37,9 +37,9 @@ class LdapConnection
         $bind = $this->ldapBind($ldap);
 
         if ($bind) {
-            if ($userFilter && $baseDn) {
+            if ($userFilter) {
                 $result = ldap_search($ldap, $baseDn, $userFilter);
-                $ldapUser = ldap_get_entries($ldap, $result);
+                $ldapUser = $ldap && $result ? ldap_get_entries($ldap, $result) : false;
                 $firstUserEntry = ldap_first_entry($ldap, $result);
                 $ldapUserDn = ldap_get_dn($ldap, $firstUserEntry);
 
@@ -58,7 +58,7 @@ class LdapConnection
                     }
                 } else {
                     $groupFilter = $ldapSettings[0]->getGroupFilter();
-                    $ldapGroups = ldap_search($ldap, $baseDn, $groupFilter);
+                    $ldapGroups = $ldap && $result ? ldap_search($ldap, $baseDn, $groupFilter) : false;
                     if ($ldapGroups) {
                         $ldapGroups = ldap_get_entries($ldap, $ldapGroups);
                         if ($ldapGroups) {
@@ -127,7 +127,7 @@ class LdapConnection
         if ($bind) {
             $result = ldap_search($ldap, $baseDn, $filter);
 
-            return $ldapUser = ldap_get_entries($ldap, $result);
+            return $ldap && $result ? $ldapUser = ldap_get_entries($ldap, $result) : false;
         }
 
         return false;

@@ -139,7 +139,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
-            'eval'                    => ['mandatory' => true, 'decodeEntities' => true],
+            'eval'                    => ['mandatory' => false, 'decodeEntities' => true],
         ),
 
         'password' => array
@@ -340,7 +340,7 @@ class tl_c4g_ldap_settings extends \Backend
             Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['bindError']);
         }
 
-        if (!$ldapConnection->ldapBind($ldap) && !$baseDn && !$bindDn && !$password && !$server && !$port) {
+        if (!$ldapConnection->ldapBind($ldap) && !$bindDn && !$password && !$server && !$port) {
             Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['bindError']);
         }
 

@@ -265,10 +265,10 @@ class tl_c4g_ldap_fe_groups extends \Backend
         }
 
         if ($bind) {
-            if ($filter && $baseDn) {
+            if ($filter) {
 
                 $result = ldap_search($ldap, $baseDn, $filter);
-                $ldapGroups = ldap_get_entries($ldap, $result);
+                $ldapGroups = $ldap && $result ? ldap_get_entries($ldap, $result) : false;
                 array_shift($ldapGroups);
 
                 foreach ($ldapGroups as $ldapGroup) {
@@ -277,8 +277,7 @@ class tl_c4g_ldap_fe_groups extends \Backend
                     $group = trim(substr($group, strpos($group, '=') + 1));
                     $groups[$group] = $group;
                 }
-            } elseif ($baseDn) {
-
+            } else {
                 $filter = "(|(cn=*)(uid=*))";
                 $result = ldap_search($ldap, $baseDn, $filter);
                 $ldapGroups = $ldap && $result ? ldap_get_entries($ldap, $result) : false;

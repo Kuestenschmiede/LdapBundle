@@ -202,7 +202,7 @@ class LdapAccount
                 if (isset($registeredGroups)) {
                     $ldapGroups = ldap_search($ldap, $baseDn, $groupFilter);
                     if ($ldapGroups) {
-                        $ldapGroups = ldap_get_entries($ldap, $ldapGroups);
+                        $ldapGroups = $ldap && $ldapGroups ? ldap_get_entries($ldap, $ldapGroups) : false;
                         if ($ldapGroups) {
                             unset($ldapGroups['count']);
                             foreach ($ldapGroups as $ldapGroup) {
