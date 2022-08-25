@@ -189,7 +189,7 @@ class tl_c4g_ldap_be_groups extends \Backend
             Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['bindError']);
         }
 
-        if (!$ldapConnection->ldapBind($ldap) && !$baseDn && !$bindDn && !$password && !$server && !$port) {
+        if (!$ldapConnection->ldapBind($ldap) && !$bindDn && !$password && !$server && !$port) {
             Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['bindError']);
         }
 
