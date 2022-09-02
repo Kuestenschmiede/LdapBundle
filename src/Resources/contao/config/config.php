@@ -14,7 +14,7 @@
 
 use Contao\System;
 
-$GLOBALS['BE_MOD']['con4gis'] = $GLOBALS['BE_MOD']['con4gis'] ?: [];
+$GLOBALS['BE_MOD']['con4gis'] = key_exists('con4gis', $GLOBALS['BE_MOD']) && $GLOBALS['BE_MOD']['con4gis'] ? $GLOBALS['BE_MOD']['con4gis'] : [];
 
 $GLOBALS['BE_MOD']['con4gis'] = array_merge($GLOBALS['BE_MOD']['con4gis'], [
     'C4gLdapSettings' => array
