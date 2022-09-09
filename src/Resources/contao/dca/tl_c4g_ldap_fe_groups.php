@@ -216,7 +216,7 @@ class tl_c4g_ldap_fe_groups extends \Backend
     public function saveDataset(Contao\DataContainer $dc) {
 
         $groups = $dc->activeRecord->groups;
-        if (substr($groups, 0, 2) == "a:") {
+        if (!is_array($groups) && substr($groups, 0, 2) == "a:") {
             $groups = unserialize($groups);
         }
 
