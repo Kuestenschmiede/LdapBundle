@@ -1,4 +1,6 @@
 # LdapBundle
+> [!IMPORTANT]  
+> We are not actively developing this con4gis module. Further development orders are possible.
 
 This bundle adds LDAP functionality for Contao backend and frontend users/groups.
 
