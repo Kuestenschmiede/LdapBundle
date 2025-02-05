@@ -118,6 +118,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_fe_groups'] = array
             'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['fieldMapping'],
             'sorting'                 => true,
             'search'                  => true,
+            'exclude'                 => true,
             'inputType'               => 'multiColumnWizard',
             'default'                 => 'a:0:{}',
             'eval'                    => array(
@@ -144,6 +145,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_fe_groups'] = array
         (
             'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['filter'],
             'sorting'                 => true,
+            'exclude'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
@@ -207,7 +209,7 @@ class tl_c4g_ldap_fe_groups extends \Backend
             Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['bindError']);
         }
 
-        if (!$ldapConnection->ldapBind($ldap) && !$bindDn && !$password && !$server && !$port) {
+        if (!$ldapConnection->ldapBind($ldap) && !$bindDn && !$bindPassword && !$server && !$port) {
             Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_fe_groups']['bindError']);
         }
 
@@ -234,13 +236,15 @@ class tl_c4g_ldap_fe_groups extends \Backend
         $currentGroups = $this->Database->prepare("SELECT name FROM tl_member_group WHERE con4gisLdapMemberGroup=1;")->execute();
         $currentGroups = $currentGroups->fetchAllAssoc();
 
-        $ldapConnection = new LdapConnection();
-        $ldap = $ldapConnection->ldapConnect();
+        if ($groups && is_array($groups)) {
+            $ldapConnection = new LdapConnection();
+            $ldap = $ldapConnection->ldapConnect();
 
-        if ($ldap && $ldapConnection->ldapBind($ldap)) {
-            foreach ($currentGroups as $currentGroup) {
-                if (!in_array($currentGroup['name'], $groups)) {
-                    $this->Database->prepare("DELETE FROM tl_member_group WHERE name=? AND con4gisLdapMemberGroup=1")->execute($currentGroup);
+            if ($ldap && $ldapConnection->ldapBind($ldap)) {
+                foreach ($currentGroups as $currentGroup) {
+                    if (!in_array($currentGroup['name'], $groups)) {
+                        $this->Database->prepare("DELETE FROM tl_member_group WHERE name=? AND con4gisLdapMemberGroup=1")->execute($currentGroup);
+                    }
                 }
             }
         }

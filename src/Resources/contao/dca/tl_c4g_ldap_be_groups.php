@@ -117,6 +117,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_be_groups'] = array
         (
             'label'                   => &$GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['filter'],
             'sorting'                 => true,
+            'exclude'                 => true,
             'search'                  => true,
             'inputType'               => 'text',
             'default'                 => '',
@@ -216,18 +217,19 @@ class tl_c4g_ldap_be_groups extends \Backend
         $currentGroups = $this->Database->prepare("SELECT name FROM tl_user_group WHERE con4gisLdapUserGroup=1;")->execute();
         $currentGroups = $currentGroups->fetchAllAssoc();
 
-        $ldapConnection = new LdapConnection();
+        if ($groups && is_array($groups)) {
+            $ldapConnection = new LdapConnection();
 
-        $ldap = $ldapConnection->ldapConnect();
+            $ldap = $ldapConnection->ldapConnect();
 
-        if ($ldap && $ldapConnection->ldapBind($ldap)) {
-            foreach ($currentGroups as $currentGroup) {
-                if (!in_array($currentGroup['name'], $groups)) {
-                    $this->Database->prepare("DELETE FROM tl_user_group WHERE name=? AND con4gisLdapUserGroup=1")->execute($currentGroup);
+            if ($ldap && $ldapConnection->ldapBind($ldap)) {
+                foreach ($currentGroups as $currentGroup) {
+                    if (!in_array($currentGroup['name'], $groups)) {
+                        $this->Database->prepare("DELETE FROM tl_user_group WHERE name=? AND con4gisLdapUserGroup=1")->execute($currentGroup);
+                    }
                 }
             }
         }
-
     }
 
     public function groupsCallback(Contao\DataContainer $dc) {

@@ -21,6 +21,7 @@ use Contao\FrontendUser;
 use Contao\MemberGroupModel;
 use Contao\StringUtil;
 use Contao\System;
+use Contao\User;
 use Contao\UserGroupModel;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use con4gis\LdapBundle\Entity\Con4gisLdapBackendGroups;
@@ -32,6 +33,7 @@ class LoginListener extends System
 
     public function __construct()
     {
+        parent::__construct();
         $this->db = Database::getInstance();
     }
 
@@ -41,7 +43,6 @@ class LoginListener extends System
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
         $ldapConnection = new LdapConnection();
 
-        $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
         $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
         $ldapSettings = $ldapSettingsRepo->findAll();
         if (empty($ldapSettings)) {

@@ -42,19 +42,19 @@ class Con4gisLdapBackendGroups
      * @var string
      * @ORM\Column(name="filter", type="string", options={"default": ""})
      */
-    protected $filter = '';
+    protected $filter = [];
 
     /**
      * @var array
      * @ORM\Column(name="groups", type="array")
      */
-    protected $groups = '';
+    protected $groups = [];
 
     /**
      * @var array
      * @ORM\Column(name="adminGroup", type="array")
      */
-    protected $adminGroup = "";
+    protected $adminGroup = [];
 
     /**
      * @return int
@@ -107,7 +107,7 @@ class Con4gisLdapBackendGroups
     /**
      * @return string
      */
-    public function getGroups(): string
+    public function getGroups(): array|string
     {
         return $this->groups ? $this->groups : '';
     }
@@ -123,7 +123,7 @@ class Con4gisLdapBackendGroups
     /**
      * @return array
      */
-    public function getAdminGroup(): array
+    public function getAdminGroup(): array|string
     {
         return $this->adminGroup ?: '';
     }

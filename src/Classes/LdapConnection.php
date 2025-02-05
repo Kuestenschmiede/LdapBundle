@@ -111,10 +111,10 @@ class LdapConnection
             $encryption = $ldapSettings[0]->getEncryption();
         }
 
+        $ldap = ldap_connect($adServer);
+
         \Safe\ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
         \Safe\ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-
-        $ldap = ldap_connect($adServer);
 
         if ($encryption == 'tls') {
             if (!ldap_start_tls($ldap)) {
