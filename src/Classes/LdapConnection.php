@@ -13,6 +13,7 @@
 namespace con4gis\LdapBundle\Classes;
 
 use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
+use Contao\Message;
 use Contao\System;
 
 class LdapConnection
@@ -94,7 +95,10 @@ class LdapConnection
             $bindDn = $ldapSettings[0]->getBindDn();
             $bindPassword = $ldapSettings[0]->getPassword();
             if ($ldap) {
-                $bind = @ldap_bind($ldap, $bindDn, $bindPassword);
+                $bind = ldap_bind($ldap, $bindDn, $bindPassword);
+                if (!$bind) {
+                    Message::addError(ldap_error($ldap));
+                }
             }
         }
 
@@ -122,7 +126,10 @@ class LdapConnection
             }
         }
 
-        $bind = @ldap_bind($ldap, $bindDn, $password);
+        $bind = ldap_bind($ldap, $bindDn, $password);
+        if (!$bind) {
+            Message::addError(ldap_error($ldap));
+        }
 
         if ($bind) {
             $result = ldap_search($ldap, $baseDn, $filter);
@@ -155,13 +162,19 @@ class LdapConnection
 
                 $ldap = ldap_connect($adServer);
 
+                $bindDn = $ldapSettings[0]->getBindDn();
+                $bindPassword = $ldapSettings[0]->getPassword();
+
+
                 \Safe\ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
                 \Safe\ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
                 if ($encryption == 'tls') {
-                    if (!$startTls = ldap_start_tls($ldap)) {
-                        return false;
-                    }
+                    ldap_start_tls($ldap);
+                }
+                $bind = ldap_bind($ldap, $bindDn, $bindPassword);
+                if (!$bind) {
+                    Message::addError(ldap_error($ldap));
                 }
             }
         }
