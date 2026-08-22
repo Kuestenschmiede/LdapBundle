@@ -345,7 +345,7 @@ class tl_c4g_ldap_settings extends \Contao\Backend
             $baseDn = $ldapSettings[0]->getBaseDn();
         }
 
-        if (!$ldap) {
+        if (!$ldap && $server && $port) {
             \Contao\Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['bindError']);
         }
 

@@ -28,6 +28,9 @@ class SyncLdapDataCron
     public function onMinutely()
     {
         $db = Database::getInstance();
+        if (!$db->tableExists('tl_c4g_ldap_settings')) {
+            return;
+        }
         $ldapSettingsData = $db->prepare('SELECT * FROM tl_c4g_ldap_settings')->execute()->fetchAssoc();
 
         if ($ldapSettingsData && isset($ldapSettingsData['updateData']) && $ldapSettingsData['updateData'] == 1) {

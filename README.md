@@ -98,3 +98,13 @@ After these changes, clear the Symfony / Contao cache for the configuration to t
 ### Step 3: Configure groups and settings
 
 Now you can log in to the Contao backend and configure everything under LDAP settings. You can import user and member groups from your LDAP server, set field mappings, and select an admin group.
+
+### Automatic Data Synchronization (Cronjob)
+
+If you enable the **"Update data"** (`updateData`) option in the LDAP settings in the Contao backend, the bundle will automatically synchronize member accounts and data from your LDAP directory.
+
+Under Contao 5.3 and 5.7, this synchronization runs automatically via Contao's built-in cron system (`contao.cronjob` service tag on a minutely interval). Ensure your server executes Contao's cronjob runner periodically (e.g. via system crontab):
+
+```bash
+* * * * * /usr/bin/php /path/to/contao/vendor/bin/contao-console contao:cron >/dev/null 2>&1
+```

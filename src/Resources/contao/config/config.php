@@ -45,8 +45,3 @@ $GLOBALS['TL_HOOKS']['createNewUser'][] = array('con4gis\LdapBundle\Classes\Ldap
 $GLOBALS['TL_HOOKS']['activateAccount'][] = array('con4gis\LdapBundle\Classes\LdapAccount', 'onAccountActivation');
 $GLOBALS['TL_HOOKS']['updatePersonalData'][] = array('con4gis\LdapBundle\Classes\MemberAccountData', 'updateMemberData');
 $GLOBALS['TL_HOOKS']['setNewPassword'][] = array('con4gis\LdapBundle\Classes\MemberAccountData', 'updateMemberPassword');
-
-/**
- * Crons
- */
-$GLOBALS['TL_CRON']['minutely'][] = [\con4gis\LdapBundle\Classes\Cron\SyncLdapDataCron::class, 'onMinutely'];

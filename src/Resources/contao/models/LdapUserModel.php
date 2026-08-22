@@ -15,7 +15,7 @@
 namespace con4gis\LdapBundle\Resources\contao\models;
 
 /**
- * Class LdapMemberModel
+ * Class LdapUserModel
  * @property integer    $con4gisLdapUser
  */
 class LdapUserModel extends \Contao\UserModel

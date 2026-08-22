@@ -3,3 +3,8 @@ services:
         class: con4gis\LdapBundle\Classes\Listener\LoginListener
         tags:
             - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin, priority: 10 }
+
+    con4gis.ldap.cron.sync:
+        class: con4gis\LdapBundle\Classes\Cron\SyncLdapDataCron
+        tags:
+            - { name: contao.cronjob, interval: minutely }
