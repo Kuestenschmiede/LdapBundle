@@ -22,11 +22,12 @@
         "issues": "https://github.com/Kuestenschmiede/LdapBundle/issues"
     },
     "require": {
-        "php": "^7.4 || ^8.0",
-        "contao/core-bundle": "^4.9",
-        "menatwork/contao-multicolumnwizard-bundle": "^3.5.2",
-        "doctrine/orm": "^2.8.1",
-        "symfony/ldap": "^4.4 || ^5.4"
+        "php": "^8.2 || ^8.3 || ^8.4",
+        "contao/core-bundle": "^5.3 || ^5.7",
+        "menatwork/contao-multicolumnwizard-bundle": "^3.7.2",
+        "doctrine/orm": "^2.14 || ^3.0",
+        "symfony/ldap": "^6.4 || ^7.0",
+        "ext-ldap": "*"
     },
     "conflict": {
         "contao/core": "*",
@@ -54,7 +55,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-main": "1.0.x-dev"
+            "dev-main": "2.0.x-dev"
         },
         "contao-manager-plugin": "con4gis\\LdapBundle\\ContaoManager\\Plugin"
     }

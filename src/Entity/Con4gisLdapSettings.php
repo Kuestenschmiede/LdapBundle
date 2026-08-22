@@ -14,16 +14,17 @@
 
 namespace con4gis\LdapBundle\Entity;
 
-use \Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class Service
+ * Class Con4gisLdapSettings
  *
  * @ORM\Entity
  * @ORM\Table(name="tl_c4g_ldap_settings")
  * @package con4gis\LdapBundle\Entity
  */
-
+#[ORM\Entity]
+#[ORM\Table(name: 'tl_c4g_ldap_settings')]
 class Con4gisLdapSettings
 {
     /**
@@ -32,126 +33,149 @@ class Con4gisLdapSettings
      * @ORM\GeneratedValue
      * @ORM\Column(name="id", type="integer")
      */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(name: 'id', type: 'integer')]
     protected $id = 0;
 
     /**
      * @var int
      * @ORM\Column(name="tstamp", type="integer", options={"default": "0"})
      */
-    protected $tstamp = '';
+    #[ORM\Column(name: 'tstamp', type: 'integer', options: ['default' => 0])]
+    protected $tstamp = 0;
 
     /**
      * @var string
      * @ORM\Column(name="serverType", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'serverType', type: 'string', options: ['default' => ''])]
     protected $serverType = '';
 
     /**
      * @var string
      * @ORM\Column(name="bindDn", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'bindDn', type: 'string', options: ['default' => ''])]
     protected $bindDn = '';
 
     /**
      * @var string
      * @ORM\Column(name="baseDn", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'baseDn', type: 'string', options: ['default' => ''])]
     protected $baseDn = '';
 
     /**
      * @var string
      * @ORM\Column(name="password", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'password', type: 'string', options: ['default' => ''])]
     protected $password = '';
 
     /**
      * @var string
      * @ORM\Column(name="encryption", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'encryption', type: 'string', options: ['default' => ''])]
     protected $encryption = '';
 
     /**
      * @var string
      * @ORM\Column(name="server", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'server', type: 'string', options: ['default' => ''])]
     protected $server = '';
 
     /**
      * @var string
      * @ORM\Column(name="port", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'port', type: 'string', options: ['default' => ''])]
     protected $port = '';
 
     /**
      * @var string
      * @ORM\Column(name="email", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'email', type: 'string', options: ['default' => ''])]
     protected $email = '';
 
     /**
      * @var string
      * @ORM\Column(name="lastname", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'lastname', type: 'string', options: ['default' => ''])]
     protected $lastname = '';
 
     /**
      * @var string
      * @ORM\Column(name="firstname", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'firstname', type: 'string', options: ['default' => ''])]
     protected $firstname = '';
 
     /**
      * @var string
      * @ORM\Column(name="userFilter", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'userFilter', type: 'string', options: ['default' => ''])]
     protected $userFilter = '';
 
     /**
      * @var string
      * @ORM\Column(name="updateData", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'updateData', type: 'string', options: ['default' => ''])]
     protected $updateData = '';
 
     /**
      * @var string
      * @ORM\Column(name="updateFilter", type="string", options={"default": "(objectClass=user)"})
      */
+    #[ORM\Column(name: 'updateFilter', type: 'string', options: ['default' => '(objectClass=user)'])]
     protected $updateFilter = '';
 
     /**
      * @var string
      * @ORM\Column(name="groupFilterCheck", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'groupFilterCheck', type: 'string', options: ['default' => ''])]
     protected $groupFilterCheck = '';
 
     /**
      * @var string
      * @ORM\Column(name="groupFilter", type="string", options={"default": "(objectClass=groupOfNames)"})
      */
+    #[ORM\Column(name: 'groupFilter', type: 'string', options: ['default' => '(objectClass=groupOfNames)'])]
     protected $groupFilter = '';
 
     /**
      * @var string
      * @ORM\Column(name="linkWithUserMail", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'linkWithUserMail', type: 'string', options: ['default' => ''])]
     protected $linkWithUserMail = '';
 
     /**
      * @var string
      * @ORM\Column(name="twoDirectionalSync", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'twoDirectionalSync', type: 'string', options: ['default' => ''])]
     protected $twoDirectionalSync = '';
 
     /**
      * @var string
      * @ORM\Column(name="c4gLdapRegistration", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'c4gLdapRegistration', type: 'string', options: ['default' => ''])]
     protected $c4gLdapRegistration = '';
 
     /**
      * @var string
      * @ORM\Column(name="c4gLdapRegistrationOu", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'c4gLdapRegistrationOu', type: 'string', options: ['default' => ''])]
     protected $c4gLdapRegistrationOu = '';
 
     /**
@@ -171,11 +195,11 @@ class Con4gisLdapSettings
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getTstamp(): int
     {
-        return $this->tstamp ? $this->tstamp : '';
+        return (int) $this->tstamp;
     }
 
     /**
@@ -275,9 +299,9 @@ class Con4gisLdapSettings
     }
 
     /**
-     * @param int $server
+     * @param string $server
      */
-    public function setServer(int $server)
+    public function setServer(string $server)
     {
         $this->server = $server;
     }
@@ -291,9 +315,9 @@ class Con4gisLdapSettings
     }
 
     /**
-     * @param int $port
+     * @param string $port
      */
-    public function setPort(int $port)
+    public function setPort(string $port)
     {
         $this->port = $port;
     }

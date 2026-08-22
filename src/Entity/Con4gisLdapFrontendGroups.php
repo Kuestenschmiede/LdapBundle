@@ -14,15 +14,17 @@
 
 namespace con4gis\LdapBundle\Entity;
 
-use \Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class Service
+ * Class Con4gisLdapFrontendGroups
  *
  * @ORM\Entity
  * @ORM\Table(name="tl_c4g_ldap_fe_groups")
  * @package con4gis\LdapBundle\Entity
  */
+#[ORM\Entity]
+#[ORM\Table(name: 'tl_c4g_ldap_fe_groups')]
 class Con4gisLdapFrontendGroups
 {
     /**
@@ -31,30 +33,37 @@ class Con4gisLdapFrontendGroups
      * @ORM\GeneratedValue
      * @ORM\Column(name="id", type="integer")
      */
+    #[ORM\Id]
+    #[ORM\GeneratedValue]
+    #[ORM\Column(name: 'id', type: 'integer')]
     protected $id = 0;
 
     /**
      * @var int
      * @ORM\Column(name="tstamp", type="integer", options={"default": "0"})
      */
-    protected $tstamp = '';
+    #[ORM\Column(name: 'tstamp', type: 'integer', options: ['default' => 0])]
+    protected $tstamp = 0;
 
     /**
-     * @var string
+     * @var array
      * @ORM\Column(name="fieldMapping", type="array")
      */
+    #[ORM\Column(name: 'fieldMapping', type: 'array', nullable: true)]
     protected $fieldMapping = [];
 
     /**
      * @var string
      * @ORM\Column(name="filter", type="string", options={"default": ""})
      */
+    #[ORM\Column(name: 'filter', type: 'string', options: ['default' => ''])]
     protected $filter = '';
 
     /**
      * @var string
      * @ORM\Column(name="groups", type="blob", options={"default": ""})
      */
+    #[ORM\Column(name: 'groups', type: 'blob', nullable: true)]
     protected $groups = '';
 
     /**
@@ -98,19 +107,19 @@ class Con4gisLdapFrontendGroups
     }
 
     /**
-     * @param int $filter
+     * @param string $filter
      */
-    public function setFilter(int $filter)
+    public function setFilter(string $filter)
     {
         $this->filter = $filter;
     }
 
     /**
-     * @return string
+     * @return int
      */
     public function getTstamp(): int
     {
-        return $this->tstamp ? $this->tstamp : '';
+        return (int) $this->tstamp;
     }
 
     /**
@@ -126,15 +135,14 @@ class Con4gisLdapFrontendGroups
      */
     public function getGroups(): string
     {
-        return $this->groups ? $this->groups : '';
+        return $this->groups ? (string) $this->groups : '';
     }
 
     /**
-     * @param int $groups
+     * @param string $groups
      */
-    public function setGroups(int $groups)
+    public function setGroups(string $groups)
     {
         $this->groups = $groups;
     }
-
 }

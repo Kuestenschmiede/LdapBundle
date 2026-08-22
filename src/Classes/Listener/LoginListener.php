@@ -21,25 +21,29 @@ use Contao\FrontendUser;
 use Contao\MemberGroupModel;
 use Contao\StringUtil;
 use Contao\System;
-use Contao\User;
 use Contao\UserGroupModel;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 use con4gis\LdapBundle\Entity\Con4gisLdapBackendGroups;
 use Contao\Database;
 
-class LoginListener extends System
+class LoginListener
 {
     private $db = null;
 
     public function __construct()
     {
-        parent::__construct();
         $this->db = Database::getInstance();
     }
 
     public function onInteractiveLogin(InteractiveLoginEvent $event)
     {
-        $loginUsername = $event->getAuthenticationToken()->getUsername();
+        $token = $event->getAuthenticationToken();
+        $user = $token->getUser();
+        if (!$user) {
+            return false;
+        }
+
+        $loginUsername = method_exists($user, 'getUserIdentifier') ? $user->getUserIdentifier() : (method_exists($token, 'getUserIdentifier') ? $token->getUserIdentifier() : $token->getUsername());
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
         $ldapConnection = new LdapConnection();
 
@@ -59,17 +63,17 @@ class LoginListener extends System
         $lastnameField = strtolower($ldapSettings[0]->getLastname());
         $userFilter = '(&(' . $ldapSettings[0]->getUserFilter() . '=' . $loginUsername . '))';
 
+        $adServer = 'ldap://' . $server . ':' . $port;
         if ($encryption == 'ssl') {
             $adServer = 'ldaps://' . $server . ':' . $port;
         } elseif ($encryption == 'plain' || $encryption == 'tls') {
             $adServer = 'ldap://' . $server . ':' . $port;
         }
 
-        if (TL_MODE == 'BE') {
+        if ($user instanceof BackendUser) {
             $beUser = LdapUserModel::findByUsername($loginUsername);
 
             if ($beUser && $beUser->con4gisLdapUser == '1') {
-
                 //Get LDAP Admin Group
                 $ldapBeGroupsRepo = $em->getRepository(Con4gisLdapBackendGroups::class);
                 $ldapBeGroups = $ldapBeGroupsRepo->findAll();
@@ -77,15 +81,12 @@ class LoginListener extends System
                 $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
                 $ldapSettings = $ldapSettingsRepo->findAll();
 
-                $adminGroup = $ldapBeGroups[0]->getAdminGroup();
-                
-                $arrAdminGroups = StringUtil::deserialize($adminGroup, true);
+                $adminGroup = !empty($ldapBeGroups) ? $ldapBeGroups[0]->getAdminGroup() : [];
+                $arrAdminGroups = is_array($adminGroup) ? $adminGroup : StringUtil::deserialize($adminGroup, true);
 
                 $groups = $ldapConnection->getLdapUserGroups($loginUsername, $ldapSettings);
 
                 $contaoGroups = [];
-
-                $beUser = BackendUser::getInstance();
 
                 foreach ($groups as $group) {
                     if ($foundGroup = UserGroupModel::findByName($group)) {
@@ -94,49 +95,43 @@ class LoginListener extends System
                 }
 
                 if (!empty($contaoGroups)) {
-                    $contaoGroups = serialize($contaoGroups);
-                    $beUser->groups = $contaoGroups;
+                    $beUser->groups = serialize($contaoGroups);
                     $beUser->tstamp = time();
                 }
 
-                if ($beUser->con4gisLdapUser == '0') {
-                    $beUser->con4gisLdapUser = '1';
-                }
+                $beUser->con4gisLdapUser = '1';
 
-                $user = LdapUserModel::findByUsername($loginUsername);
-                if ($user) {
-                    foreach ($groups as $group) {
-                        
-                        if (in_array($group, $arrAdminGroups)) {
-                            $beUser->admin = '1';
-                            $beUser->tstamp = time();
-
-                            break;
-                        }
-                        
-                        $beUser->admin = '0';
-                        $beUser->tstamp = time();
+                $isAdmin = false;
+                foreach ($groups as $group) {
+                    if (in_array($group, $arrAdminGroups)) {
+                        $isAdmin = true;
+                        break;
                     }
                 }
+                $beUser->admin = $isAdmin ? '1' : '0';
+                $beUser->tstamp = time();
 
-                if ($beUser->name == '' or $beUser->email == '') {
+                if ($beUser->name == '' || $beUser->email == '') {
                     $ldapUser = $ldapConnection->filterLdap($bindDn, $bindPassword, $userFilter, $baseDn, $adServer);
-                    $userMail = $ldapUser[0][$mailField][0];
-                    $userFirstname = $ldapUser[0][$firstnameField][0];
-                    $userLastname = $ldapUser[0][$lastnameField][0];
+                    if (!empty($ldapUser) && isset($ldapUser[0])) {
+                        $userMail = !empty($mailField) && isset($ldapUser[0][$mailField][0]) ? $ldapUser[0][$mailField][0] : '';
+                        $userFirstname = !empty($firstnameField) && isset($ldapUser[0][$firstnameField][0]) ? $ldapUser[0][$firstnameField][0] : '';
+                        $userLastname = !empty($lastnameField) && isset($ldapUser[0][$lastnameField][0]) ? $ldapUser[0][$lastnameField][0] : '';
 
-                    if ($userMail) {
-                        $beUser->email = $userMail;
-                    }
+                        if ($userMail) {
+                            $beUser->email = $userMail;
+                        }
 
-                    if ($userFirstname && $userLastname) {
-                        $beUser->name = $userFirstname . ' ' . $userLastname;
+                        if ($userFirstname && $userLastname) {
+                            $beUser->name = $userFirstname . ' ' . $userLastname;
+                        }
                     }
                 }
 
                 $beUser->password = $this->generatePassword();
+                $beUser->save();
             }
-        } elseif (TL_MODE == 'FE') {
+        } elseif ($user instanceof FrontendUser) {
             $feUser = LdapMemberModel::findByUsername($loginUsername);
 
             if ($feUser && $feUser->con4gisLdapMember == '1') {
@@ -147,8 +142,6 @@ class LoginListener extends System
 
                 $contaoGroups = [];
 
-                $feUser = FrontendUser::getInstance();
-
                 foreach ($groups as $group) {
                     if ($foundGroup = MemberGroupModel::findByName($group)) {
                         $contaoGroups[] = $foundGroup->id;
@@ -156,38 +149,35 @@ class LoginListener extends System
                 }
 
                 if (!empty($contaoGroups)) {
-                    $contaoGroups = serialize($contaoGroups);
-                    $feUser->allGroups = $contaoGroups;
+                    $feUser->groups = serialize($contaoGroups);
                     $feUser->tstamp = time();
                 }
 
-                if ($feUser->con4gisLdapMember == '0') {
-                    $feUser->con4gisLdapMember = '1';
-                }
+                $feUser->con4gisLdapMember = '1';
 
-                if ($feUser->firstname == '' || $feUser->lastname || $feUser->email == '') {
+                if ($feUser->firstname == '' || $feUser->lastname == '' || $feUser->email == '') {
                     $ldapUser = $ldapConnection->filterLdap($bindDn, $bindPassword, $userFilter, $baseDn, $adServer);
-                    $userMail = $ldapUser[0][$mailField][0];
+                    if (!empty($ldapUser) && isset($ldapUser[0])) {
+                        $userMail = !empty($mailField) && isset($ldapUser[0][$mailField][0]) ? $ldapUser[0][$mailField][0] : '';
+                        $userFirstname = !empty($firstnameField) && isset($ldapUser[0][$firstnameField][0]) ? $ldapUser[0][$firstnameField][0] : '';
+                        $userLastname = !empty($lastnameField) && isset($ldapUser[0][$lastnameField][0]) ? $ldapUser[0][$lastnameField][0] : '';
 
-                    $userFirstname = $ldapUser[0][$firstnameField][0];
-                    $userLastname = $ldapUser[0][$lastnameField][0];
+                        if ($userMail) {
+                            $feUser->email = $userMail;
+                        }
 
-                    if ($userMail) {
-                        $feUser->email = $userMail;
-                    }
+                        if ($userFirstname) {
+                            $feUser->firstname = $userFirstname;
+                        }
 
-                    if ($userFirstname) {
-                        $feUser->firstname = $userFirstname;
-                    }
-
-                    if ($userLastname) {
-                        $feUser->lastname = $userLastname;
+                        if ($userLastname) {
+                            $feUser->lastname = $userLastname;
+                        }
                     }
                 }
 
                 $feUser->password = $this->generatePassword();
-
-                $feUser->con4gisLdapMember = '1';
+                $feUser->save();
             }
         }
     }

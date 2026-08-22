@@ -28,9 +28,9 @@ class SyncLdapDataCron
     public function onMinutely()
     {
         $db = Database::getInstance();
-        $ldapSettings = $db->prepare('SELECT * FROM tl_c4g_ldap_settings')->execute()->fetchAssoc();
+        $ldapSettingsData = $db->prepare('SELECT * FROM tl_c4g_ldap_settings')->execute()->fetchAssoc();
 
-        if ($ldapSettings['updateData'] == 1) {
+        if ($ldapSettingsData && isset($ldapSettingsData['updateData']) && $ldapSettingsData['updateData'] == 1) {
             $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
 
             $ldapConnection = new LdapConnection();
@@ -40,6 +40,9 @@ class SyncLdapDataCron
 
             $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
             $ldapSettings = $ldapSettingsRepo->findAll();
+            if (empty($ldapSettings)) {
+                return;
+            }
 
             $baseDn = $ldapSettings[0]->getBaseDn();
             $bindDn = $ldapSettings[0]->getBindDn();
@@ -49,10 +52,11 @@ class SyncLdapDataCron
             $port = $ldapSettings[0]->getPort();
             $updateFilter = '(|(cn=*)(uid=*))';
             $ldapUsernames = [];
-            if ($server && $port && $encryption) {
+            $adServer = '';
+            if ($server && $port) {
                 if ($encryption == 'ssl') {
                     $adServer = 'ldaps://' . $server . ':' . $port;
-                } elseif ($encryption == 'plain' || $encryption == 'tls') {
+                } else {
                     $adServer = 'ldap://' . $server . ':' . $port;
                 }
             }
@@ -63,11 +67,11 @@ class SyncLdapDataCron
                     array_shift($ldapUsers);
                     $ldapUsernameField = strtolower($ldapSettings[0]->getUserFilter());
 
+                    $ldapFrontendGroupsRepo = $em->getRepository(Con4gisLdapFrontendGroups::class);
+                    $ldapFrontendGroups = $ldapFrontendGroupsRepo->findAll();
+
                     foreach ($ldapUsers as $ldapUser) {
-                        $ldapFrontendGroupsRepo = $em->getRepository(Con4gisLdapFrontendGroups::class);
-                        $ldapFrontendGroups = $ldapFrontendGroupsRepo->findAll();
-                        $mappingDatas = $ldapFrontendGroups[0]->getFieldMapping();
-                        $username = $ldapUser[$ldapUsernameField][0];
+                        $username = isset($ldapUser[$ldapUsernameField][0]) ? $ldapUser[$ldapUsernameField][0] : null;
                         if ($username) {
                             $ldapUsernames[] = $username;
                         }
@@ -75,29 +79,8 @@ class SyncLdapDataCron
                 }
             }
 
-            $ldapConnection = new LdapConnection();
-
-            $ldap = $ldapConnection->ldapConnect();
-            $bind = $ldapConnection->ldapBind($ldap);
-
             if ($ldapSettings[0]->getUpdateFilter() != '') {
-                $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
-                $ldapSettings = $ldapSettingsRepo->findAll();
-
-                $baseDn = $ldapSettings[0]->getBaseDn();
-                $bindDn = $ldapSettings[0]->getBindDn();
-                $bindPassword = $ldapSettings[0]->getPassword();
-                $encryption = $ldapSettings[0]->getEncryption();
-                $server = $ldapSettings[0]->getServer();
-                $port = $ldapSettings[0]->getPort();
                 $updateFilter = $ldapSettings[0]->getUpdateFilter();
-                if ($server && $port && $encryption) {
-                    if ($encryption == 'ssl') {
-                        $adServer = 'ldaps://' . $server . ':' . $port;
-                    } elseif ($encryption == 'plain' || $encryption == 'tls') {
-                        $adServer = 'ldap://' . $server . ':' . $port;
-                    }
-                }
                 if ($adServer) {
                     $ldapUsers = $ldapConnection->filterLdap($bindDn, $bindPassword, $updateFilter, $baseDn, $adServer);
 
@@ -111,12 +94,15 @@ class SyncLdapDataCron
                         foreach ($ldapUsers as $ldapUser) {
                             $ldapFrontendGroupsRepo = $em->getRepository(Con4gisLdapFrontendGroups::class);
                             $ldapFrontendGroups = $ldapFrontendGroupsRepo->findAll();
-                            $mappingDatas = $ldapFrontendGroups[0]->getFieldMapping();
-                            $username = $ldapUser[$ldapUsernameField][0];
+                            $mappingDatas = !empty($ldapFrontendGroups) ? $ldapFrontendGroups[0]->getFieldMapping() : [];
+                            $username = isset($ldapUser[$ldapUsernameField][0]) ? $ldapUser[$ldapUsernameField][0] : '';
+                            if (!$username) {
+                                continue;
+                            }
                             $ldapUsernames[] = $username;
-                            $firstname = $ldapUser[$ldapFirstnameField][0];
-                            $lastname = $ldapUser[$ldapLastnameField][0];
-                            $email = $ldapUser[$ldapEmailField][0];
+                            $firstname = (!empty($ldapFirstnameField) && isset($ldapUser[$ldapFirstnameField][0])) ? $ldapUser[$ldapFirstnameField][0] : '';
+                            $lastname = (!empty($ldapLastnameField) && isset($ldapUser[$ldapLastnameField][0])) ? $ldapUser[$ldapLastnameField][0] : '';
+                            $email = (!empty($ldapEmailField) && isset($ldapUser[$ldapEmailField][0])) ? $ldapUser[$ldapEmailField][0] : '';
                             $member = LdapMemberModel::findByUsername($username);
                             if (!$member) {
                                 $member = new LdapMemberModel();
@@ -148,26 +134,24 @@ class SyncLdapDataCron
                                 $member->tstamp = time();
                             }
 
-                            //ToDo: Individuellen Felder aus dem MultiColumnWizard verknüpfen
-                            foreach ($mappingDatas as $mappingData) {
-                                $contaoField = $mappingData['contaoField'];
-                                $ldapField = strtolower($mappingData['ldapField']);
-                                $ldapFieldData = $ldapUser[$ldapField][0];
-                                if ($contaoField == 'country') {
-                                    $ldapFieldData = strtolower($ldapFieldData);
+                            if (!empty($mappingDatas)) {
+                                foreach ($mappingDatas as $mappingData) {
+                                    $contaoField = $mappingData['contaoField'];
+                                    $ldapField = strtolower($mappingData['ldapField']);
+                                    $ldapFieldData = isset($ldapUser[$ldapField][0]) ? $ldapUser[$ldapField][0] : '';
+                                    if ($contaoField == 'country') {
+                                        $ldapFieldData = strtolower($ldapFieldData);
+                                    }
+                                    $member->$contaoField = $ldapFieldData;
                                 }
-                                if (!$ldapFieldData) {
-                                    $ldapFieldData = '';
-                                }
-                                $member->$contaoField = $ldapFieldData;
                             }
                             try {
                                 $member->save();
                             } catch (\Exception $e) {
-                                \System::getContainer()
+                                System::getContainer()
                                     ->get('monolog.logger.contao')
-                                    ->log(LogLevel::ERROR, 'Fehler beim automatischen Abgleich der Mitglieder über LDAP: '.$e, array(
-                                        'contao' => new ContaoContext(__CLASS__.'::'.__FUNCTION__, TL_CRON
+                                    ->log(LogLevel::ERROR, 'Fehler beim automatischen Abgleich der Mitglieder über LDAP: '.$e->getMessage(), array(
+                                        'contao' => new ContaoContext(__CLASS__.'::'.__FUNCTION__, ContaoContext::CRON
                                         )));
                                 break;
                             }
@@ -183,8 +167,6 @@ class SyncLdapDataCron
                             }
                         }
                     }
-
-                    $test = 'test';
                 }
             }
         }

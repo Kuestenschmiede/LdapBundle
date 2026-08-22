@@ -19,6 +19,7 @@ use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
 use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
 use Contao\CoreBundle\Monolog\ContaoContext;
 use Contao\Database;
+use Contao\Input;
 use Contao\Module;
 use Contao\FrontendUser;
 use Contao\System;
@@ -36,6 +37,9 @@ class MemberAccountData
             $ldapFrontendGroupsRepo = $em->getRepository(Con4gisLdapFrontendGroups::class);
 
             $ldapSettings = $ldapSettingsRepo->findAll();
+            if (empty($ldapSettings)) {
+                return;
+            }
             $ldapFrontendGroups = $ldapFrontendGroupsRepo->findAll();
 
             $baseDn = $ldapSettings[0]->getBaseDn();
@@ -54,7 +58,7 @@ class MemberAccountData
                 $userRDNObject = $member->username;
             }
 
-            $mappingDatas = $ldapFrontendGroups[0]->getFieldMapping();
+            $mappingDatas = !empty($ldapFrontendGroups) ? $ldapFrontendGroups[0]->getFieldMapping() : [];
             if (!$mappingDatas) {
                 $mappingDatas[0]['contaoField'] = "firstname";
                 $mappingDatas[0]['ldapField'] = $firstnameField;
@@ -71,6 +75,7 @@ class MemberAccountData
                 $mappingDatas[$lastMappingDatasKey + 3]['contaoField'] = "mail";
                 $mappingDatas[$lastMappingDatasKey + 3]['ldapField'] = $mailField;
             }
+            $updateEntry = [];
             foreach ($mappingDatas as $mappingData) {
                 if (array_key_exists($mappingData['contaoField'], $data)) {
                     $updateEntry[$mappingData['ldapField']][0] = $data[$mappingData['contaoField']];
@@ -84,18 +89,18 @@ class MemberAccountData
 
             //edit user in ldap
             $userDn = $userRDNKey."=".$userRDNObject.",".$ldapRegistrationOu;
-            ldap_mod_replace($ldap, $userDn, $updateEntry);
+            @ldap_mod_replace($ldap, $userDn, $updateEntry);
             $ldapError = ldap_error($ldap);
             if ($ldapError != "Success" && !is_null($ldapError)) {
-                \System::getContainer()
+                System::getContainer()
                     ->get('monolog.logger.contao')
-                    ->log(LogLevel::ERROR, 'Fehler beim Aktualisieren des Passworts: '.$ldapError, array(
-                        'contao' => new ContaoContext(__CLASS__.'::'.__FUNCTION__, TL_CRON
+                    ->log(LogLevel::ERROR, 'Fehler beim Aktualisieren der LDAP-Daten: '.$ldapError, array(
+                        'contao' => new ContaoContext(__CLASS__.'::'.__FUNCTION__, ContaoContext::ACCESS
                         )));
             }
 
             //close ldap connection
-            ldap_unbind($ldap);
+            @ldap_unbind($ldap);
         }
     }
 
@@ -104,13 +109,16 @@ class MemberAccountData
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
         $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
         $ldapSettings = $ldapSettingsRepo->findAll();
+        if (empty($ldapSettings)) {
+            return;
+        }
         $serverType = $ldapSettings[0]->getServerType();
         $ldapRegistrationOu = $ldapSettings[0]->getC4gLdapRegistrationOu();
         $twoDirectionalSync = $ldapSettings[0]->getTwoDirectionalSync();
 
         if ($twoDirectionalSync == "1") {
             //get new user password
-            $userPwdPlain = $_POST['password'];
+            $userPwdPlain = Input::post('password') ?: $password;
 
             //get user dn and password entry
             if ($serverType == "windows_ad") {
@@ -138,23 +146,25 @@ class MemberAccountData
 
             //edit user in ldap
             $userDn = $userRDNKey."=".$userRDNObject.",".$ldapRegistrationOu;
-            ldap_mod_replace($ldap, $userDn, $updateEntry);
+            @ldap_mod_replace($ldap, $userDn, $updateEntry);
             $ldapError = ldap_error($ldap);
             if ($ldapError != "Success" && !is_null($ldapError)) {
-                \System::getContainer()
+                System::getContainer()
                     ->get('monolog.logger.contao')
                     ->log(LogLevel::ERROR, 'Fehler beim Aktualisieren des Passworts: '.$ldapError, array(
-                        'contao' => new ContaoContext(__CLASS__.'::'.__FUNCTION__, TL_CRON
+                        'contao' => new ContaoContext(__CLASS__.'::'.__FUNCTION__, ContaoContext::ACCESS
                         )));
             }
 
             //set random contao member password
-            $member = LdapMemberModel::findByUsername($member->username);
-            $member->password = $ldapConnection->generatePassword();
-            $member->save();
+            $memberModel = LdapMemberModel::findByUsername($member->username);
+            if ($memberModel) {
+                $memberModel->password = $ldapConnection->generatePassword();
+                $memberModel->save();
+            }
 
             //close ldap connection
-            ldap_unbind($ldap);
+            @ldap_unbind($ldap);
         }
     }
 }

@@ -21,7 +21,7 @@ $GLOBALS['BE_MOD']['con4gis'] = array_merge($GLOBALS['BE_MOD']['con4gis'], [
     (
         'brick' => 'ldap',
         'tables'    => array('tl_c4g_ldap_settings'),
-        'icon'      => 'bundles/con4giscore/images/be-icons/edit.svg'
+        'icon'      => 'bundles/con4gisldap/images/be-icons/con4gis_ldap_settings.svg'
     ),
     'C4gLdapBeGroups' => array
     (

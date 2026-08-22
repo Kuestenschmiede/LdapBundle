@@ -29,19 +29,18 @@ class Plugin implements BundlePluginInterface
      *
      * @return ConfigInterface[]
      */
-    public function getBundles(ParserInterface $parser)
+    public function getBundles(ParserInterface $parser): array
     {
-        if (file_exists($_SERVER["DOCUMENT_ROOT"].'/../vendor/con4gis/core/src/ContaoManager/Plugin.php')) {
-            return [
-                BundleConfig::create(con4gisLdapBundle::class)
-                    ->setLoadAfter([ContaoCoreBundle::class, \con4gis\CoreBundle\ContaoManager\Plugin::class])
-            ];
-        } else {
-            return [
-                BundleConfig::create(con4gisLdapBundle::class)
-                    ->setLoadAfter([ContaoCoreBundle::class])
-            ];
+        $loadAfter = [ContaoCoreBundle::class];
+
+        if (class_exists('con4gis\CoreBundle\con4gisCoreBundle')) {
+            $loadAfter[] = \con4gis\CoreBundle\con4gisCoreBundle::class;
         }
+
+        return [
+            BundleConfig::create(con4gisLdapBundle::class)
+                ->setLoadAfter($loadAfter)
+        ];
     }
 
 }

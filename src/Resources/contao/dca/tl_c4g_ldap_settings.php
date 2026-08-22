@@ -13,6 +13,10 @@
  */
 
 use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
+use Contao\Backend;
+use Contao\Database;
+use Contao\DC_Table;
+use Contao\Input;
 use Contao\Message;
 use Contao\System;
 use Contao\UserGroupModel;
@@ -27,7 +31,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
     // Config
     'config' => array
     (
-        'dataContainer'               => 'Table',
+        'dataContainer'               => DC_Table::class,
         'enableVersioning'            => false,
         'notDeletable'                => true,
         'notCopyable'                 => true,
@@ -297,23 +301,22 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_settings'] = array
 
     ),
 );
-class tl_c4g_ldap_settings extends \Backend
+class tl_c4g_ldap_settings extends \Contao\Backend
 {
-    public function loadDataset(Contao\DataContainer $dc)
+    public function loadDataset(?\Contao\DataContainer $dc = null)
     {
         $objConfig = Database::getInstance()->prepare("SELECT id FROM tl_c4g_ldap_settings")->execute();
 
-        if (\Input::get('key')) return;
+        if (\Contao\Input::get('key')) return;
 
-        if(!$objConfig->numRows && !\Input::get('act'))
+        if (!$objConfig->numRows && !\Contao\Input::get('act'))
         {
             $this->redirect($this->addToUrl('act=create'));
         }
 
-
-        if(!\Input::get('id') && !\Input::get('act'))
+        if (!\Contao\Input::get('id') && !\Contao\Input::get('act'))
         {
-            $GLOBALS['TL_DCA']['tl_c4g_settings']['config']['notCreatable'] = true;
+            $GLOBALS['TL_DCA']['tl_c4g_ldap_settings']['config']['notCreatable'] = true;
             $this->redirect($this->addToUrl('act=edit&id='.$objConfig->id));
         }
 
@@ -327,6 +330,12 @@ class tl_c4g_ldap_settings extends \Backend
         $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
         $ldapSettings = $ldapSettingsRepo->findAll();
 
+        $bindDn = '';
+        $bindPassword = '';
+        $server = '';
+        $port = '';
+        $baseDn = '';
+
         if ($ldapSettings && count($ldapSettings) > 0) {
             $encryption = $ldapSettings[0]->getEncryption();
             $bindDn = $ldapSettings[0]->getBindDn();
@@ -336,13 +345,12 @@ class tl_c4g_ldap_settings extends \Backend
             $baseDn = $ldapSettings[0]->getBaseDn();
         }
 
-        if(!$ldap) {
-            Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['bindError']);
+        if (!$ldap) {
+            \Contao\Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['bindError']);
         }
 
-        if (!$ldapConnection->ldapBind($ldap) && !$bindDn && !$bindPassword && !$server && !$port) {
-            Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['bindError']);
+        if ($ldap && !$ldapConnection->ldapBind($ldap) && !$bindDn && !$bindPassword && !$server && !$port) {
+            \Contao\Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_settings']['bindError']);
         }
-
     }
 }

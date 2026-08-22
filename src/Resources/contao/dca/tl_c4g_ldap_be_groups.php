@@ -13,7 +13,12 @@
  */
 
 use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
+use Contao\Backend;
+use Contao\Database;
+use Contao\DC_Table;
+use Contao\Input;
 use Contao\Message;
+use Contao\StringUtil;
 use Contao\System;
 use Contao\UserGroupModel;
 use con4gis\LdapBundle\Classes\LdapConnection;
@@ -27,7 +32,7 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_be_groups'] = array
     // Config
     'config' => array
     (
-        'dataContainer'               => 'Table',
+        'dataContainer'               => DC_Table::class,
         'enableVersioning'            => false,
         'notDeletable'                => true,
         'notCopyable'                 => true,
@@ -147,23 +152,22 @@ $GLOBALS['TL_DCA']['tl_c4g_ldap_be_groups'] = array
         ),
     ),
 );
-class tl_c4g_ldap_be_groups extends \Backend
+class tl_c4g_ldap_be_groups extends \Contao\Backend
 {
-    public function loadDataset(Contao\DataContainer $dc)
+    public function loadDataset(?\Contao\DataContainer $dc = null)
     {
         $objConfig = Database::getInstance()->prepare("SELECT id FROM tl_c4g_ldap_be_groups")->execute();
 
-        if (\Input::get('key')) return;
+        if (\Contao\Input::get('key')) return;
 
-        if(!$objConfig->numRows && !\Input::get('act'))
+        if (!$objConfig->numRows && !\Contao\Input::get('act'))
         {
             $this->redirect($this->addToUrl('act=create'));
         }
 
-
-        if(!\Input::get('id') && !\Input::get('act'))
+        if (!\Contao\Input::get('id') && !\Contao\Input::get('act'))
         {
-            $GLOBALS['TL_DCA']['tl_c4g_settings']['config']['notCreatable'] = true;
+            $GLOBALS['TL_DCA']['tl_c4g_ldap_be_groups']['config']['notCreatable'] = true;
             $this->redirect($this->addToUrl('act=edit&id='.$objConfig->id));
         }
 
@@ -177,6 +181,12 @@ class tl_c4g_ldap_be_groups extends \Backend
         $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
         $ldapSettings = $ldapSettingsRepo->findAll();
 
+        $bindDn = '';
+        $bindPassword = '';
+        $server = '';
+        $port = '';
+        $baseDn = '';
+
         if ($ldapSettings && count($ldapSettings) > 0) {
             $encryption = $ldapSettings[0]->getEncryption();
             $bindDn = $ldapSettings[0]->getBindDn();
@@ -186,95 +196,78 @@ class tl_c4g_ldap_be_groups extends \Backend
             $baseDn = $ldapSettings[0]->getBaseDn();
         }
 
-        if(!$ldap) {
-            Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['bindError']);
+        if (!$ldap) {
+            \Contao\Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['bindError']);
         }
 
-        if (!$ldapConnection->ldapBind($ldap) && !$bindDn && !$password && !$server && !$port) {
-            Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['bindError']);
+        if ($ldap && !$ldapConnection->ldapBind($ldap) && !$bindDn && !$bindPassword && !$server && !$port) {
+            \Contao\Message::addError($GLOBALS['TL_LANG']['tl_c4g_ldap_be_groups']['bindError']);
         }
-
     }
 
-    public function saveDataset(Contao\DataContainer $dc) {
-
-        $groups = $dc->activeRecord->groups;
-        if (!is_array($groups) && substr($groups, 0, 2) == "a:") {
-            $groups = unserialize($groups);
-        }
+    public function saveDataset(\Contao\DataContainer $dc) {
+        $db = Database::getInstance();
+        $rawGroups = $dc->activeRecord ? $dc->activeRecord->groups : null;
+        $groups = is_array($rawGroups) ? $rawGroups : \Contao\StringUtil::deserialize($rawGroups, true);
 
         $currentTime = time();
 
-        foreach ($groups as $group) {
-
-            $contaoGroup = UserGroupModel::findOneByName($group);
-            if (!$contaoGroup) {
-                $this->Database->prepare("INSERT INTO tl_user_group SET tstamp=?, name=?, con4gisLdapUserGroup=1")->execute($currentTime, $group);
+        if (is_array($groups)) {
+            foreach ($groups as $group) {
+                $contaoGroup = UserGroupModel::findOneByName($group);
+                if (!$contaoGroup) {
+                    $db->prepare("INSERT INTO tl_user_group (tstamp, name, con4gisLdapUserGroup) VALUES (?, ?, 1)")->execute($currentTime, $group);
+                }
             }
 
-        }
+            $currentGroups = $db->prepare("SELECT name FROM tl_user_group WHERE con4gisLdapUserGroup=1;")->execute();
+            $currentGroups = $currentGroups->fetchAllAssoc();
 
-        $currentGroups = $this->Database->prepare("SELECT name FROM tl_user_group WHERE con4gisLdapUserGroup=1;")->execute();
-        $currentGroups = $currentGroups->fetchAllAssoc();
-
-        if ($groups && is_array($groups)) {
             $ldapConnection = new LdapConnection();
-
             $ldap = $ldapConnection->ldapConnect();
 
             if ($ldap && $ldapConnection->ldapBind($ldap)) {
                 foreach ($currentGroups as $currentGroup) {
                     if (!in_array($currentGroup['name'], $groups)) {
-                        $this->Database->prepare("DELETE FROM tl_user_group WHERE name=? AND con4gisLdapUserGroup=1")->execute($currentGroup);
+                        $db->prepare("DELETE FROM tl_user_group WHERE name=? AND con4gisLdapUserGroup=1")->execute($currentGroup['name']);
                     }
                 }
             }
         }
     }
 
-    public function groupsCallback(Contao\DataContainer $dc) {
+    public function groupsCallback(?\Contao\DataContainer $dc = null) {
+        $db = Database::getInstance();
+        $ldapSettingsResult = $db->prepare("SELECT * FROM tl_c4g_ldap_settings")->execute()->fetchAllAssoc();
+        if (empty($ldapSettingsResult)) {
+            return [];
+        }
+        $ldapSettings = $ldapSettingsResult[0];
 
-        $ldapSettings = $this->Database->prepare("SELECT * FROM tl_c4g_ldap_settings")->execute()->fetchAllAssoc();
-        $ldapSettings = $ldapSettings[0];
-//
-        $baseDn = $ldapSettings['baseDn'];
-        $filter = $dc->activeRecord->filter;
+        $baseDn = $ldapSettings['baseDn'] ?? '';
+        $filter = ($dc && $dc->activeRecord) ? $dc->activeRecord->filter : '';
 
         $groups = [];
-
 
         $ldapConnection = new LdapConnection();
         $ldap = $ldapConnection->ldapConnect();
         $bind = false;
         
-        if($ldap) {
+        if ($ldap) {
             $bind = $ldapConnection->ldapBind($ldap);
         }
 
-        if ($bind) {
-            if ($filter) {
-
-                $result = ldap_search($ldap, $baseDn, $filter);
-                $ldapGroups = $ldap && $result ? ldap_get_entries($ldap, $result) : false;
-                if ($ldapGroups) {
-                    array_shift($ldapGroups);
-
-                    foreach ($ldapGroups as $ldapGroup) {
-
-                        $group = strstr($ldapGroup['dn'], ',', true);
-                        $group = trim(substr($group, strpos($group, '=') + 1));
-                        $groups[$group] = $group;
-                    }
-                }
-            } else {
+        if ($bind && $baseDn) {
+            if (!$filter) {
                 $filter = "(|(cn=*)(uid=*))";
-                $result = ldap_search($ldap, $baseDn, $filter);
-                $ldapGroups = $ldap && $result ? ldap_get_entries($ldap, $result) : false;
-                if ($ldapGroups) {
-                    array_shift($ldapGroups);
+            }
+            $result = @ldap_search($ldap, $baseDn, $filter);
+            $ldapGroups = $ldap && $result ? ldap_get_entries($ldap, $result) : false;
+            if ($ldapGroups) {
+                array_shift($ldapGroups);
 
-                    foreach ($ldapGroups as $ldapGroup) {
-
+                foreach ($ldapGroups as $ldapGroup) {
+                    if (isset($ldapGroup['dn'])) {
                         $group = strstr($ldapGroup['dn'], ',', true);
                         $group = trim(substr($group, strpos($group, '=') + 1));
                         $groups[$group] = $group;
@@ -294,5 +287,4 @@ class tl_c4g_ldap_be_groups extends \Backend
         
         return $value;
     }
-
 }

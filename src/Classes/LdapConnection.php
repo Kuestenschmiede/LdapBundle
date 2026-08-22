@@ -31,9 +31,11 @@ class LdapConnection
 
         $ldap = $this->ldapConnect();
 
-        ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-        ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-        ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
+        if ($ldap) {
+            ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+            ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+            @ldap_set_option($ldap, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
+        }
 
         $bind = $this->ldapBind($ldap);
 
@@ -116,25 +118,28 @@ class LdapConnection
         }
 
         $ldap = ldap_connect($adServer);
+        if (!$ldap) {
+            return false;
+        }
 
-        \Safe\ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-        \Safe\ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
+        ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+        ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
         if ($encryption == 'tls') {
-            if (!ldap_start_tls($ldap)) {
+            if (!@ldap_start_tls($ldap)) {
                 return false;
             }
         }
 
-        $bind = ldap_bind($ldap, $bindDn, $password);
+        $bind = @ldap_bind($ldap, $bindDn, $password);
         if (!$bind) {
             Message::addError(ldap_error($ldap));
         }
 
         if ($bind) {
-            $result = ldap_search($ldap, $baseDn, $filter);
+            $result = @ldap_search($ldap, $baseDn, $filter);
 
-            return $ldap && $result ? $ldapUser = ldap_get_entries($ldap, $result) : false;
+            return $ldap && $result ? ldap_get_entries($ldap, $result) : false;
         }
 
         return false;
@@ -156,25 +161,28 @@ class LdapConnection
                     $adServer = 'ldaps://' . $server . ':' . $port;
                 } elseif ($encryption == 'plain' || $encryption == 'tls') {
                     $adServer = 'ldap://' . $server . ':' . $port;
+                } else {
+                    $adServer = 'ldap://' . $server . ':' . $port;
                 }
 
-                \Safe\ldap_set_option(null, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
+                @ldap_set_option(null, LDAP_OPT_X_TLS_REQUIRE_CERT, LDAP_OPT_X_TLS_NEVER);
 
                 $ldap = ldap_connect($adServer);
 
                 $bindDn = $ldapSettings[0]->getBindDn();
                 $bindPassword = $ldapSettings[0]->getPassword();
 
+                if ($ldap) {
+                    ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
+                    ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
 
-                \Safe\ldap_set_option($ldap, LDAP_OPT_PROTOCOL_VERSION, 3);
-                \Safe\ldap_set_option($ldap, LDAP_OPT_REFERRALS, 0);
-
-                if ($encryption == 'tls') {
-                    ldap_start_tls($ldap);
-                }
-                $bind = ldap_bind($ldap, $bindDn, $bindPassword);
-                if (!$bind) {
-                    Message::addError(ldap_error($ldap));
+                    if ($encryption == 'tls') {
+                        @ldap_start_tls($ldap);
+                    }
+                    $bind = @ldap_bind($ldap, $bindDn, $bindPassword);
+                    if (!$bind) {
+                        Message::addError(ldap_error($ldap));
+                    }
                 }
             }
         }

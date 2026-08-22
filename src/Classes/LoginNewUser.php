@@ -12,18 +12,15 @@
  */
 namespace con4gis\LdapBundle\Classes;
 
-use Contao\CoreBundle\ServiceAnnotation\Hook;
+use Contao\CoreBundle\DependencyInjection\Attribute\AsHook;
 use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
 use con4gis\LdapBundle\Resources\contao\models\LdapUserModel;
 use Contao\System;
-use Terminal42\ServiceAnnotationBundle\ServiceAnnotationInterface;
 use con4gis\LdapBundle\Entity\Con4gisLdapSettings;
 
-class LoginNewUser implements ServiceAnnotationInterface
+#[AsHook('importUser')]
+class LoginNewUser
 {
-    /**
-     * @Hook("importUser")
-     */
     public function importUserBeforeAuthenticate(string $username, string $password, string $table): bool
     {
         $em = System::getContainer()->get('doctrine.orm.default_entity_manager');
@@ -41,6 +38,7 @@ class LoginNewUser implements ServiceAnnotationInterface
         $userFilter = '(&(' . $ldapSettings[0]->getUserFilter() . '=' . $username . '))';
         $mailField = strtolower($ldapSettings[0]->getEmail());
 
+        $adServer = 'ldap://' . $server . ':' . $port;
         if ($encryption == 'ssl') {
             $adServer = 'ldaps://' . $server . ':' . $port;
         } elseif ($encryption == 'plain' || $encryption == 'tls') {
@@ -50,7 +48,7 @@ class LoginNewUser implements ServiceAnnotationInterface
         $ldapConnection = new LdapConnection();
         $ldapUser = $ldapConnection->filterLdap($bindDn, $bindPassword, $userFilter, $baseDn, $adServer);
 
-        if ($ldapUser['count'] != 0) {
+        if (!empty($ldapUser) && isset($ldapUser['count']) && $ldapUser['count'] > 0) {
             $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%&*_-';
             $password = hash('sha384', substr(str_shuffle($chars), 0, 18));
 
@@ -60,7 +58,7 @@ class LoginNewUser implements ServiceAnnotationInterface
                     return true;
                 }
 
-                if ($ldapSettings[0]->shouldLinkWithUserMail() && !empty(LdapUserModel::findOneByEmail($ldapUser[0][$mailField][0]))) {
+                if ($ldapSettings[0]->shouldLinkWithUserMail() && !empty($mailField) && !empty($ldapUser[0][$mailField][0]) && !empty(LdapUserModel::findOneByEmail($ldapUser[0][$mailField][0]))) {
                     $user = LdapUserModel::findOneByEmail($ldapUser[0][$mailField][0]);
                 } else {
                     $user = new LdapUserModel();
@@ -72,7 +70,7 @@ class LoginNewUser implements ServiceAnnotationInterface
                 if (LdapMemberModel::findByUsername($username)) {
                     return true;
                 }
-                if ($ldapSettings[0]->shouldLinkWithUserMail() && !empty(LdapMemberModel::findOneByEmail($ldapUser[0][$mailField][0]))) {
+                if ($ldapSettings[0]->shouldLinkWithUserMail() && !empty($mailField) && !empty($ldapUser[0][$mailField][0]) && !empty(LdapMemberModel::findOneByEmail($ldapUser[0][$mailField][0]))) {
                     $user = LdapMemberModel::findOneByEmail($ldapUser[0][$mailField][0]);
                 } else {
                     $user = new LdapMemberModel();
