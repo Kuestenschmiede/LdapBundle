@@ -69,6 +69,7 @@ security:
     firewalls:  
         contao_backend:
             provider: chain_provider_backend
+            entry_point: contao_login
             form_login_ldap:
                 service: Symfony\Component\Ldap\Ldap
                 dn_string: 'uid={username},ou=Users,dc=ad,dc=yourldapserver,dc=com'
