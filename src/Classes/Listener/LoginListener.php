@@ -128,7 +128,6 @@ class LoginListener
                     }
                 }
 
-                $beUser->password = $this->generatePassword();
                 $beUser->save();
             }
         } elseif ($user instanceof FrontendUser) {
@@ -176,7 +175,6 @@ class LoginListener
                     }
                 }
 
-                $feUser->password = $this->generatePassword();
                 $feUser->save();
             }
         }

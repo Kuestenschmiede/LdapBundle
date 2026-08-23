@@ -38,9 +38,6 @@ class SyncLdapDataCron
 
             $ldapConnection = new LdapConnection();
 
-            $ldap = $ldapConnection->ldapConnect();
-            $bind = $ldapConnection->ldapBind($ldap);
-
             $ldapSettingsRepo = $em->getRepository(Con4gisLdapSettings::class);
             $ldapSettings = $ldapSettingsRepo->findAll();
             if (empty($ldapSettings)) {
@@ -53,8 +50,13 @@ class SyncLdapDataCron
             $encryption = $ldapSettings[0]->getEncryption();
             $server = $ldapSettings[0]->getServer();
             $port = $ldapSettings[0]->getPort();
-            $updateFilter = '(|(cn=*)(uid=*))';
-            $ldapUsernames = [];
+            $userFilter = $ldapSettings[0]->getUserFilter();
+            $updateFilter = $ldapSettings[0]->getUpdateFilter() ?: '(|(cn=*)(uid=*))';
+            $ldapUsernameField = strtolower($userFilter ?: 'uid');
+            $ldapEmailField = strtolower($ldapSettings[0]->getEmail() ?: 'mail');
+            $ldapFirstnameField = strtolower($ldapSettings[0]->getFirstname() ?: 'givenname');
+            $ldapLastnameField = strtolower($ldapSettings[0]->getLastname() ?: 'sn');
+
             $adServer = '';
             if ($server && $port) {
                 if ($encryption == 'ssl') {
@@ -64,112 +66,89 @@ class SyncLdapDataCron
                 }
             }
 
-            if ($adServer) {
-                $ldapUsers = $ldapConnection->filterLdap($bindDn, $bindPassword, $updateFilter, $baseDn, $adServer);
-                if ($ldapUsers) {
-                    array_shift($ldapUsers);
-                    $ldapUsernameField = strtolower($ldapSettings[0]->getUserFilter());
+            if (!$adServer) {
+                return;
+            }
 
-                    $ldapFrontendGroupsRepo = $em->getRepository(Con4gisLdapFrontendGroups::class);
-                    $ldapFrontendGroups = $ldapFrontendGroupsRepo->findAll();
+            $ldapUsers = $ldapConnection->filterLdap($bindDn, $bindPassword, $updateFilter, $baseDn, $adServer);
+            if (!$ldapUsers) {
+                return;
+            }
 
-                    foreach ($ldapUsers as $ldapUser) {
-                        $username = isset($ldapUser[$ldapUsernameField][0]) ? $ldapUser[$ldapUsernameField][0] : null;
-                        if ($username) {
-                            $ldapUsernames[] = $username;
+            array_shift($ldapUsers);
+
+            $ldapFrontendGroupsRepo = $em->getRepository(Con4gisLdapFrontendGroups::class);
+            $ldapFrontendGroups = $ldapFrontendGroupsRepo->findAll();
+            $mappingDatas = !empty($ldapFrontendGroups) ? $ldapFrontendGroups[0]->getFieldMapping() : [];
+
+            foreach ($ldapUsers as $ldapUser) {
+                $username = isset($ldapUser[$ldapUsernameField][0]) ? $ldapUser[$ldapUsernameField][0] : '';
+                if (!$username) {
+                    continue;
+                }
+
+                $firstname = (!empty($ldapFirstnameField) && isset($ldapUser[$ldapFirstnameField][0])) ? $ldapUser[$ldapFirstnameField][0] : '';
+                $lastname = (!empty($ldapLastnameField) && isset($ldapUser[$ldapLastnameField][0])) ? $ldapUser[$ldapLastnameField][0] : '';
+                $email = (!empty($ldapEmailField) && isset($ldapUser[$ldapEmailField][0])) ? $ldapUser[$ldapEmailField][0] : '';
+
+                $member = LdapMemberModel::findByUsername($username);
+                if (!$member) {
+                    $member = new LdapMemberModel();
+                    $member->username = $username;
+                    $member->dateAdded = time();
+                    $member->con4gisLdapMember = '1';
+                    $member->login = '1';
+                    $member->password = $this->generatePassword();
+                    $member->save();
+                    $member = LdapMemberModel::findByUsername($username);
+                }
+
+                if (!$member) {
+                    continue;
+                }
+
+                $member->firstname = $firstname;
+                $member->lastname = $lastname;
+                $member->email = $email;
+                $member->con4gisLdapMember = '1';
+
+                $groups = $ldapConnection->getLdapUserGroups($username, $ldapSettings);
+                $contaoGroups = [];
+                foreach ($groups as $group) {
+                    if ($foundGroup = MemberGroupModel::findByName($group)) {
+                        $contaoGroups[] = $foundGroup->id;
+                    }
+                }
+
+                if (!empty($contaoGroups)) {
+                    $member->groups = serialize($contaoGroups);
+                }
+
+                if (!empty($mappingDatas)) {
+                    foreach ($mappingDatas as $mappingData) {
+                        $contaoField = $mappingData['contaoField'];
+                        $ldapField = strtolower($mappingData['ldapField']);
+                        $ldapFieldData = isset($ldapUser[$ldapField][0]) ? $ldapUser[$ldapField][0] : '';
+                        if ($contaoField == 'country') {
+                            $ldapFieldData = strtolower($ldapFieldData);
+                        }
+                        if ($contaoField) {
+                            $member->$contaoField = $ldapFieldData;
                         }
                     }
                 }
-            }
 
-            if ($ldapSettings[0]->getUpdateFilter() != '') {
-                $updateFilter = $ldapSettings[0]->getUpdateFilter();
-                if ($adServer) {
-                    $ldapUsers = $ldapConnection->filterLdap($bindDn, $bindPassword, $updateFilter, $baseDn, $adServer);
+                $member->tstamp = time();
 
-                    if ($ldapUsers) {
-                        array_shift($ldapUsers);
-                        $ldapUsernameField = strtolower($ldapSettings[0]->getUserFilter());
-                        $ldapEmailField = strtolower($ldapSettings[0]->getEmail());
-                        $ldapFirstnameField = strtolower($ldapSettings[0]->getFirstname());
-                        $ldapLastnameField = strtolower($ldapSettings[0]->getLastname());
-                        $ldapUsernames = [];
-                        foreach ($ldapUsers as $ldapUser) {
-                            $ldapFrontendGroupsRepo = $em->getRepository(Con4gisLdapFrontendGroups::class);
-                            $ldapFrontendGroups = $ldapFrontendGroupsRepo->findAll();
-                            $mappingDatas = !empty($ldapFrontendGroups) ? $ldapFrontendGroups[0]->getFieldMapping() : [];
-                            $username = isset($ldapUser[$ldapUsernameField][0]) ? $ldapUser[$ldapUsernameField][0] : '';
-                            if (!$username) {
-                                continue;
-                            }
-                            $ldapUsernames[] = $username;
-                            $firstname = (!empty($ldapFirstnameField) && isset($ldapUser[$ldapFirstnameField][0])) ? $ldapUser[$ldapFirstnameField][0] : '';
-                            $lastname = (!empty($ldapLastnameField) && isset($ldapUser[$ldapLastnameField][0])) ? $ldapUser[$ldapLastnameField][0] : '';
-                            $email = (!empty($ldapEmailField) && isset($ldapUser[$ldapEmailField][0])) ? $ldapUser[$ldapEmailField][0] : '';
-                            $member = LdapMemberModel::findByUsername($username);
-                            if (!$member) {
-                                $member = new LdapMemberModel();
-                                $member->username = $username;
-                                $member->dateAdded = time();
-                                $member->con4gisLdapMember = '1';
-                                $member->login = '1';
-                                $member->password = $this->generatePassword();
-                                $member->save();
-                                $member = LdapMemberModel::findByUsername($username);
-                            }
-
-                            $member->firstname = $firstname;
-                            $member->lastname = $lastname;
-                            $member->email = $email;
-                            $member->con4gisLdapMember = '1';
-
-                            $groups = $ldapConnection->getLdapUserGroups($username, $ldapSettings);
-                            $contaoGroups = [];
-                            foreach ($groups as $group) {
-                                if ($foundGroup = MemberGroupModel::findByName($group)) {
-                                    $contaoGroups[] = $foundGroup->id;
-                                }
-                            }
-
-                            if (!empty($contaoGroups)) {
-                                $contaoGroups = serialize($contaoGroups);
-                                $member->groups = $contaoGroups;
-                                $member->tstamp = time();
-                            }
-
-                            if (!empty($mappingDatas)) {
-                                foreach ($mappingDatas as $mappingData) {
-                                    $contaoField = $mappingData['contaoField'];
-                                    $ldapField = strtolower($mappingData['ldapField']);
-                                    $ldapFieldData = isset($ldapUser[$ldapField][0]) ? $ldapUser[$ldapField][0] : '';
-                                    if ($contaoField == 'country') {
-                                        $ldapFieldData = strtolower($ldapFieldData);
-                                    }
-                                    $member->$contaoField = $ldapFieldData;
-                                }
-                            }
-                            try {
-                                $member->save();
-                            } catch (\Exception $e) {
-                                System::getContainer()
-                                    ->get('monolog.logger.contao')
-                                    ->log(LogLevel::ERROR, 'Fehler beim automatischen Abgleich der Mitglieder über LDAP: '.$e->getMessage(), array(
-                                        'contao' => new ContaoContext(__CLASS__.'::'.__FUNCTION__, ContaoContext::CRON
-                                        )));
-                                break;
-                            }
-                        }
-
-                        //Delete old con4gis LDAP member
-                        $allMember = MemberModel::findBy('con4gisLdapMember', '1');
-                        if ($allMember) {
-                            foreach ($allMember as $oneMember) {
-                                if (!in_array($oneMember->username, $ldapUsernames)) {
-                                    $oneMember->delete();
-                                }
-                            }
-                        }
-                    }
+                try {
+                    $member->save();
+                } catch (\Exception $e) {
+                    System::getContainer()
+                        ->get('monolog.logger.contao')
+                        ->log(LogLevel::ERROR, 'Fehler beim automatischen Abgleich der Mitglieder über LDAP: '.$e->getMessage(), array(
+                            'contao' => new ContaoContext(__CLASS__.'::'.__FUNCTION__, ContaoContext::CRON
+                            )));
+                    break;
                 }
             }
         }
