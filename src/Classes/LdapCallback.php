@@ -14,6 +14,7 @@ namespace con4gis\LdapBundle\Classes;
 
 use con4gis\LdapBundle\Resources\contao\models\LdapMemberModel;
 use con4gis\LdapBundle\Resources\contao\models\LdapUserModel;
+use Contao\CoreBundle\DataContainer\DataContainerOperation;
 use Contao\CoreBundle\DataContainer\PaletteManipulator;
 use Contao\CoreBundle\DataContainer\PaletteNotFoundException;
 use Contao\DataContainer;
@@ -53,6 +54,7 @@ class LdapCallback
             }
 
             $GLOBALS['TL_DCA'][$dc->table]['fields'][$field]['eval']['readonly'] = true;
+            $GLOBALS['TL_DCA'][$dc->table]['fields'][$field]['eval']['disabled'] = true;
         }
 
         if ($dc->table == 'tl_user') {
@@ -74,5 +76,47 @@ class LdapCallback
         }
 
         Message::addInfo($GLOBALS['TL_LANG'][$dc->table]['ldap_readonly_info']);
+    }
+
+    /**
+     * @param DataContainer|null $dc
+     */
+    public function onLoadMemberGroup(?DataContainer $dc = null): void
+    {
+        $GLOBALS['TL_DCA']['tl_member_group']['list']['operations']['delete']['button_callback'] = [
+            self::class, 'deleteMemberGroupButton'
+        ];
+    }
+
+    /**
+     * @param DataContainer|null $dc
+     */
+    public function onLoadUserGroup(?DataContainer $dc = null): void
+    {
+        $GLOBALS['TL_DCA']['tl_user_group']['list']['operations']['delete']['button_callback'] = [
+            self::class, 'deleteUserGroupButton'
+        ];
+    }
+
+    /**
+     * Hide delete button for LDAP member groups
+     */
+    public function deleteMemberGroupButton(DataContainerOperation $operation): void
+    {
+        $record = $operation->getRecord();
+        if ($record && !empty($record['con4gisLdapMemberGroup'])) {
+            $operation->hide();
+        }
+    }
+
+    /**
+     * Hide delete button for LDAP user groups
+     */
+    public function deleteUserGroupButton(DataContainerOperation $operation): void
+    {
+        $record = $operation->getRecord();
+        if ($record && !empty($record['con4gisLdapUserGroup'])) {
+            $operation->hide();
+        }
     }
 }

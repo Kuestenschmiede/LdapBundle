@@ -12,16 +12,13 @@
  *
  */
 
-use Contao\Backend;
-use Contao\Image;
-use Contao\Message;
-use Contao\StringUtil;
+use con4gis\LdapBundle\Classes\LdapCallback;
 
 /**
- * Edit Operations
+ * Register callbacks
  */
-$GLOBALS['TL_DCA']['tl_member_group']['list']['operations']['delete']['button_callback'] = [
-    'tl_member_group_con4gis', 'deleteUser'
+$GLOBALS['TL_DCA']['tl_member_group']['config']['onload_callback'][] = [
+    LdapCallback::class, 'onLoadMemberGroup'
 ];
 
 /**
@@ -35,27 +32,3 @@ $GLOBALS['TL_DCA']['tl_member_group']['fields']['con4gisLdapMemberGroup'] = arra
         'default'                 => 0,
         'sql'                     => "int(10) unsigned NOT NULL default '0'"
 );
-
-class tl_member_group_con4gis extends \Contao\Backend
-{
-    /**
-     * Return the delete user button
-     *
-     * @param array  $row
-     * @param string $href
-     * @param string $label
-     * @param string $title
-     * @param string $icon
-     * @param string $attributes
-     *
-     * @return string
-     */
-    public function deleteUser($row, $href, $label, $title, $icon, $attributes): string
-    {
-        if (isset($row['con4gisLdapMemberGroup']) && $row['con4gisLdapMemberGroup'] == "1") {
-            return "";
-        } else {
-            return '<a href="' . $this->addToUrl($href . '&amp;id=' . $row['id']) . '" title="' . StringUtil::specialchars($title) . '"' . $attributes . '>' . Image::getHtml($icon, $label) . '</a> ';
-        }
-    }
-}
